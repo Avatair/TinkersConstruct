@@ -123,6 +123,7 @@ public final class TinkerMaterials {
   // Metals
   public static final Material iron       = mat("iron", 0xcacaca);
   public static final Material pigiron    = mat("pigiron", 0xef9e9b);
+//  public static final Material ender      = mat("ender", 0x2c0d59);	// CHANGEME!
 
   // Nether Materials
   public static final Material netherrack = mat("netherrack", 0xb84f4f);
@@ -282,6 +283,8 @@ public final class TinkerMaterials {
     pigiron.addTrait(baconlicious, HEAD);
     pigiron.addTrait(tasty, HEAD);
     pigiron.addTrait(tasty);
+    
+//    ender.addCommonItems("Ender");
 
     cobalt.addCommonItems("Cobalt");
     cobalt.addTrait(momentum, HEAD);

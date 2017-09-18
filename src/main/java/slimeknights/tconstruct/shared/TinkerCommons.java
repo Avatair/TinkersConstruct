@@ -71,7 +71,7 @@ public class TinkerCommons extends TinkerPulse {
 
   public static Block slabDecoGround;
   public static Block slabFirewood;
-
+  
   // stairs
   public static Block stairsMudBrick;
   public static Block stairsFirewood;
@@ -101,6 +101,7 @@ public class TinkerCommons extends TinkerPulse {
   public static ItemStack blockKnightSlime;
   public static ItemStack blockSilkyJewel;
   public static ItemStack blockAlubrass;
+  public static ItemStack blockEnder;
 
   public static ItemStack lavawood;
   public static ItemStack firewood;
@@ -119,6 +120,7 @@ public class TinkerCommons extends TinkerPulse {
   public static ItemStack nuggetPigIron;
   public static ItemStack nuggetKnightSlime;
   public static ItemStack nuggetAlubrass;
+  public static ItemStack nuggetEnder;
 
   // Ingot Itemstacks
   public static ItemStack ingotCobalt;
@@ -127,6 +129,7 @@ public class TinkerCommons extends TinkerPulse {
   public static ItemStack ingotPigIron;
   public static ItemStack ingotKnightSlime;
   public static ItemStack ingotAlubrass;
+  public static ItemStack ingotEnder;
 
   // Material Itemstacks
   public static ItemStack searedBrick;
@@ -263,6 +266,9 @@ public class TinkerCommons extends TinkerPulse {
 
       nuggetAlubrass = nuggets.addMeta(5, "alubrass");
       ingotAlubrass = ingots.addMeta(5, "alubrass");
+      
+      nuggetEnder = nuggets.addMeta(6, "ender");
+      ingotEnder = ingots.addMeta(6, "ender");
 
       blockMetal = registerEnumBlock(new BlockMetal(), "metal");
 
@@ -273,6 +279,7 @@ public class TinkerCommons extends TinkerPulse {
       blockPigIron = new ItemStack(blockMetal, 1, BlockMetal.MetalTypes.PIGIRON.getMeta());
       blockAlubrass = new ItemStack(blockMetal, 1, BlockMetal.MetalTypes.ALUBRASS.getMeta());
       blockSilkyJewel = new ItemStack(blockMetal, 1, BlockMetal.MetalTypes.SILKY_JEWEL.getMeta());
+      blockEnder = new ItemStack(blockMetal, 1, BlockMetal.MetalTypes.ENDER.getMeta());
     }
 
     // Materials
@@ -367,12 +374,13 @@ public class TinkerCommons extends TinkerPulse {
     addStairRecipe(stairsLavawood, lavawood);
 
     // metals
-    registerMetalRecipes("Cobalt", ingotCobalt, nuggetCobalt, blockCobalt);
-    registerMetalRecipes("Ardite", ingotArdite, nuggetArdite, blockArdite);
-    registerMetalRecipes("Manyullyn", ingotManyullyn, nuggetManyullyn, blockManyullyn);
-    registerMetalRecipes("Knightslime", ingotKnightSlime, nuggetKnightSlime, blockKnightSlime);
-    registerMetalRecipes("Pigiron", ingotPigIron, nuggetPigIron, blockPigIron);
-    registerMetalRecipes("Alubrass", ingotAlubrass, nuggetAlubrass, blockAlubrass);
+    registerMetalRecipes("Cobalt", ingotCobalt, nuggetCobalt, blockCobalt, 9);
+    registerMetalRecipes("Ardite", ingotArdite, nuggetArdite, blockArdite, 9);
+    registerMetalRecipes("Manyullyn", ingotManyullyn, nuggetManyullyn, blockManyullyn, 9);
+    registerMetalRecipes("Knightslime", ingotKnightSlime, nuggetKnightSlime, blockKnightSlime, 9);
+    registerMetalRecipes("Pigiron", ingotPigIron, nuggetPigIron, blockPigIron, 9);
+    registerMetalRecipes("Alubrass", ingotAlubrass, nuggetAlubrass, blockAlubrass, 9);
+    registerMetalRecipes("Ender", ingotEnder, nuggetEnder, blockEnder, 9);
 
     if(blockSilkyJewel != null && matSilkyJewel != null) {
       GameRegistry.addShapedRecipe(blockSilkyJewel, "###", "###", "###", '#', matSilkyJewel);
@@ -413,32 +421,40 @@ public class TinkerCommons extends TinkerPulse {
     addSlimeRecipes(TinkerCommons.matSlimeBallMagma, BlockSlime.SlimeType.MAGMA);
   }
 
-  private static void registerMetalRecipes(String oreString, ItemStack ingot, ItemStack nugget, ItemStack block) {
+  private static void registerMetalRecipes(String oreString, ItemStack ingot, ItemStack nugget, ItemStack block, int count) {
     if(ingot == null) {
       return;
     }
 
     // nugget recipies
     if(nugget != null) {
-      registerFullrecipe(nugget, ingot, "nugget" + oreString, "ingot" + oreString);
+    	registerCountRecipe(nugget, ingot, "nugget" + oreString, "ingot" + oreString, count);
     }
     // block recipies
     if(block != null) {
-      registerFullrecipe(ingot, block, "ingot" + oreString, "block" + oreString);
+    	registerCountRecipe(ingot, block, "ingot" + oreString, "block" + oreString, count);
     }
   }
 
-  private static void registerFullrecipe(ItemStack small, ItemStack big, String oreSmall, String oreBig) {
-    // ingot -> block
+  private static void registerCountRecipe(ItemStack small, ItemStack big, String oreSmall, String oreBig, int count) {
+    if( count > 9 )
+    	throw new IllegalArgumentException("Count must be less or equal to 9.");
+	
+	// ingot -> block
+    Object[] oresSmall = new String[count];
+    for( int i = 0; i < count; i ++ )
+    	oresSmall[i] = oreSmall;
+    GameRegistry.addRecipe(new ShapelessOreRecipe(big, oresSmall));
+
     //GameRegistry.addShapedRecipe(big, "###", "###", "###", '#', small);
-    GameRegistry.addRecipe(new ShapedOreRecipe(big, "###", "###", "###", '#', oreSmall));
+    //GameRegistry.addRecipe(new ShapedOreRecipe(big, "###", "###", "###", '#', oreSmall));
     // block -> 9 ingot
     small = small.copy();
-    small.setCount(9);
+    small.setCount(count);
     //GameRegistry.addShapelessRecipe(small, big);
     GameRegistry.addRecipe(new ShapelessOreRecipe(small, oreBig));
   }
-
+  
   private void addSlimeRecipes(ItemStack slimeball, BlockSlime.SlimeType type) {
     ItemStack congealed = new ItemStack(blockSlimeCongealed);
     congealed.setItemDamage(blockSlimeCongealed.getMetaFromState(blockSlimeCongealed.getDefaultState().withProperty(BlockSlime.TYPE, type)));

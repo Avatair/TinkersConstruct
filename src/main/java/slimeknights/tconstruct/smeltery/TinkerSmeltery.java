@@ -552,7 +552,17 @@ public class TinkerSmeltery extends TinkerPulse {
                                                           RecipeMatch.of(new ItemStack(Blocks.SAND, 1, 0)),
                                                           new FluidStack(TinkerFluids.blood, 10),
                                                           true, false));
-
+    
+    // end stone
+    TinkerRegistry.registerBasinCasting(new CastingRecipe(new ItemStack(Blocks.END_STONE, 1, 0),
+            RecipeMatch.of(new ItemStack(Blocks.OBSIDIAN, 1, 0)),
+            new FluidStack(TinkerFluids.moltenEnder, Material.VALUE_EnderPearl / 6),
+            true, false));
+    TinkerRegistry.registerBasinCasting(new CastingRecipe(new ItemStack(Blocks.END_STONE, 1, 0),
+            RecipeMatch.of(new ItemStack(Blocks.SANDSTONE, 1, 0)),
+            new FluidStack(TinkerFluids.moltenEnder, Material.VALUE_EnderPearl),
+            true, false));
+    
     // melt entities into a pulp
     TinkerRegistry.registerEntityMelting(EntityIronGolem.class, new FluidStack(TinkerFluids.iron, 18));
     TinkerRegistry.registerEntityMelting(EntitySnowman.class, new FluidStack(FluidRegistry.WATER, 100));

@@ -81,6 +81,10 @@ public class TinkerFluids extends TinkerPulse {
     // Fluids for integration, getting registered by TinkerIntegration
     iron = fluidMetal(TinkerMaterials.iron.getIdentifier(), 0xa81212);
     iron.setTemperature(769);
+    
+    moltenEnder = fluidMetal("ender", 0x105e51);
+    moltenEnder.setTemperature(700);
+    moltenEnder.setRarity(EnumRarity.RARE);
 
     gold = fluidMetal("gold", 0xf6d609);
     gold.setTemperature(532);
@@ -174,10 +178,10 @@ public class TinkerFluids extends TinkerPulse {
       registerMoltenBlock(emerald);
       FluidRegistry.addBucketForFluid(emerald);
       
-      moltenEnder = fluidMetal("ender", 0x2c0d59);
+/*      moltenEnder = fluidMetal("ender", 0x2c0d59);
       moltenEnder.setTemperature(700);
       registerMoltenBlock(moltenEnder);
-      FluidRegistry.addBucketForFluid(moltenEnder);
+      FluidRegistry.addBucketForFluid(moltenEnder); */
 
       glass = fluidMetal("glass", 0xc0f5fe);
       glass.setTemperature(625);

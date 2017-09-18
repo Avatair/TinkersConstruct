@@ -54,7 +54,8 @@ public class BlockMetal extends EnumBlock<BlockMetal.MetalTypes> {
     KNIGHTSLIME,
     PIGIRON,
     ALUBRASS,
-    SILKY_JEWEL;
+    SILKY_JEWEL,
+    ENDER;
 
     public final int meta;
 
