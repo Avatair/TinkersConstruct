@@ -52,11 +52,15 @@ public class Material extends RecipeMatchRegistry {
   public static final int VALUE_SearedBlock = VALUE_Ingot * 2;
   public static final int VALUE_SearedMaterial = VALUE_Ingot / 2;
   public static final int VALUE_Glass = 1000;
-
+  
   public static final int VALUE_BrickBlock = VALUE_Ingot * 4;
 
   public static final int VALUE_SlimeBall = 250;
 
+  public static final int VALUE_EnderPearl = 125;
+  public static final int VALUE_EnderIngot = VALUE_EnderPearl * 2;
+  public static final int VALUE_EnderBlock = 1000;
+  
   public static int VALUE_Ore() {
     return (int) (VALUE_Ingot * Config.oreToIngotRatio);
   }

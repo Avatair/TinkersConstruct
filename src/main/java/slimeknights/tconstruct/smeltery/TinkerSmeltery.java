@@ -82,6 +82,7 @@ import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 import slimeknights.tconstruct.smeltery.tileentity.TileTank;
 import slimeknights.tconstruct.smeltery.tileentity.TileTinkerTank;
 import slimeknights.tconstruct.tools.TinkerMaterials;
+import slimeknights.tconstruct.tools.TinkerTools;
 
 @Pulse(id = TinkerSmeltery.PulseId, description = "The smeltery and items needed for it")
 public class TinkerSmeltery extends TinkerPulse {
@@ -509,7 +510,23 @@ public class TinkerSmeltery extends TinkerPulse {
     if(Config.castableBricks) {
       TinkerRegistry.registerTableCasting(new ItemStack(Items.BRICK), castIngot, TinkerFluids.clay, Material.VALUE_Ingot);
     }
-
+    
+    // ender pearl melting and casting
+    TinkerRegistry.registerMelting(Items.ENDER_PEARL, TinkerFluids.moltenEnder, Material.VALUE_EnderPearl);
+    {
+	    ItemStack panCast = new ItemStack(TinkerSmeltery.cast);
+	    Cast.setTagForPart(panCast, TinkerTools.panHead);
+	    TinkerRegistry.registerTableCasting(new ItemStack(Items.ENDER_PEARL), panCast, TinkerFluids.moltenEnder, Material.VALUE_EnderPearl);
+	    
+	    if(Config.claycasts) {
+	    	ItemStack clayPanCast = new ItemStack(TinkerSmeltery.clayCast);
+		    Cast.setTagForPart(clayPanCast, TinkerTools.panHead);
+            RecipeMatch rm2 = RecipeMatch.ofNBT(clayPanCast);
+            FluidStack fs2 = new FluidStack(TinkerFluids.moltenEnder, Material.VALUE_EnderPearl);
+            TinkerRegistry.registerTableCasting(new CastingRecipe(new ItemStack(Items.ENDER_PEARL), rm2, fs2, true, false));
+	    }
+    }
+    
     // emerald melting and casting
     TinkerRegistry.registerMelting(new MeltingRecipe(RecipeMatch.of("gemEmerald", Material.VALUE_Gem), TinkerFluids.emerald));
     TinkerRegistry.registerMelting(new MeltingRecipe(RecipeMatch.of("oreEmerald", (int) (Material.VALUE_Gem * Config.oreToIngotRatio)), TinkerFluids.emerald));

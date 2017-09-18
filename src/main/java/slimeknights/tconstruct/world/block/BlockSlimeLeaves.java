@@ -20,8 +20,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.List;
 import java.util.Random;
 
@@ -161,7 +159,7 @@ public class BlockSlimeLeaves extends BlockLeaves {
   @Nonnull
   @Override
   public BlockPlanks.EnumType getWoodType(int meta) {
-    throw new NotImplementedException(); // unused by our code.
+    throw new UnsupportedOperationException(); // unused by our code.
   }
 
   @Override
