@@ -513,6 +513,8 @@ public class TinkerSmeltery extends TinkerPulse {
     
     // ender pearl melting and casting
     TinkerRegistry.registerMelting(Items.ENDER_PEARL, TinkerFluids.moltenEnder, Material.VALUE_EnderPearl);
+    TinkerRegistry.registerMelting(Items.CHORUS_FRUIT, TinkerFluids.moltenEnder, Material.VALUE_EnderPearl / 18);
+    TinkerRegistry.registerMelting(Blocks.CHORUS_FLOWER, TinkerFluids.moltenEnder, Material.VALUE_EnderPearl / 6);
     {
 	    ItemStack panCast = new ItemStack(TinkerSmeltery.cast);
 	    Cast.setTagForPart(panCast, TinkerTools.panHead);
