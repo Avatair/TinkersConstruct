@@ -34,7 +34,7 @@ public class BlockDecoGroundRaw extends EnumBlock<BlockDecoGroundRaw.DecoGroundT
 		  boolean isSurroundedBySunlit = worldIn.canSeeSky(pos.up()) && worldIn.canSeeSky(pos.north()) &&
 				  worldIn.canSeeSky(pos.east()) && worldIn.canSeeSky(pos.south()) && worldIn.canSeeSky(pos.west());
 		  
-		  if( isSurroundedBySunlit && worldIn.isDaytime() ) {
+		  if( isSurroundedBySunlit && worldIn.isDaytime() && !worldIn.isRaining() ) {
 			  if( state.getValue(TYPE) == DecoGroundTypeRaw.MUDBRICK_RAW && rand.nextInt(10) < 3 ) {
 				  IBlockState newState = TinkerCommons.blockDecoGround.getDefaultState().withProperty(BlockDecoGround.TYPE, BlockDecoGround.DecoGroundType.MUDBRICK_DRIED);
 				  worldIn.setBlockState(pos, newState, 2);
