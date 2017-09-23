@@ -169,7 +169,7 @@ public class TinkerFluids extends TinkerPulse {
       FluidRegistry.addBucketForFluid(clay);
 
       dirt = fluidStone("dirt", 0xa68564);
-      dirt.setTemperature(500);
+      dirt.setTemperature(350);
       registerMoltenBlock(dirt);
       FluidRegistry.addBucketForFluid(dirt);
 
