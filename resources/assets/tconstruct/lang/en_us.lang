@@ -25,8 +25,11 @@ tile.tconstruct.soil.graveyard.tooltip=Heals undead
 tile.tconstruct.soil.consecrated.name=Consecrated Soil
 tile.tconstruct.soil.consecrated.tooltip=Hurts undead
 
-tile.tconstruct.deco_ground.mudbrick.name=Mud Bricks
-tile.tconstruct.deco_ground_slab.mudbrick.name=Mud Bricks Slab
+tile.tconstruct.deco_ground_raw.mudbrick_raw.name=Wet Mud Bricks
+tile.tconstruct.deco_ground.mudbrick_dried.name=Mud Bricks
+tile.tconstruct.deco_ground.mudbrick_cooked.name=Hardened Mud Bricks
+tile.tconstruct.deco_ground_slab.mudbrick_dried.name=Mud Bricks Slab
+tile.tconstruct.deco_ground_slab.mudbrick_cooked.name=Hardened Mud Bricks Slab
 tile.tconstruct.mudbrick_stairs.name=Mud Bricks Stairs
 
 tile.tconstruct.ore.cobalt.name=Cobalt Ore

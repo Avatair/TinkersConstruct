@@ -33,6 +33,7 @@ import slimeknights.tconstruct.library.Util;
 import slimeknights.tconstruct.shared.block.BlockClearGlass;
 import slimeknights.tconstruct.shared.block.BlockClearStainedGlass;
 import slimeknights.tconstruct.shared.block.BlockDecoGround;
+import slimeknights.tconstruct.shared.block.BlockDecoGroundRaw;
 import slimeknights.tconstruct.shared.block.BlockDecoGroundSlab;
 import slimeknights.tconstruct.shared.block.BlockFirewood;
 import slimeknights.tconstruct.shared.block.BlockFirewoodSlab;
@@ -65,6 +66,7 @@ public class TinkerCommons extends TinkerPulse {
   public static BlockGlow blockGlow;
 
   public static BlockDecoGround blockDecoGround;
+  public static BlockDecoGroundRaw blockDecoGroundRaw;
 
   public static BlockSlime blockSlime;
   public static BlockSlimeCongealed blockSlimeCongealed;
@@ -89,7 +91,9 @@ public class TinkerCommons extends TinkerPulse {
   public static ItemStack graveyardSoil;
   public static ItemStack consecratedSoil;
 
+  public static ItemStack mudBrickRawBlock;
   public static ItemStack mudBrickBlock;
+  public static ItemStack mudBrickBlockCooked;
 
   public static ItemStack oreCobalt;
   public static ItemStack oreArdite;
@@ -211,8 +215,12 @@ public class TinkerCommons extends TinkerPulse {
     firewood = new ItemStack(blockFirewood, 1, BlockFirewood.FirewoodType.FIREWOOD.getMeta());
 
     // deco stuff
+    blockDecoGroundRaw = registerEnumBlock(new BlockDecoGroundRaw(), "deco_ground_raw");
+    mudBrickRawBlock = new ItemStack(blockDecoGroundRaw, 1, BlockDecoGroundRaw.DecoGroundTypeRaw.MUDBRICK_RAW.getMeta());
+    
     blockDecoGround = registerEnumBlock(new BlockDecoGround(), "deco_ground");
-    mudBrickBlock = new ItemStack(blockDecoGround, 1, BlockDecoGround.DecoGroundType.MUDBRICK.getMeta());
+    mudBrickBlock = new ItemStack(blockDecoGround, 1, BlockDecoGround.DecoGroundType.MUDBRICK_DRIED.getMeta());
+    mudBrickBlockCooked = new ItemStack(blockDecoGround, 1, BlockDecoGround.DecoGroundType.MUDBRICK_COOKED.getMeta());
 
     blockClearGlass = registerBlock(new BlockClearGlass(), "clear_glass");
     blockClearStainedGlass = registerEnumBlock(new BlockClearStainedGlass(), "clear_stained_glass");
@@ -222,7 +230,7 @@ public class TinkerCommons extends TinkerPulse {
     slabFirewood = registerEnumBlockSlab(new BlockFirewoodSlab(), "firewood_slab");
 
     // stairs
-    stairsMudBrick = registerBlockStairsFrom(blockDecoGround, BlockDecoGround.DecoGroundType.MUDBRICK, "mudbrick_stairs");
+    stairsMudBrick = registerBlockStairsFrom(blockDecoGround, BlockDecoGround.DecoGroundType.MUDBRICK_DRIED, "mudbrick_stairs");
     stairsFirewood = registerBlockStairsFrom(blockFirewood, BlockFirewood.FirewoodType.FIREWOOD, "firewood_stairs");
     stairsLavawood = registerBlockStairsFrom(blockFirewood, BlockFirewood.FirewoodType.LAVAWOOD, "lavawood_stairs");
 
@@ -360,10 +368,11 @@ public class TinkerCommons extends TinkerPulse {
     GameRegistry.addSmelting(graveyardSoil, consecratedSoil, 0);
     GameRegistry.addShapelessRecipe(graveyardSoil, Blocks.DIRT, Items.ROTTEN_FLESH, new ItemStack(Items.DYE, 1, 15));
     if(mudBrick != null) {
-      GameRegistry.addShapedRecipe(mudBrickBlock, "BB", "BB", 'B', mudBrick);
-      GameRegistry.addShapedRecipe(new ItemStack(slabDecoGround, 1, BlockDecoGround.DecoGroundType.MUDBRICK.getMeta()), "bb", 'b', mudBrick);
+      GameRegistry.addShapedRecipe(mudBrickRawBlock, "BB", "BB", 'B', mudBrick);
+      GameRegistry.addShapedRecipe(new ItemStack(slabDecoGround, 1, BlockDecoGround.DecoGroundType.MUDBRICK_DRIED.getMeta()), "bb", 'b', mudBrick);
+      GameRegistry.addSmelting(mudBrickBlock, mudBrickBlockCooked, 0);
     }
-    addSlabRecipe(new ItemStack(slabDecoGround, 1, BlockDecoGround.DecoGroundType.MUDBRICK.getMeta()), mudBrickBlock);
+    addSlabRecipe(new ItemStack(slabDecoGround, 1, BlockDecoGround.DecoGroundType.MUDBRICK_DRIED.getMeta()), mudBrickBlock);
     addStairRecipe(stairsMudBrick, mudBrickBlock);
 
     // firewood
