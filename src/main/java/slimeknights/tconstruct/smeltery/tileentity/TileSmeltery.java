@@ -5,6 +5,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -238,7 +239,7 @@ public class TileSmeltery extends TileHeatingStructureFuelTank<MultiblockSmelter
         // no custom melting but a living entity that's alive?
         if(fluid == null && entity instanceof EntityLivingBase) {
           if(entity.isEntityAlive() && !entity.isDead) {
-            fluid = new FluidStack(TinkerFluids.blood, 10);
+      		fluid = new FluidStack(TinkerFluids.blood, 10);
           }
         }
 

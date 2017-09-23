@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.common.eventbus.Subscribe;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.entity.passive.EntityVillager;
@@ -569,6 +570,7 @@ public class TinkerSmeltery extends TinkerPulse {
     TinkerRegistry.registerEntityMelting(EntityIronGolem.class, new FluidStack(TinkerFluids.iron, 18));
     TinkerRegistry.registerEntityMelting(EntitySnowman.class, new FluidStack(FluidRegistry.WATER, 100));
     TinkerRegistry.registerEntityMelting(EntityVillager.class, new FluidStack(TinkerFluids.emerald, 6));
+    TinkerRegistry.registerEntityMelting(EntityEnderman.class, new FluidStack(TinkerFluids.moltenEnder, 25));
   }
 
   private void registerAlloys() {
