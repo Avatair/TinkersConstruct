@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -17,8 +18,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -38,12 +41,15 @@ import slimeknights.tconstruct.smeltery.tileentity.TileTinkersAnvil;
 public class BlockTinkerAnvil extends BlockInventory {
 
 	public static final PropertyEnum<AnvilType> TYPE = PropertyEnum.create("type", AnvilType.class);
+    protected static final AxisAlignedBB X_AXIS_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.125D, 1.0D, 1.0D, 0.875D);
+    protected static final AxisAlignedBB Z_AXIS_AABB = new AxisAlignedBB(0.125D, 0.0D, 0.0D, 0.875D, 1.0D, 1.0D);
 
 	public BlockTinkerAnvil() {
 		super(Material.ANVIL);
 		setHardness(3F);
 		setResistance(20F);
 		setCreativeTab(TinkerRegistry.tabSmeltery);
+		setSoundType(SoundType.ANVIL);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -91,6 +97,20 @@ public class BlockTinkerAnvil extends BlockInventory {
 	}
 
 	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (playerIn.isSneaking()) {
+			return false;
+		}
+		TileEntity te = worldIn.getTileEntity(pos);
+		if (te instanceof TileTinkersAnvil) {
+			((TileTinkersAnvil) te).interact(playerIn);
+			return true;
+		}
+		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+	}
+
+	@Override
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
 			ItemStack stack) {
 		super.onBlockPlacedBy(world, pos, state, placer, stack);
@@ -102,6 +122,17 @@ public class BlockTinkerAnvil extends BlockInventory {
 			((TileTinkersAnvil) te).setFacing(placer.getHorizontalFacing().getOpposite());
 		}
 	}
+	
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+    	TileEntity te = source.getTileEntity(pos);
+    	if (te != null && te instanceof TileTinkersAnvil) {
+            EnumFacing enumfacing = ((TileTinkersAnvil)te).getFacing();
+            return enumfacing.getAxis() == EnumFacing.Axis.X ? X_AXIS_AABB : Z_AXIS_AABB;
+        }
+    	
+    	return super.getBoundingBox(state, source, pos);
+    }
 
 	@Nonnull
 	@Override
