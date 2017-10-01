@@ -38,6 +38,7 @@ import slimeknights.tconstruct.library.tools.IToolPart;
 import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 import slimeknights.tconstruct.smeltery.block.BlockCasting;
+import slimeknights.tconstruct.smeltery.block.BlockTinkerAnvil;
 import slimeknights.tconstruct.smeltery.client.GuiSmeltery;
 import slimeknights.tconstruct.smeltery.client.GuiTinkerTank;
 import slimeknights.tconstruct.smeltery.client.IGuiLiquidTank;
@@ -128,6 +129,8 @@ public class JEIPlugin implements IModPlugin {
       registry.addRecipeCategoryCraftingItem(new ItemStack(TinkerSmeltery.castingBlock, 1, BlockCasting.CastingType.TABLE.meta),
                                              CastingRecipeCategory.CATEGORY);
       registry.addRecipeCategoryCraftingItem(new ItemStack(TinkerSmeltery.castingBlock, 1, BlockCasting.CastingType.BASIN.meta),
+                                             CastingRecipeCategory.CATEGORY);
+      registry.addRecipeCategoryCraftingItem(new ItemStack(TinkerSmeltery.anvilBlock, 1, BlockTinkerAnvil.AnvilType.ANVIL.meta),
                                              CastingRecipeCategory.CATEGORY);
       // add the seared furnace to the list with the vanilla furnace
       // note that this is just the smelting one, fuel is not relevant

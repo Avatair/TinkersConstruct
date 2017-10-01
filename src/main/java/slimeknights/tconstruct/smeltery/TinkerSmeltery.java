@@ -70,6 +70,7 @@ import slimeknights.tconstruct.smeltery.block.BlockSearedStairs;
 import slimeknights.tconstruct.smeltery.block.BlockSmelteryController;
 import slimeknights.tconstruct.smeltery.block.BlockSmelteryIO;
 import slimeknights.tconstruct.smeltery.block.BlockTank;
+import slimeknights.tconstruct.smeltery.block.BlockTinkerAnvil;
 import slimeknights.tconstruct.smeltery.block.BlockTinkerTankController;
 import slimeknights.tconstruct.smeltery.item.CastCustom;
 import slimeknights.tconstruct.smeltery.item.ItemTank;
@@ -82,6 +83,7 @@ import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 import slimeknights.tconstruct.smeltery.tileentity.TileTank;
 import slimeknights.tconstruct.smeltery.tileentity.TileTinkerTank;
+import slimeknights.tconstruct.smeltery.tileentity.TileTinkersAnvil;
 import slimeknights.tconstruct.tools.TinkerMaterials;
 import slimeknights.tconstruct.tools.TinkerTools;
 
@@ -100,6 +102,7 @@ public class TinkerSmeltery extends TinkerPulse {
   public static BlockTank searedTank;
   public static BlockFaucet faucet;
   public static BlockCasting castingBlock;
+  public static BlockTinkerAnvil anvilBlock;
   public static BlockSmelteryIO smelteryIO;
   public static Block searedGlass;
 
@@ -154,6 +157,7 @@ public class TinkerSmeltery extends TinkerPulse {
     searedTank = registerBlock(new ItemTank(new BlockTank()), "seared_tank");
     faucet = registerBlock(new BlockFaucet(), "faucet");
     castingBlock = registerBlock(new ItemBlockMeta(new BlockCasting()), "casting");
+    anvilBlock =  registerBlock(new ItemBlockMeta(new BlockTinkerAnvil()), "tinker_anvil");
     smelteryIO = registerEnumBlock(new BlockSmelteryIO(), "smeltery_io");
     searedGlass = registerEnumBlock(new BlockSearedGlass(), "seared_glass");
 
@@ -162,6 +166,7 @@ public class TinkerSmeltery extends TinkerPulse {
 
     ItemBlockMeta.setMappingProperty(searedTank, BlockTank.TYPE);
     ItemBlockMeta.setMappingProperty(castingBlock, BlockCasting.TYPE);
+    ItemBlockMeta.setMappingProperty(anvilBlock, BlockTinkerAnvil.TYPE);
 
     // slabs
     searedSlab = registerEnumBlockSlab(new BlockSearedSlab(), "seared_slab");
@@ -187,6 +192,7 @@ public class TinkerSmeltery extends TinkerPulse {
     registerTE(TileFaucet.class, "faucet");
     registerTE(TileCastingTable.class, "casting_table");
     registerTE(TileCastingBasin.class, "casting_basin");
+    registerTE(TileTinkersAnvil.class, "tinker_anvil");
     registerTE(TileDrain.class, "smeltery_drain");
     registerTE(TileSearedFurnace.class, "seared_furnace");
     registerTE(TileTinkerTank.class, "tinker_tank");
@@ -314,6 +320,8 @@ public class TinkerSmeltery extends TinkerPulse {
                            "bbb", "b b", "b b", 'b', searedBrick); // Table
     GameRegistry.addRecipe(new ItemStack(castingBlock, 1, BlockCasting.CastingType.BASIN.getMeta()),
                            "b b", "b b", "bbb", 'b', searedBrick); // Basin
+    GameRegistry.addRecipe(new ItemStack(anvilBlock, 1, BlockTinkerAnvil.AnvilType.ANVIL.getMeta()),
+            			   "b  ", "   ", "   ", 'b', searedBrick); // Anvil (temporary)
     GameRegistry.addRecipe(new ItemStack(faucet),
                            "b b", " b ", 'b', searedBrick); // Faucet
     //GameRegistry.addRecipe(new ItemStack(TinkerSmeltery.castingChannel, 4, 0), "b b", "bbb", 'b', searedBrick); // Channel
