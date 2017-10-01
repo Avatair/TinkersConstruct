@@ -4,15 +4,19 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import slimeknights.tconstruct.common.Sounds;
 import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.shared.block.PropertyTableItem;
 import slimeknights.tconstruct.shared.tileentity.TileTable;
+import slimeknights.tconstruct.tools.tools.Hammer;
 
 public class TileTinkersAnvil extends TileTable implements ISidedInventory {
 
@@ -91,5 +95,16 @@ public class TileTinkersAnvil extends TileTable implements ISidedInventory {
 	@Override
 	public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing direction) {
 		return index == 1;
+	}
+
+	public void maybeCraft(EntityPlayer playerIn) {
+		
+		// TODO Auto-generated method stub
+		ItemStack heldItem = playerIn.getHeldItemMainhand();
+		Item item = heldItem.getItem();
+		if( item instanceof Hammer ) {
+			
+			this.world.playSound((double)this.getPos().getX() + 0.5D, (double)this.getPos().getY() + 0.5D, (double)this.getPos().getZ() + 0.5D, Sounds.anvil_hit, SoundCategory.BLOCKS, 0.25F, 1.0F, false);
+		}
 	}
 }

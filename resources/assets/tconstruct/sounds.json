@@ -23,6 +23,14 @@
       "tconstruct:slimesling"
     ]
    },
+   "anvil_hit": {
+     "category": "block",
+     "sounds": [
+       "tconstruct:anvilHit1",
+	   "tconstruct:anvilHit2",
+	   "tconstruct:anvilHit3"
+     ]
+   },
    "wood_hit": {
      "category": "block",
      "sounds": [

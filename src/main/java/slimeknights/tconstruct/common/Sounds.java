@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-
+import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.Util;
 
 public abstract class Sounds {
@@ -23,6 +23,7 @@ public abstract class Sounds {
 
   public static final SoundEvent stone_hit = sound("stone_hit");
   public static final SoundEvent wood_hit = sound("wood_hit");
+  public static final SoundEvent anvil_hit = sound("anvil_hit");
 
   public static final SoundEvent crossbow_reload = sound("crossbow_reload");
 

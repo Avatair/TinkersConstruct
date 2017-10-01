@@ -123,6 +123,17 @@ public class BlockTinkerAnvil extends BlockInventory {
 		}
 	}
 	
+	@Override
+    public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn)
+    {
+		TileEntity te = worldIn.getTileEntity(pos);
+    	if (te != null && te instanceof TileTinkersAnvil) {
+    		TileTinkersAnvil anvilTE = (TileTinkersAnvil)te;
+    		anvilTE.maybeCraft(playerIn);
+    	}
+    }
+	
+	@Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
     	TileEntity te = source.getTileEntity(pos);
