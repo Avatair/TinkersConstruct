@@ -60,7 +60,7 @@ public class Hammer extends Pickaxe {
   public double attackSpeed() {
     return 0.8f;
   }
-
+  
   @Override
   public boolean dealDamage(ItemStack stack, EntityLivingBase player, Entity entity, float damage) {
     // bonus damage vs. undead!

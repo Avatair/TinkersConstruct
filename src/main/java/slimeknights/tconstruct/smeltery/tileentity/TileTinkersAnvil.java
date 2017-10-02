@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.smeltery.tileentity;
 
+import java.util.Random;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,12 +9,14 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import slimeknights.tconstruct.common.Sounds;
+import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.shared.block.PropertyTableItem;
 import slimeknights.tconstruct.shared.tileentity.TileTable;
@@ -27,7 +31,15 @@ public class TileTinkersAnvil extends TileTable implements ISidedInventory {
 		this.itemHandler = new SidedInvWrapper(this, EnumFacing.DOWN);
 	}
 
-	public void interact(EntityPlayer player) {
+	public boolean interact(EntityPlayer player) {
+		
+		// Maybe interact with hammer
+		if( !player.isSneaking() ) {
+			if( player.getHeldItemMainhand().getItem() instanceof Hammer ) {
+				return maybeCraft(player);
+			}
+		}
+		
 		// completely empty -> insert current item into input
 		if (!isStackInSlot(0) && !isStackInSlot(1)) {
 			ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
@@ -56,6 +68,8 @@ public class TileTinkersAnvil extends TileTable implements ISidedInventory {
 				this.getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), true);
 			}
 		}
+		
+		return true;
 	}
 
 	@Override
@@ -67,7 +81,7 @@ public class TileTinkersAnvil extends TileTable implements ISidedInventory {
 				PropertyTableItem.TableItem item = getTableItem(getStackInSlot(i), this.getWorld(), null);
 				assert item != null;
 //				item.s = 0.875f;// * 0.875f;
-				item.s = 0.3f;
+				item.s = 0.5f;
 				item.y -= 1 / 16f * 0.875f; //item.s;
 
 				// item.s = 1f;
@@ -97,14 +111,39 @@ public class TileTinkersAnvil extends TileTable implements ISidedInventory {
 		return index == 1;
 	}
 
-	public void maybeCraft(EntityPlayer playerIn) {
-		
-		// TODO Auto-generated method stub
+	public boolean maybeCraft(EntityPlayer playerIn) {
 		ItemStack heldItem = playerIn.getHeldItemMainhand();
 		Item item = heldItem.getItem();
 		if( item instanceof Hammer ) {
+			if( playerIn.getCooldownTracker().hasCooldown(heldItem.getItem()) )
+				return false;
 			
-			this.world.playSound((double)this.getPos().getX() + 0.5D, (double)this.getPos().getY() + 0.5D, (double)this.getPos().getZ() + 0.5D, Sounds.anvil_hit, SoundCategory.BLOCKS, 0.25F, 1.0F, false);
+			if( world.isRemote ) {
+				Random rand = world.rand;
+				
+				if( rand.nextInt(2) == 0 ) {
+					EnumParticleTypes type;
+					if( rand.nextInt(4) != 0 ) {
+						type = EnumParticleTypes.FLAME;
+					}
+					else
+						type = EnumParticleTypes.LAVA;
+		            double d8 = getPos().getX() + 0.25 + (double)rand.nextFloat() * 0.5;
+		            double d4 = getPos().getY() + 1.0f;//stateIn.getBoundingBox(worldIn, pos).maxY;
+		            double d6 = getPos().getZ() + 0.25 + (double)rand.nextFloat() * 0.5;
+		            world.spawnParticle(type, d8, d4, d6, 0.0D, 0.0D, 0.0D, new int[0]);
+				}
+				
+				this.world.playSound((double)this.getPos().getX() + 0.5D, (double)this.getPos().getY() + 0.5D, (double)this.getPos().getZ() + 0.5D, Sounds.anvil_hit, SoundCategory.BLOCKS, 0.25F, 1.0F, false);
+			}
+			else {
+				playerIn.getCooldownTracker().setCooldown(heldItem.getItem(), 15);
+				ToolHelper.damageTool(heldItem, 1, playerIn);
+			}
+			
+			return true;
 		}
+		
+		return false;
 	}
 }

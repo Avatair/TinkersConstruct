@@ -1,6 +1,7 @@
 package slimeknights.tconstruct.smeltery.block;
 
 import java.util.Locale;
+import java.util.Random;
 
 import javax.annotation.Nonnull;
 
@@ -19,10 +20,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -59,6 +62,13 @@ public class BlockTinkerAnvil extends BlockInventory {
 			list.add(new ItemStack(this, 1, type.getMeta()));
 		}
 	}
+	
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, net.minecraft.client.particle.ParticleManager manager)
+    {
+        return true;
+    }
 
 	@Nonnull
 	@Override
@@ -99,13 +109,12 @@ public class BlockTinkerAnvil extends BlockInventory {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (playerIn.isSneaking()) {
+/*		if (playerIn.isSneaking()) {
 			return false;
-		}
+		}*/
 		TileEntity te = worldIn.getTileEntity(pos);
 		if (te instanceof TileTinkersAnvil) {
-			((TileTinkersAnvil) te).interact(playerIn);
-			return true;
+			return ((TileTinkersAnvil) te).interact(playerIn);
 		}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 	}
@@ -123,7 +132,7 @@ public class BlockTinkerAnvil extends BlockInventory {
 		}
 	}
 	
-	@Override
+/*	@Override
     public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn)
     {
 		TileEntity te = worldIn.getTileEntity(pos);
@@ -131,7 +140,7 @@ public class BlockTinkerAnvil extends BlockInventory {
     		TileTinkersAnvil anvilTE = (TileTinkersAnvil)te;
     		anvilTE.maybeCraft(playerIn);
     	}
-    }
+    } */
 	
 	@Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
