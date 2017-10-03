@@ -58,16 +58,16 @@ public class HarvestClientProxy extends ClientProxy {
     info = new ToolBuildGuiInfo(excavator);
     info.addSlotPosition(33 - 10 + 2, 42 + 4); // handle
     info.addSlotPosition(33 + 12, 42 - 16); // head
-    info.addSlotPosition(33 - 8, 42 - 16); // plate
     info.addSlotPosition(33 - 10 - 16, 42 + 20); // binding
+    info.addSlotPosition(33 - 8, 42 - 16); // plate
     TinkerRegistryClient.addToolBuilding(info);
 
     // lumberaxe
     info = new ToolBuildGuiInfo(lumberAxe);
     info.addSlotPosition(33 + 6 - 10 + 3, 42 + 4); // handle
     info.addSlotPosition(33 + 6 - 6, 42 - 20); // head
-    info.addSlotPosition(33 + 6 + 14, 42 - 4); // plate
     info.addSlotPosition(33 + 6 - 10 - 16, 42 + 20); // binding
+    info.addSlotPosition(33 + 6 + 14, 42 - 4); // plate
     TinkerRegistryClient.addToolBuilding(info);
 
     // scythe

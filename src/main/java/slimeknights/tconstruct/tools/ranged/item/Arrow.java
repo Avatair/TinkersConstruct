@@ -27,8 +27,8 @@ public class Arrow extends ProjectileCore {
 
   public Arrow() {
     super(PartMaterialType.arrowShaft(TinkerTools.arrowShaft),
-          PartMaterialType.arrowHead(TinkerTools.arrowHead),
-          PartMaterialType.fletching(TinkerTools.fletching));
+    	  PartMaterialType.fletching(TinkerTools.fletching),
+    	  PartMaterialType.arrowHead(TinkerTools.arrowHead) );
 
     addCategory(Category.NO_MELEE, Category.PROJECTILE);
   }

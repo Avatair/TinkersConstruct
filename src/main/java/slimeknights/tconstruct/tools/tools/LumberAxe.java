@@ -52,8 +52,8 @@ public class LumberAxe extends AoeToolCore {
   public LumberAxe() {
     super(PartMaterialType.handle(TinkerTools.toughToolRod),
           PartMaterialType.head(TinkerTools.broadAxeHead),
-          PartMaterialType.head(TinkerTools.largePlate),
-          PartMaterialType.extra(TinkerTools.toughBinding));
+          PartMaterialType.extra(TinkerTools.toughBinding),
+          PartMaterialType.head(TinkerTools.largePlate) );
 
     // lumberaxe is not a weapon. it's for lumberjacks. Lumberjacks are manly, they're weapons themselves.
     addCategory(Category.HARVEST);

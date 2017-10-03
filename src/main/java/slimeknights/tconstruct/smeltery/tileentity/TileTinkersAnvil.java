@@ -20,6 +20,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import slimeknights.tconstruct.common.Sounds;
 import slimeknights.tconstruct.library.client.ToolBuildGuiInfo;
+import slimeknights.tconstruct.library.tools.TinkerToolCore;
+import slimeknights.tconstruct.library.tools.ToolPart;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.shared.block.PropertyTableItem;
@@ -39,56 +41,142 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 	}
 
 	public boolean interact(EntityPlayer player) {
-
+		ItemStack heldItemStack = player.getHeldItemMainhand();
+		Item heldItem = heldItemStack.getItem();
+		
 		// Special interactions
 		if (!player.isSneaking()) {
 			// Maybe use crafting
-			boolean bHoldsHammer = player.getHeldItemMainhand().getItem() instanceof Hammer;
-			if (bHoldsHammer) {
+			if (heldItem instanceof Hammer) {
 				return maybeCraft(player);
 			}
 
 			return false;
 		}
-		/*
-		 * else { // Maybe open GUI instead if( player.getHeldItemMainhand().isEmpty() )
-		 * return false; }
-		 */
-
-		// completely empty -> insert current item into input
-		if (!isStackInSlot(0) && !isStackInSlot(1)) {
-			ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
-			if (stack.isEmpty())
-				return false;
-			setInventorySlotContents(0, stack);
+		
+		if( !heldItemStack.isEmpty() ) {
+			// find next empty space
+			int emptySlot = -1;
+			for( int i = 0; i < this.getSizeInventory(); i ++ ) {
+				if( !isStackInSlot(i) ) {
+					emptySlot = i;
+					break;
+				}
+			}
+			
+			if( emptySlot != -1 ) 
+			{
+				// put on anvil by prio
+				if( heldItem instanceof ToolPart ) {
+					ToolPart toolPartItem = (ToolPart)heldItem;
+					int[] slotPrio = toolPartItem.getSlotPrio();
+					
+					boolean foundSlot = false;
+					for( int i : slotPrio ) {
+						if( !isStackInSlot(i) ) {
+							ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, 1);
+							setInventorySlotContents(i, stack);
+							foundSlot = true;
+							break;
+						}
+					}
+					
+					if( !foundSlot ) {
+						ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
+						setInventorySlotContents(emptySlot, stack);
+					}
+				}
+				else if( heldItem instanceof TinkerToolCore ) {
+					// try to add to slot 0 first
+					if( !isStackInSlot(0) ) {
+						ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
+						setInventorySlotContents(0, stack);
+					}
+					else {
+						ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
+						setInventorySlotContents(emptySlot, stack);
+					}
+				}
+				else {
+					// otherwise put into next empty slot, but to slot 0 at least
+					// TODO: Stack up for stackable items
+					ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
+					if( emptySlot == 0 ) {
+						boolean bFound = false;
+						for( int i = 1; i < this.getSizeInventory(); i ++ ) {
+							if( !isStackInSlot(i) ) {
+								setInventorySlotContents(i, stack);
+								bFound = true;
+								break;
+							}
+						}
+						
+						if( !bFound )
+							setInventorySlotContents(0, stack);
+					}
+					else
+						setInventorySlotContents(emptySlot, stack);
+				}
+				
+				
+				return true;
+			}
 		}
-		// take item out
 		else {
-			// take out of stack 1 if something is in there, 0 otherwise
-			int slot = isStackInSlot(1) ? 1 : 0;
-
-			// Additional Info: Only 1 item can only be put into the casting block usually,
-			// however recipes
-			// can have Itemstacks with stacksize > 1 as output
-			// we therefore spill the whole contents on extraction
-			ItemStack stack = getStackInSlot(slot);
-			if (stack.isEmpty())
-				return false;
-			/*
-			 * if(slot == 1) { FMLCommonHandler.instance().firePlayerSmeltedEvent(player,
-			 * stack); }
-			 */
-			ItemHandlerHelper.giveItemToPlayer(player, stack);
-			setInventorySlotContents(slot, ItemStack.EMPTY);
-
-			// send a block update for the comparator, needs to be done after the stack is
-			// removed
-			if (slot == 1) {
-				this.getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), true);
+			// take item out from last non empty slot
+			// find next empty space
+			int nonEmptySlot = -1;
+			for( int i = this.getSizeInventory()-1; i >= 0; i -- ) {
+				if( isStackInSlot(i) ) {
+					nonEmptySlot = i;
+					break;
+				}
+			}
+			
+			if( nonEmptySlot != -1 ) {
+				ItemStack stack = getStackInSlot(nonEmptySlot);
+				ItemHandlerHelper.giveItemToPlayer(player, stack);
+				setInventorySlotContents(nonEmptySlot, ItemStack.EMPTY);
+				
+				return true;
 			}
 		}
 
-		return true;
+
+//		// completely empty -> insert current item into input
+//		if (!isStackInSlot(0) && !isStackInSlot(1)) {
+//			ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
+//			if (stack.isEmpty())
+//				return false;
+//			setInventorySlotContents(0, stack);
+//		}
+//		// take item out
+//		else {
+//			// take out of stack 1 if something is in there, 0 otherwise
+//			int slot = isStackInSlot(1) ? 1 : 0;
+//
+//			// Additional Info: Only 1 item can only be put into the casting block usually,
+//			// however recipes
+//			// can have Itemstacks with stacksize > 1 as output
+//			// we therefore spill the whole contents on extraction
+//			ItemStack stack = getStackInSlot(slot);
+//			if (stack.isEmpty())
+//				return false;
+//			/*
+//			 * if(slot == 1) { FMLCommonHandler.instance().firePlayerSmeltedEvent(player,
+//			 * stack); }
+//			 */
+//			ItemHandlerHelper.giveItemToPlayer(player, stack);
+//			setInventorySlotContents(slot, ItemStack.EMPTY);
+//
+//			// send a block update for the comparator, needs to be done after the stack is
+//			// removed
+//			if (slot == 1) {
+//				this.getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), true);
+//			}
+//		}
+
+		return false;
 	}
 
 	/*
@@ -166,6 +254,8 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 		ItemStack heldItem = playerIn.getHeldItemMainhand();
 		Item item = heldItem.getItem();
 		if (item instanceof Hammer) {
+			if( ToolHelper.isBroken(heldItem) )
+				return true;
 			if (playerIn.getCooldownTracker().hasCooldown(heldItem.getItem()))
 				return true;
 

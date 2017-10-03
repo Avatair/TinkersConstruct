@@ -29,8 +29,8 @@ public class Excavator extends Shovel {
   public Excavator() {
     super(PartMaterialType.handle(TinkerTools.toughToolRod),
           PartMaterialType.head(TinkerTools.excavatorHead),
-          PartMaterialType.head(TinkerTools.largePlate),
-          PartMaterialType.extra(TinkerTools.toughBinding));
+          PartMaterialType.extra(TinkerTools.toughBinding),
+          PartMaterialType.head(TinkerTools.largePlate) );
   }
 
   @Override
