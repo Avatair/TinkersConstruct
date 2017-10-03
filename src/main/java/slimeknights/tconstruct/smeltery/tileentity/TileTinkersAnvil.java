@@ -6,7 +6,10 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPane;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -14,11 +17,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import slimeknights.tconstruct.common.Sounds;
+import slimeknights.tconstruct.common.config.Config;
 import slimeknights.tconstruct.library.client.ToolBuildGuiInfo;
 import slimeknights.tconstruct.library.tools.TinkerToolCore;
 import slimeknights.tconstruct.library.tools.ToolPart;
@@ -27,6 +33,7 @@ import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.shared.block.PropertyTableItem;
 import slimeknights.tconstruct.shared.tileentity.TileTable;
 import slimeknights.tconstruct.tools.common.client.GuiButtonRepair;
+import slimeknights.tconstruct.tools.common.inventory.ContainerToolStation;
 import slimeknights.tconstruct.tools.common.tileentity.TileToolForge;
 import slimeknights.tconstruct.tools.common.tileentity.TileToolStation;
 import slimeknights.tconstruct.tools.tools.Hammer;
@@ -50,8 +57,10 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 			if (heldItem instanceof Hammer) {
 				return maybeCraft(player);
 			}
-
-			return false;
+		}
+		else {
+			if (!(heldItem instanceof Hammer))
+				return false;
 		}
 		
 		if( !heldItemStack.isEmpty() ) {
@@ -118,27 +127,28 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 						setInventorySlotContents(emptySlot, stack);
 				}
 				
-				
 				return true;
 			}
 		}
 		else {
-			// take item out from last non empty slot
-			// find next empty space
-			int nonEmptySlot = -1;
-			for( int i = this.getSizeInventory()-1; i >= 0; i -- ) {
-				if( isStackInSlot(i) ) {
-					nonEmptySlot = i;
-					break;
-				}
-			}
-			
-			if( nonEmptySlot != -1 ) {
-				ItemStack stack = getStackInSlot(nonEmptySlot);
+			// try to take item out from first slot
+			if( isStackInSlot(0) ) {
+				ItemStack stack = getStackInSlot(0);
 				ItemHandlerHelper.giveItemToPlayer(player, stack);
-				setInventorySlotContents(nonEmptySlot, ItemStack.EMPTY);
-				
+				setInventorySlotContents(0, ItemStack.EMPTY);
 				return true;
+			}
+			else {
+				// take item out from last non empty slot
+				// find next empty space
+				for( int i = this.getSizeInventory()-1; i >= 0; i -- ) {
+					if( isStackInSlot(i) ) {
+						ItemStack stack = getStackInSlot(i);
+						ItemHandlerHelper.giveItemToPlayer(player, stack);
+						setInventorySlotContents(i, ItemStack.EMPTY);
+						return true;
+					}
+				}
 			}
 		}
 
@@ -258,6 +268,8 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 				return true;
 			if (playerIn.getCooldownTracker().hasCooldown(heldItem.getItem()))
 				return true;
+			
+			boolean bCraftingFinished = true;
 
 			if (world.isRemote) {
 				Random rand = world.rand;
@@ -282,6 +294,12 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 				ToolHelper.damageTool(heldItem, 1, playerIn);
 			}
 
+			// perform crafting
+			if( bCraftingFinished ) {
+				ContainerToolStation theContainer = (ContainerToolStation)createContainer(playerIn.inventory, world, getPos());
+				theContainer.performCrafting(playerIn);
+			}
+			
 			return true;
 		}
 

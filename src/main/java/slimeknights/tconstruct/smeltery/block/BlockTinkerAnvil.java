@@ -124,7 +124,13 @@ public class BlockTinkerAnvil extends BlockTable implements ITinkerStationBlock 
 			if (((TileTinkersAnvil) te).interact(playerIn))
 				return true;
 		}
-		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+		
+		if(!worldIn.isRemote) {
+			return this.openGui(playerIn, worldIn, pos);
+		}
+		
+		return true;
+		//return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 	}
 
 	/*

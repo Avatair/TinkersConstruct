@@ -60,7 +60,24 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
   public ItemStack getResult() {
     return out.getStack();
   }
-
+  
+  public ItemStack performCrafting(EntityPlayer player) {
+	  ItemStack stack = out.getStack();
+	  if( stack.isEmpty() )
+		  return ItemStack.EMPTY;
+	  stack = stack.copy();
+	  
+	  ItemStack stack2 = out.onTake(player, stack);
+	  if( !tile.isStackInSlot(0) ) {
+		  tile.setInventorySlotContents(0, stack2);
+	  }
+	  else {
+		  player.dropItem(stack2, false);
+	  }
+	  
+	  return stack2;
+  }
+  
   @Override
   protected void syncNewContainer(EntityPlayerMP player) {
     this.activeSlots = tile.getSizeInventory();
