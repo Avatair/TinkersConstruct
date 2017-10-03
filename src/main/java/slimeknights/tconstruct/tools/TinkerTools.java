@@ -151,7 +151,7 @@ public class TinkerTools extends AbstractToolPulse {
   protected void registerToolParts() {
 	int headPrios[] = new int[] {1,2,0,3};
 	int handlePrios[] = new int[] {0,3};
-	int platePrios[] = new int[] {2,3};
+	int platePrios[] = new int[] {3,2};
 	int bindingPrios[] = new int[] {2};
 	int limbPrios[] = new int[] {1,0};
 	int bowStringPrios[] = new int[] {3,2};

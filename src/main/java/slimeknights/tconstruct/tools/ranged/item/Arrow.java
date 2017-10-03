@@ -53,8 +53,8 @@ public class Arrow extends ProjectileCore {
     ProjectileNBT data = new ProjectileNBT();
 
     ArrowShaftMaterialStats shaft = materials.get(0).getStatsOrUnknown(MaterialTypes.SHAFT);
-    HeadMaterialStats head = materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD);
-    FletchingMaterialStats fletching = materials.get(2).getStatsOrUnknown(MaterialTypes.FLETCHING);
+    HeadMaterialStats head = materials.get(2).getStatsOrUnknown(MaterialTypes.HEAD);
+    FletchingMaterialStats fletching = materials.get(1).getStatsOrUnknown(MaterialTypes.FLETCHING);
 
     data.head(head);
     data.fletchings(fletching);

@@ -124,25 +124,28 @@ public class BlockTinkerAnvil extends BlockTable implements ITinkerStationBlock 
 			if (((TileTinkersAnvil) te).interact(playerIn))
 				return true;
 		}
-		
-		if(!worldIn.isRemote) {
+
+		if (!worldIn.isRemote) {
 			return this.openGui(playerIn, worldIn, pos);
 		}
-		
+
 		return true;
-		//return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+		// return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing,
+		// hitX, hitY, hitZ);
 	}
 
-	/*
-	 * @Override public void onBlockPlacedBy(World world, BlockPos pos, IBlockState
-	 * state, EntityLivingBase placer, ItemStack stack) {
-	 * super.onBlockPlacedBy(world, pos, state, placer, stack);
-	 * 
-	 * // we have rotation for the stuff too so the items inside rotate according to
-	 * // placement! TileEntity te = world.getTileEntity(pos); if (te != null && te
-	 * instanceof TileTinkersAnvil) { ((TileTinkersAnvil)
-	 * te).setFacing(placer.getHorizontalFacing().getOpposite()); } }
-	 */
+	@Override
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
+			ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, placer, stack);
+
+		// we have rotation for the stuff too so the items inside rotate according to
+		// placement!
+		TileEntity te = world.getTileEntity(pos);
+		if (te != null && te instanceof TileTinkersAnvil) {
+			((TileTinkersAnvil) te).setProgress(0);
+		}
+	}
 
 	/*
 	 * @Override public void onBlockClicked(World worldIn, BlockPos pos,

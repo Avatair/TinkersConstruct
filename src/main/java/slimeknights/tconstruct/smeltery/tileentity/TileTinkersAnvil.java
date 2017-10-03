@@ -14,6 +14,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
@@ -39,12 +43,32 @@ import slimeknights.tconstruct.tools.common.tileentity.TileToolStation;
 import slimeknights.tconstruct.tools.tools.Hammer;
 
 public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventory */ {
+	
+	public static final String PROGRESS_TAG = "progress";
 
 	public TileTinkersAnvil() {
 		super("gui.tinkersanvil.name"); // 2 slots. 0 == input, 1 == output
 
 		// use a SidedInventory Wrapper to respect the canInsert/Extract calls
 		// this.itemHandler = new SidedInvWrapper(this, EnumFacing.DOWN);
+	}
+	
+	@Override
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+	    NBTTagCompound tag = pkt.getNbtCompound();
+	    NBTBase progress = tag.getTag(PROGRESS_TAG);
+	    if(progress != null) {
+	      getTileData().setTag(PROGRESS_TAG, progress);
+	    }
+		super.onDataPacket(net, pkt);
+	}
+	
+	public void setProgress(int progress) {
+		getTileData().setInteger(PROGRESS_TAG, progress);
+	}
+	
+	public int getProgress() {
+		return getTileData().getInteger(PROGRESS_TAG);
 	}
 
 	public boolean interact(EntityPlayer player) {
@@ -259,6 +283,15 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 	 * @Override public boolean canExtractItem(int index, @Nonnull ItemStack
 	 * stack, @Nonnull EnumFacing direction) { return index == 1; }
 	 */
+	
+	@Override
+	  public void setInventorySlotContents(int slot, @Nonnull ItemStack itemstack) {
+		// if inventory has changed, reset progress
+		if( world != null && !world.isRemote )
+			setProgress( 0 );
+		
+		super.setInventorySlotContents(slot, itemstack);
+	}
 
 	public boolean maybeCraft(EntityPlayer playerIn) {
 		ItemStack heldItem = playerIn.getHeldItemMainhand();
@@ -269,8 +302,12 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 			if (playerIn.getCooldownTracker().hasCooldown(heldItem.getItem()))
 				return true;
 			
-			boolean bCraftingFinished = true;
+			int progress = getProgress();
+			progress ++;
+			
+			boolean bCraftingFinished = progress >= 10;
 
+			ContainerToolStation theContainer = (ContainerToolStation)createContainer(playerIn.inventory, world, getPos());
 			if (world.isRemote) {
 				Random rand = world.rand;
 
@@ -292,11 +329,14 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 			} else {
 				playerIn.getCooldownTracker().setCooldown(heldItem.getItem(), 15);
 				ToolHelper.damageTool(heldItem, 1, playerIn);
+				
+				if( bCraftingFinished || theContainer.getResult().isEmpty() )
+					progress = 0;
+				setProgress( progress );
 			}
 
 			// perform crafting
 			if( bCraftingFinished ) {
-				ContainerToolStation theContainer = (ContainerToolStation)createContainer(playerIn.inventory, world, getPos());
 				theContainer.performCrafting(playerIn);
 			}
 			
