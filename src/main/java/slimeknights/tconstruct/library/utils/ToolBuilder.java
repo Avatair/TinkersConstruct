@@ -201,7 +201,8 @@ public final class ToolBuilder {
 	  
     // Check if tool contains invalid castable materials
     if(bOnlyCraftable) {
-      toolContainNonCraftable(toolStack);
+      if( toolContainNonCraftable(toolStack) )
+    	return ItemStack.EMPTY;
     }
 	    
     ItemStack copy = toolStack.copy();

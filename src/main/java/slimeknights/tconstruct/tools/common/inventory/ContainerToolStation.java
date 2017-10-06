@@ -167,6 +167,10 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       if(result.isEmpty()) {
         result = buildTool();
       }
+      // 5. try rename the tool
+      if(result.isEmpty()) {
+    	result = renameTool(false);
+      }
 
       out.inventory.setInventorySlotContents(0, result);
       updateGUI();
@@ -193,7 +197,8 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
     try {
       resultTaken = !repairTool(true).isEmpty() ||
                     !replaceToolParts(true).isEmpty() ||
-                    !modifyTool(true).isEmpty();
+                    !modifyTool(true).isEmpty() ||
+                    !renameTool(true).isEmpty();
     } catch(TinkerGuiException e) {
       // no error updating needed
       e.printStackTrace();
@@ -256,6 +261,29 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
     }
 
     return ToolBuilder.tryModifyTool(getInputs(), modifyable, remove, bOnlyCraftable);
+  }
+  
+  private ItemStack renameTool(boolean remove) throws TinkerGuiException {
+	ItemStack modifyable = inventorySlots.get(0).getStack();
+
+	// modifying possible?
+	if(modifyable.isEmpty()) {
+	  return ItemStack.EMPTY;
+	}
+	
+	// renaming possible?
+	if( toolName == null || toolName.isEmpty() )
+	  return ItemStack.EMPTY;
+	if( modifyable.getDisplayName().equals(toolName) )
+	  return ItemStack.EMPTY;
+
+	// rename tool
+	ItemStack newTool = modifyable.copy();
+	newTool.setStackDisplayName(toolName);
+	if( remove )
+		modifyable.setCount(0);
+	
+	return newTool;
   }
 
   private ItemStack buildTool() {
