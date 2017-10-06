@@ -1,4 +1,5 @@
 {    "textures": {
+		"particle": "tconstruct:blocks/smeltery/castingtable_top",
         "top": "tconstruct:blocks/smeltery/castingtable_top",
         "c": "tconstruct:blocks/smeltery/castingtable_bottom",
         "body": "tconstruct:blocks/smeltery/castingtable_top"

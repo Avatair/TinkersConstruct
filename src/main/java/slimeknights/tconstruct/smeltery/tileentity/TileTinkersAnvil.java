@@ -308,20 +308,44 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 			boolean bCraftingFinished = progress >= 10;
 
 			ContainerToolStation theContainer = (ContainerToolStation)createContainer(playerIn.inventory, world, getPos());
+			boolean bIsValidRecipe = !theContainer.getResult().isEmpty();
 			if (world.isRemote) {
 				Random rand = world.rand;
 
-				if (rand.nextInt(2) == 0) {
-					EnumParticleTypes type;
-					if (rand.nextInt(4) != 0) {
-						type = EnumParticleTypes.FLAME;
-					} else
-						type = EnumParticleTypes.LAVA;
+				for( int j = 0; j < rand.nextInt(3) + 2; j ++ ) {
 					double d8 = getPos().getX() + 0.25 + (double) rand.nextFloat() * 0.5;
 					double d4 = getPos().getY() + 1.0f;// stateIn.getBoundingBox(worldIn, pos).maxY;
 					double d6 = getPos().getZ() + 0.25 + (double) rand.nextFloat() * 0.5;
-					world.spawnParticle(type, d8, d4, d6, 0.0D, 0.0D, 0.0D, new int[0]);
+					world.spawnParticle(EnumParticleTypes.BLOCK_DUST, d8, d4, d6, (double) rand.nextFloat() * 0.10 - 0.05, (double) rand.nextFloat() * 0.10, (double) rand.nextFloat() * 0.10 - 0.05, new int[] {Block.getStateId( world.getBlockState(getPos()) )});
 				}
+					
+				if( !bCraftingFinished ) {
+					if( bIsValidRecipe ) {
+						if (rand.nextInt(2) == 0) {
+							EnumParticleTypes type;
+							double ySpeed = 0;
+							if (rand.nextInt(4) != 0) {
+								type = EnumParticleTypes.FLAME;
+							} else {
+								type = EnumParticleTypes.LAVA;
+								ySpeed = -8.0d;
+							}
+							double d8 = getPos().getX() + 0.25 + (double) rand.nextFloat() * 0.5;
+							double d4 = getPos().getY() + 1.0f;// stateIn.getBoundingBox(worldIn, pos).maxY;
+							double d6 = getPos().getZ() + 0.25 + (double) rand.nextFloat() * 0.5;
+							world.spawnParticle(type, d8, d4, d6, 0.0D, ySpeed, 0.0D, new int[0]);
+						}					
+					}
+				}
+				else {
+					for( int j = 0; j < 5; j ++ ) {
+						double d8 = getPos().getX() + 0.25 + (double) rand.nextFloat() * 0.5;
+						double d4 = getPos().getY() + 1.1f;// stateIn.getBoundingBox(worldIn, pos).maxY;
+						double d6 = getPos().getZ() + 0.25 + (double) rand.nextFloat() * 0.5;
+						world.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, d8, d4, d6, 0.0D, 0.0D, 0.0D, new int[0]);
+					}
+				}
+
 
 				this.world.playSound((double) this.getPos().getX() + 0.5D, (double) this.getPos().getY() + 0.5D,
 						(double) this.getPos().getZ() + 0.5D, Sounds.anvil_hit, SoundCategory.BLOCKS, 0.25F, 1.0F,
