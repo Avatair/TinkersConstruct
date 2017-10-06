@@ -321,7 +321,7 @@ public class TinkerSmeltery extends TinkerPulse {
     GameRegistry.addRecipe(new ItemStack(castingBlock, 1, BlockCasting.CastingType.BASIN.getMeta()),
                            "b b", "b b", "bbb", 'b', searedBrick); // Basin
     GameRegistry.addRecipe(new ItemStack(anvilBlock, 1, BlockTinkerAnvil.AnvilType.ANVIL.getMeta()),
-            			   "b  ", "   ", "   ", 'b', searedBrick); // Anvil (temporary)
+            			   "BBB", " f ", "bbb", 'B', Blocks.IRON_BLOCK, 'b', Items.IRON_INGOT, 'f', TinkerTools.toolForge ); // Anvil
     GameRegistry.addRecipe(new ItemStack(faucet),
                            "b b", " b ", 'b', searedBrick); // Faucet
     //GameRegistry.addRecipe(new ItemStack(TinkerSmeltery.castingChannel, 4, 0), "b b", "bbb", 'b', searedBrick); // Channel

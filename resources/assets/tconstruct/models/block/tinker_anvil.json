@@ -1,8 +1,8 @@
 {    "textures": {
-		"particle": "tconstruct:blocks/smeltery/castingtable_top",
-        "top": "tconstruct:blocks/smeltery/castingtable_top",
+		"particle": "tconstruct:blocks/smeltery/seared_stone",
+        "top": "tconstruct:blocks/smeltery/seared_stone",
         "c": "tconstruct:blocks/smeltery/castingtable_bottom",
-        "body": "tconstruct:blocks/smeltery/castingtable_top"
+        "body": "tconstruct:blocks/smeltery/seared_stone"
     },
     "elements": [
         {   "__comment": "Anvil base",

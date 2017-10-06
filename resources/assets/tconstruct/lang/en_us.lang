@@ -11,6 +11,7 @@ tile.tconstruct.tooltables.patternchest.tooltip=Holds either patterns or casts
 tile.tconstruct.tooltables.partchest.name=Part Chest
 tile.tconstruct.tooltables.partchest.tooltip=Can hold a large amount of toolparts
 tile.tconstruct.toolforge.name=Tool Forge
+tile.tconstruct.tinker_anvil.anvil.name=Tinker Anvil
 
 tile.tconstruct.soil.grout.name=Grout
 tile.tconstruct.soil.grout.tooltip=I am Grout!
@@ -913,6 +914,7 @@ gui.partbuilder.material_value=Material Value: %s %s
 # Tool Station/Forge
 gui.toolstation.name=Tool Station
 gui.toolforge.name=Tool Forge
+gui.tinkersanvil.name=Tinker Anvil
 gui.toolstation.repair=Repair & Modify
 gui.toolstation.traits=Traits
 gui.toolstation.components=Components
