@@ -86,6 +86,10 @@ public class GuiToolStationBase extends GuiTinkerStation {
 
   protected GuiButtonsToolStation buttons;
   protected int activeSlots; // how many of the available slots are active
+  
+  protected int xOffsetPartSlots = 0;
+  protected int yOffsetPartSlots = 0;
+  protected boolean bArrangeRemainingsVertically = false;
 
 //  public GuiTextField textField;
 
@@ -183,8 +187,8 @@ public class GuiToolStationBase extends GuiTinkerStation {
       Point point = currentInfo.positions.get(i);
 
       Slot slot = inventorySlots.getSlot(i);
-      slot.xPos = point.getX();
-      slot.yPos = point.getY();
+      slot.xPos = point.getX() + xOffsetPartSlots;
+      slot.yPos = point.getY() + yOffsetPartSlots;
     }
 
     // remaining slots
@@ -193,8 +197,14 @@ public class GuiToolStationBase extends GuiTinkerStation {
       Slot slot = inventorySlots.getSlot(i);
 
       if(slot.getHasStack()) {
-        slot.xPos = 87 + 20 * stillFilled;
-        slot.yPos = 62;
+    	if( !bArrangeRemainingsVertically ) {
+          slot.xPos = 87 + 20 * stillFilled;
+          slot.yPos = 62;
+    	}
+    	else {
+          slot.xPos = 147;
+          slot.yPos = 9 + 20 * stillFilled;
+    	}
         stillFilled++;
       }
       else {
@@ -341,8 +351,8 @@ public class GuiToolStationBase extends GuiTinkerStation {
     GlStateManager.translate(xOff, yOff, 0);
     GlStateManager.scale(scale, scale, 1.0f);
     {
-      int logoX = (int) (this.cornerX / scale);
-      int logoY = (int) (this.cornerY / scale);
+      int logoX = (int) ((this.cornerX + xOffsetPartSlots) / scale);
+      int logoY = (int) ((this.cornerY + yOffsetPartSlots) / scale);
 
       if(currentInfo != null) {
         if(!currentInfo.tool.isEmpty()) {
@@ -368,7 +378,7 @@ public class GuiToolStationBase extends GuiTinkerStation {
 
     // draw the halftransparent "cover" over the item
     GlStateManager.color(1.0f, 1.0f, 1.0f, 0.82f);
-    ItemCover.draw(this.cornerX + 7, this.cornerY + 18);
+    ItemCover.draw(this.cornerX + 7 + xOffsetPartSlots, this.cornerY + 18 + yOffsetPartSlots);
 
     // the slot backgrounds
     GlStateManager.color(1.0f, 1.0f, 1.0f, 0.28f);
