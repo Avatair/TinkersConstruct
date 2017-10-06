@@ -28,6 +28,7 @@ import slimeknights.tconstruct.library.tinkering.TinkersItem;
 import slimeknights.tconstruct.library.tools.ToolCore;
 import slimeknights.tconstruct.library.utils.ToolBuilder;
 import slimeknights.tconstruct.tools.common.client.GuiToolStation;
+import slimeknights.tconstruct.tools.common.client.GuiToolStationBase;
 import slimeknights.tconstruct.tools.common.network.ToolStationSelectionPacket;
 import slimeknights.tconstruct.tools.common.network.ToolStationTextPacket;
 import slimeknights.tconstruct.tools.common.tileentity.TileToolStation;
@@ -40,7 +41,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
   protected int activeSlots;
   public String toolName;
 
-  public ContainerToolStation(InventoryPlayer playerInventory, TileToolStation tile) {
+  public ContainerToolStation(InventoryPlayer playerInventory, TileToolStation tile, boolean bHasOut) {
     super(tile);
 
     // input slots
@@ -51,7 +52,8 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
 
     // output slot
     out = new SlotToolStationOut(i, 124, 38, this);
-    addSlotToContainer(out);
+    if( bHasOut )
+    	addSlotToContainer(out);
 
     this.addPlayerInventory(playerInventory, 8, 84 + 8);
     onCraftMatrixChanged(null);

@@ -29,6 +29,6 @@ public class TileToolForge extends TileToolStation {
 
   @Override
   public ContainerToolForge createContainer(InventoryPlayer inventoryplayer, World world, BlockPos pos) {
-    return new ContainerToolForge(inventoryplayer, this);
+    return new ContainerToolForge(inventoryplayer, this, true);
   }
 }

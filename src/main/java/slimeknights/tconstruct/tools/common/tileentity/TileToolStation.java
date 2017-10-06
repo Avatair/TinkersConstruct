@@ -14,12 +14,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import slimeknights.mantle.common.IInventoryGui;
+import slimeknights.tconstruct.library.Util;
 import slimeknights.tconstruct.library.client.ToolBuildGuiInfo;
 import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.shared.block.PropertyTableItem;
 import slimeknights.tconstruct.shared.tileentity.TileTable;
 import slimeknights.tconstruct.tools.common.client.GuiButtonRepair;
 import slimeknights.tconstruct.tools.common.client.GuiToolStation;
+import slimeknights.tconstruct.tools.common.client.GuiToolStationBase;
 import slimeknights.tconstruct.tools.common.inventory.ContainerTinkerStation;
 import slimeknights.tconstruct.tools.common.inventory.ContainerToolStation;
 
@@ -35,7 +37,7 @@ public class TileToolStation extends TileTable implements IInventoryGui {
 
   @Override
   public ContainerToolStation createContainer(InventoryPlayer inventoryplayer, World world, BlockPos pos) {
-    return new ContainerToolStation(inventoryplayer, this);
+    return new ContainerToolStation(inventoryplayer, this, true);
   }
 
   @Override

@@ -14,8 +14,8 @@ import slimeknights.tconstruct.tools.common.tileentity.TileToolStation;
 
 public class ContainerToolForge extends ContainerToolStation {
 
-  public ContainerToolForge(InventoryPlayer playerInventory, TileToolStation tile) {
-    super(playerInventory, tile);
+  public ContainerToolForge(InventoryPlayer playerInventory, TileToolStation tile, boolean bHasOut ) {
+    super(playerInventory, tile, bHasOut);
   }
 
   @Override

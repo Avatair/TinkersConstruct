@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPane;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -25,6 +26,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import slimeknights.tconstruct.common.Sounds;
@@ -37,6 +40,8 @@ import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.shared.block.PropertyTableItem;
 import slimeknights.tconstruct.shared.tileentity.TileTable;
 import slimeknights.tconstruct.tools.common.client.GuiButtonRepair;
+import slimeknights.tconstruct.tools.common.client.GuiTinkersAnvil;
+import slimeknights.tconstruct.tools.common.client.GuiToolForge;
 import slimeknights.tconstruct.tools.common.inventory.ContainerTinkersAnvil;
 import slimeknights.tconstruct.tools.common.inventory.ContainerToolForge;
 import slimeknights.tconstruct.tools.common.inventory.ContainerToolStation;
@@ -56,8 +61,14 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
+	public GuiContainer createGui(InventoryPlayer inventoryplayer, World world, BlockPos pos) {
+		return new GuiTinkersAnvil(inventoryplayer, world, pos, this);
+	}
+
+	@Override
 	public ContainerTinkersAnvil createContainer(InventoryPlayer inventoryplayer, World world, BlockPos pos) {
-		return new ContainerTinkersAnvil(inventoryplayer, this);
+		return new ContainerTinkersAnvil(inventoryplayer, this, false);
 	}
 
 	@Override

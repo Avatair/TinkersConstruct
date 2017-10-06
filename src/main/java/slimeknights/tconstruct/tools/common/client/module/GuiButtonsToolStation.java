@@ -12,14 +12,14 @@ import slimeknights.tconstruct.library.client.Icons;
 import slimeknights.tconstruct.library.client.ToolBuildGuiInfo;
 import slimeknights.tconstruct.tools.common.client.GuiButtonItem;
 import slimeknights.tconstruct.tools.common.client.GuiButtonRepair;
-import slimeknights.tconstruct.tools.common.client.GuiToolStation;
+import slimeknights.tconstruct.tools.common.client.GuiToolStationBase;
 
 public class GuiButtonsToolStation extends GuiSideButtons {
 
-  protected final GuiToolStation parent;
+  protected final GuiToolStationBase parent;
 
-  public GuiButtonsToolStation(GuiToolStation parent, Container container) {
-    super(parent, container, GuiToolStation.Column_Count);
+  public GuiButtonsToolStation(GuiToolStationBase parent, Container container) {
+    super(parent, container, GuiToolStationBase.Column_Count);
 
     this.parent = parent;
   }
