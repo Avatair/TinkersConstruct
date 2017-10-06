@@ -97,7 +97,7 @@ public class GuiToolStation extends GuiTinkerStation {
 
 
   public GuiToolStation(InventoryPlayer playerInv, World world, BlockPos pos, TileToolStation tile) {
-    super(world, pos, (ContainerTinkerStation) tile.createContainer(playerInv, world, pos));
+    super(world, pos, tile.createContainer(playerInv, world, pos));
 
     buttons = new GuiButtonsToolStation(this, inventorySlots);
     this.addModule(buttons);

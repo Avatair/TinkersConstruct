@@ -37,13 +37,15 @@ import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.shared.block.PropertyTableItem;
 import slimeknights.tconstruct.shared.tileentity.TileTable;
 import slimeknights.tconstruct.tools.common.client.GuiButtonRepair;
+import slimeknights.tconstruct.tools.common.inventory.ContainerTinkersAnvil;
+import slimeknights.tconstruct.tools.common.inventory.ContainerToolForge;
 import slimeknights.tconstruct.tools.common.inventory.ContainerToolStation;
 import slimeknights.tconstruct.tools.common.tileentity.TileToolForge;
 import slimeknights.tconstruct.tools.common.tileentity.TileToolStation;
 import slimeknights.tconstruct.tools.tools.Hammer;
 
 public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventory */ {
-	
+
 	public static final String PROGRESS_TAG = "progress";
 
 	public TileTinkersAnvil() {
@@ -52,21 +54,26 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 		// use a SidedInventory Wrapper to respect the canInsert/Extract calls
 		// this.itemHandler = new SidedInvWrapper(this, EnumFacing.DOWN);
 	}
-	
+
+	@Override
+	public ContainerTinkersAnvil createContainer(InventoryPlayer inventoryplayer, World world, BlockPos pos) {
+		return new ContainerTinkersAnvil(inventoryplayer, this);
+	}
+
 	@Override
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-	    NBTTagCompound tag = pkt.getNbtCompound();
-	    NBTBase progress = tag.getTag(PROGRESS_TAG);
-	    if(progress != null) {
-	      getTileData().setTag(PROGRESS_TAG, progress);
-	    }
+		NBTTagCompound tag = pkt.getNbtCompound();
+		NBTBase progress = tag.getTag(PROGRESS_TAG);
+		if (progress != null) {
+			getTileData().setTag(PROGRESS_TAG, progress);
+		}
 		super.onDataPacket(net, pkt);
 	}
-	
+
 	public void setProgress(int progress) {
 		getTileData().setInteger(PROGRESS_TAG, progress);
 	}
-	
+
 	public int getProgress() {
 		return getTileData().getInteger(PROGRESS_TAG);
 	}
@@ -74,99 +81,91 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 	public boolean interact(EntityPlayer player) {
 		ItemStack heldItemStack = player.getHeldItemMainhand();
 		Item heldItem = heldItemStack.getItem();
-		
+
 		// Special interactions
 		if (!player.isSneaking()) {
 			// Maybe use crafting
 			if (heldItem instanceof Hammer) {
 				return maybeCraft(player);
 			}
-		}
-		else {
+		} else {
 			if (!(heldItem instanceof Hammer))
 				return false;
 		}
-		
-		if( !heldItemStack.isEmpty() ) {
+
+		if (!heldItemStack.isEmpty()) {
 			// find next empty space
 			int emptySlot = -1;
-			for( int i = 0; i < this.getSizeInventory(); i ++ ) {
-				if( !isStackInSlot(i) ) {
+			for (int i = 0; i < this.getSizeInventory(); i++) {
+				if (!isStackInSlot(i)) {
 					emptySlot = i;
 					break;
 				}
 			}
-			
-			if( emptySlot != -1 ) 
-			{
+
+			if (emptySlot != -1) {
 				// put on anvil by prio
-				if( heldItem instanceof ToolPart ) {
-					ToolPart toolPartItem = (ToolPart)heldItem;
+				if (heldItem instanceof ToolPart) {
+					ToolPart toolPartItem = (ToolPart) heldItem;
 					int[] slotPrio = toolPartItem.getSlotPrio();
-					
+
 					boolean foundSlot = false;
-					for( int i : slotPrio ) {
-						if( !isStackInSlot(i) ) {
+					for (int i : slotPrio) {
+						if (!isStackInSlot(i)) {
 							ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, 1);
 							setInventorySlotContents(i, stack);
 							foundSlot = true;
 							break;
 						}
 					}
-					
-					if( !foundSlot ) {
+
+					if (!foundSlot) {
 						ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
 						setInventorySlotContents(emptySlot, stack);
 					}
-				}
-				else if( heldItem instanceof TinkerToolCore ) {
+				} else if (heldItem instanceof TinkerToolCore) {
 					// try to add to slot 0 first
-					if( !isStackInSlot(0) ) {
+					if (!isStackInSlot(0)) {
 						ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
 						setInventorySlotContents(0, stack);
-					}
-					else {
+					} else {
 						ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
 						setInventorySlotContents(emptySlot, stack);
 					}
-				}
-				else {
+				} else {
 					// otherwise put into next empty slot, but to slot 0 at least
 					// TODO: Stack up for stackable items
 					ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
-					if( emptySlot == 0 ) {
+					if (emptySlot == 0) {
 						boolean bFound = false;
-						for( int i = 1; i < this.getSizeInventory(); i ++ ) {
-							if( !isStackInSlot(i) ) {
+						for (int i = 1; i < this.getSizeInventory(); i++) {
+							if (!isStackInSlot(i)) {
 								setInventorySlotContents(i, stack);
 								bFound = true;
 								break;
 							}
 						}
-						
-						if( !bFound )
+
+						if (!bFound)
 							setInventorySlotContents(0, stack);
-					}
-					else
+					} else
 						setInventorySlotContents(emptySlot, stack);
 				}
-				
+
 				return true;
 			}
-		}
-		else {
+		} else {
 			// try to take item out from first slot
-			if( isStackInSlot(0) ) {
+			if (isStackInSlot(0)) {
 				ItemStack stack = getStackInSlot(0);
 				ItemHandlerHelper.giveItemToPlayer(player, stack);
 				setInventorySlotContents(0, ItemStack.EMPTY);
 				return true;
-			}
-			else {
+			} else {
 				// take item out from last non empty slot
 				// find next empty space
-				for( int i = this.getSizeInventory()-1; i >= 0; i -- ) {
-					if( isStackInSlot(i) ) {
+				for (int i = this.getSizeInventory() - 1; i >= 0; i--) {
+					if (isStackInSlot(i)) {
 						ItemStack stack = getStackInSlot(i);
 						ItemHandlerHelper.giveItemToPlayer(player, stack);
 						setInventorySlotContents(i, ItemStack.EMPTY);
@@ -176,39 +175,42 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 			}
 		}
 
-
-//		// completely empty -> insert current item into input
-//		if (!isStackInSlot(0) && !isStackInSlot(1)) {
-//			ItemStack stack = player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
-//			if (stack.isEmpty())
-//				return false;
-//			setInventorySlotContents(0, stack);
-//		}
-//		// take item out
-//		else {
-//			// take out of stack 1 if something is in there, 0 otherwise
-//			int slot = isStackInSlot(1) ? 1 : 0;
-//
-//			// Additional Info: Only 1 item can only be put into the casting block usually,
-//			// however recipes
-//			// can have Itemstacks with stacksize > 1 as output
-//			// we therefore spill the whole contents on extraction
-//			ItemStack stack = getStackInSlot(slot);
-//			if (stack.isEmpty())
-//				return false;
-//			/*
-//			 * if(slot == 1) { FMLCommonHandler.instance().firePlayerSmeltedEvent(player,
-//			 * stack); }
-//			 */
-//			ItemHandlerHelper.giveItemToPlayer(player, stack);
-//			setInventorySlotContents(slot, ItemStack.EMPTY);
-//
-//			// send a block update for the comparator, needs to be done after the stack is
-//			// removed
-//			if (slot == 1) {
-//				this.getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), true);
-//			}
-//		}
+		// // completely empty -> insert current item into input
+		// if (!isStackInSlot(0) && !isStackInSlot(1)) {
+		// ItemStack stack =
+		// player.inventory.decrStackSize(player.inventory.currentItem, stackSizeLimit);
+		// if (stack.isEmpty())
+		// return false;
+		// setInventorySlotContents(0, stack);
+		// }
+		// // take item out
+		// else {
+		// // take out of stack 1 if something is in there, 0 otherwise
+		// int slot = isStackInSlot(1) ? 1 : 0;
+		//
+		// // Additional Info: Only 1 item can only be put into the casting block
+		// usually,
+		// // however recipes
+		// // can have Itemstacks with stacksize > 1 as output
+		// // we therefore spill the whole contents on extraction
+		// ItemStack stack = getStackInSlot(slot);
+		// if (stack.isEmpty())
+		// return false;
+		// /*
+		// * if(slot == 1) { FMLCommonHandler.instance().firePlayerSmeltedEvent(player,
+		// * stack); }
+		// */
+		// ItemHandlerHelper.giveItemToPlayer(player, stack);
+		// setInventorySlotContents(slot, ItemStack.EMPTY);
+		//
+		// // send a block update for the comparator, needs to be done after the stack
+		// is
+		// // removed
+		// if (slot == 1) {
+		// this.getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(),
+		// true);
+		// }
+		// }
 
 		return false;
 	}
@@ -258,7 +260,7 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 						&& !(Block.getBlockFromItem(stackInSlot.getItem()) instanceof BlockPane)) {
 					item.y = -(1f - item.s) / 2f;
 				}
-				
+
 				item.y -= 1 / 16f * (0.875f + 0.3);
 
 				// item.s *= 2/5f;
@@ -283,13 +285,13 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 	 * @Override public boolean canExtractItem(int index, @Nonnull ItemStack
 	 * stack, @Nonnull EnumFacing direction) { return index == 1; }
 	 */
-	
+
 	@Override
-	  public void setInventorySlotContents(int slot, @Nonnull ItemStack itemstack) {
+	public void setInventorySlotContents(int slot, @Nonnull ItemStack itemstack) {
 		// if inventory has changed, reset progress
-		if( world != null && !world.isRemote )
-			setProgress( 0 );
-		
+		if (world != null && !world.isRemote)
+			setProgress(0);
+
 		super.setInventorySlotContents(slot, itemstack);
 	}
 
@@ -297,30 +299,33 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 		ItemStack heldItem = playerIn.getHeldItemMainhand();
 		Item item = heldItem.getItem();
 		if (item instanceof Hammer) {
-			if( ToolHelper.isBroken(heldItem) )
+			if (ToolHelper.isBroken(heldItem))
 				return true;
 			if (playerIn.getCooldownTracker().hasCooldown(heldItem.getItem()))
 				return true;
-			
+
 			int progress = getProgress();
-			progress ++;
-			
+			progress++;
+
 			boolean bCraftingFinished = progress >= 10;
 
-			ContainerToolStation theContainer = (ContainerToolStation)createContainer(playerIn.inventory, world, getPos());
+			ContainerTinkersAnvil theContainer = createContainer(playerIn.inventory, world, getPos());
 			boolean bIsValidRecipe = !theContainer.getResult().isEmpty();
 			if (world.isRemote) {
 				Random rand = world.rand;
 
-				for( int j = 0; j < rand.nextInt(3) + 2; j ++ ) {
+				for (int j = 0; j < rand.nextInt(3) + 2; j++) {
 					double d8 = getPos().getX() + 0.25 + (double) rand.nextFloat() * 0.5;
 					double d4 = getPos().getY() + 1.0f;// stateIn.getBoundingBox(worldIn, pos).maxY;
 					double d6 = getPos().getZ() + 0.25 + (double) rand.nextFloat() * 0.5;
-					world.spawnParticle(EnumParticleTypes.BLOCK_DUST, d8, d4, d6, (double) rand.nextFloat() * 0.10 - 0.05, (double) rand.nextFloat() * 0.10, (double) rand.nextFloat() * 0.10 - 0.05, new int[] {Block.getStateId( world.getBlockState(getPos()) )});
+					world.spawnParticle(EnumParticleTypes.BLOCK_DUST, d8, d4, d6,
+							(double) rand.nextFloat() * 0.10 - 0.05, (double) rand.nextFloat() * 0.10,
+							(double) rand.nextFloat() * 0.10 - 0.05,
+							new int[] { Block.getStateId(world.getBlockState(getPos())) });
 				}
-					
-				if( !bCraftingFinished ) {
-					if( bIsValidRecipe ) {
+
+				if (!bCraftingFinished) {
+					if (bIsValidRecipe) {
 						if (rand.nextInt(2) == 0) {
 							EnumParticleTypes type;
 							double ySpeed = 0;
@@ -334,11 +339,10 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 							double d4 = getPos().getY() + 1.0f;// stateIn.getBoundingBox(worldIn, pos).maxY;
 							double d6 = getPos().getZ() + 0.25 + (double) rand.nextFloat() * 0.5;
 							world.spawnParticle(type, d8, d4, d6, 0.0D, ySpeed, 0.0D, new int[0]);
-						}					
+						}
 					}
-				}
-				else {
-					for( int j = 0; j < 5; j ++ ) {
+				} else {
+					for (int j = 0; j < 5; j++) {
 						double d8 = getPos().getX() + 0.25 + (double) rand.nextFloat() * 0.5;
 						double d4 = getPos().getY() + 1.1f;// stateIn.getBoundingBox(worldIn, pos).maxY;
 						double d6 = getPos().getZ() + 0.25 + (double) rand.nextFloat() * 0.5;
@@ -346,24 +350,23 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 					}
 				}
 
-
 				this.world.playSound((double) this.getPos().getX() + 0.5D, (double) this.getPos().getY() + 0.5D,
 						(double) this.getPos().getZ() + 0.5D, Sounds.anvil_hit, SoundCategory.BLOCKS, 0.25F, 1.0F,
 						false);
 			} else {
 				playerIn.getCooldownTracker().setCooldown(heldItem.getItem(), 15);
 				ToolHelper.damageTool(heldItem, 1, playerIn);
-				
-				if( bCraftingFinished || theContainer.getResult().isEmpty() )
+
+				if (bCraftingFinished || theContainer.getResult().isEmpty())
 					progress = 0;
-				setProgress( progress );
+				setProgress(progress);
 			}
 
 			// perform crafting
-			if( bCraftingFinished ) {
-				theContainer.performCrafting(playerIn);
+			if (bCraftingFinished) {
+				theContainer.performAnvilCrafting(playerIn);
 			}
-			
+
 			return true;
 		}
 

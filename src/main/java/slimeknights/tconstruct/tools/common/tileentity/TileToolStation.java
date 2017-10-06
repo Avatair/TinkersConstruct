@@ -20,6 +20,7 @@ import slimeknights.tconstruct.shared.block.PropertyTableItem;
 import slimeknights.tconstruct.shared.tileentity.TileTable;
 import slimeknights.tconstruct.tools.common.client.GuiButtonRepair;
 import slimeknights.tconstruct.tools.common.client.GuiToolStation;
+import slimeknights.tconstruct.tools.common.inventory.ContainerTinkerStation;
 import slimeknights.tconstruct.tools.common.inventory.ContainerToolStation;
 
 public class TileToolStation extends TileTable implements IInventoryGui {
@@ -33,7 +34,7 @@ public class TileToolStation extends TileTable implements IInventoryGui {
   }
 
   @Override
-  public Container createContainer(InventoryPlayer inventoryplayer, World world, BlockPos pos) {
+  public ContainerToolStation createContainer(InventoryPlayer inventoryplayer, World world, BlockPos pos) {
     return new ContainerToolStation(inventoryplayer, this);
   }
 
