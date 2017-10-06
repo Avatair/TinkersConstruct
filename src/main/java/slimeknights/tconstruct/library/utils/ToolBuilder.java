@@ -50,8 +50,8 @@ public final class ToolBuilder {
   }
 
   @Nonnull
-  public static ItemStack tryBuildTool(NonNullList<ItemStack> stacks, String name) {
-    return tryBuildTool(stacks, name, TinkerRegistry.getTools());
+  public static ItemStack tryBuildTool(NonNullList<ItemStack> stacks, String name, boolean bAllowCastable) {
+    return tryBuildTool(stacks, name, TinkerRegistry.getTools(), bAllowCastable);
   }
 
   /**
@@ -61,7 +61,7 @@ public final class ToolBuilder {
    * @return The built tool or null if none could be built.
    */
   @Nonnull
-  public static ItemStack tryBuildTool(NonNullList<ItemStack> stacks, String name, Collection<ToolCore> possibleTools) {
+  public static ItemStack tryBuildTool(NonNullList<ItemStack> stacks, String name, Collection<ToolCore> possibleTools, boolean bOnlyCraftable) {
     int length = -1;
     NonNullList<ItemStack> input;
     // remove trailing empty slots
@@ -79,6 +79,12 @@ public final class ToolBuilder {
 
     if(length < 0) {
       return ItemStack.EMPTY;
+    }
+    
+    // check if there exist some invalid material
+    if( bOnlyCraftable ) {
+      if( containsNonCraftable(stacks) )
+    	return ItemStack.EMPTY; 
     }
 
     input = ItemStackList.of(stacks);
@@ -100,7 +106,19 @@ public final class ToolBuilder {
 
     return ItemStack.EMPTY;
   }
-
+  
+  private static boolean containsNonCraftable(NonNullList<ItemStack> stacks) {
+  	for(int i = 0; i < stacks.size(); i++) {
+	  ItemStack stack = stacks.get(i);
+	  Material mat = TinkerUtil.getMaterialFromStack(stack);
+	  if( mat == null || mat == Material.UNKNOWN )
+		continue;
+	  if( mat != null && !mat.isCraftable() )
+	    return true;
+	}
+  	return false;
+  }
+  
   /**
    * Adds the trait to the tag, taking max-count and already existing traits into account.
    *
@@ -140,9 +158,14 @@ public final class ToolBuilder {
   }
 
   @Nonnull
-  public static ItemStack tryRepairTool(NonNullList<ItemStack> stacks, ItemStack toolStack, boolean removeItems) {
+  public static ItemStack tryRepairTool(NonNullList<ItemStack> stacks, ItemStack toolStack, boolean removeItems, boolean bOnlyCraftable) {
     if(toolStack == null || !(toolStack.getItem() instanceof IRepairable)) {
       return ItemStack.EMPTY;
+    }
+    
+    // Check if tool contains invalid castable materials
+    if(bOnlyCraftable) {
+      toolContainNonCraftable(toolStack);
     }
 
     // obtain a working copy of the items if the originals shouldn't be modified
@@ -151,6 +174,15 @@ public final class ToolBuilder {
     }
 
     return ((IRepairable) toolStack.getItem()).repair(toolStack, stacks);
+  }
+  
+  private static boolean toolContainNonCraftable(ItemStack toolStack) {
+  	List<Material> materials = TinkerUtil.getMaterialsFromTagList(TagUtil.getBaseMaterialsTagList(toolStack));
+  	for( Material mat : materials ) {
+  	  if( !mat.isCraftable() )
+  	    return true;
+  	}
+  	return false;
   }
 
   /**
@@ -164,8 +196,14 @@ public final class ToolBuilder {
    * @throws TinkerGuiException Thrown when not matching modifiers could be applied. Contains extra-information why the process failed.
    */
   @Nonnull
-  public static ItemStack tryModifyTool(NonNullList<ItemStack> input, ItemStack toolStack, boolean removeItems)
+  public static ItemStack tryModifyTool(NonNullList<ItemStack> input, ItemStack toolStack, boolean removeItems, boolean bOnlyCraftable)
       throws TinkerGuiException {
+	  
+    // Check if tool contains invalid castable materials
+    if(bOnlyCraftable) {
+      toolContainNonCraftable(toolStack);
+    }
+	    
     ItemStack copy = toolStack.copy();
 
     // obtain a working copy of the items if the originals shouldn't be modified
@@ -270,12 +308,18 @@ public final class ToolBuilder {
    * @return The tool with the replaced parts or null if the conditions have not been met.
    */
   @Nonnull
-  public static ItemStack tryReplaceToolParts(ItemStack toolStack, final NonNullList<ItemStack> toolPartsIn, final boolean removeItems)
+  public static ItemStack tryReplaceToolParts(ItemStack toolStack, final NonNullList<ItemStack> toolPartsIn, final boolean removeItems, boolean bOnlyCraftable)
       throws TinkerGuiException {
     if(toolStack == null || !(toolStack.getItem() instanceof TinkersItem)) {
       return ItemStack.EMPTY;
     }
-
+    
+    // Reject if no castable parts are allowed
+    if( bOnlyCraftable ) {
+      if( containsNonCraftable(toolPartsIn) )
+        return ItemStack.EMPTY; 
+    }
+    
     // we never modify the original. Caller can remove all of them if we return a result
     NonNullList<ItemStack> inputItems = ItemStackList.of(Util.deepCopyFixedNonNullList(toolPartsIn));
     if(!TinkerEvent.OnToolPartReplacement.fireEvent(inputItems, toolStack)) {

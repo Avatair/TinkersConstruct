@@ -37,7 +37,7 @@ public class TileToolStation extends TileTable implements IInventoryGui {
 
   @Override
   public ContainerToolStation createContainer(InventoryPlayer inventoryplayer, World world, BlockPos pos) {
-    return new ContainerToolStation(inventoryplayer, this, true);
+    return new ContainerToolStation(inventoryplayer, this, true, true);
   }
 
   @Override

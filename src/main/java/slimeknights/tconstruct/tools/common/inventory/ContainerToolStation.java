@@ -39,10 +39,13 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
   protected SlotToolStationOut out;
   protected ToolCore selectedTool; // needed for newly opened containers to sync
   protected int activeSlots;
+  protected final boolean bOnlyCraftable;
   public String toolName;
 
-  public ContainerToolStation(InventoryPlayer playerInventory, TileToolStation tile, boolean bHasOut) {
+  public ContainerToolStation(InventoryPlayer playerInventory, TileToolStation tile, boolean bHasOut, boolean bOnlyCraftable) {
     super(tile);
+    
+    this.bOnlyCraftable = bOnlyCraftable;
 
     // input slots
     int i;
@@ -231,7 +234,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       return ItemStack.EMPTY;
     }
 
-    return ToolBuilder.tryRepairTool(getInputs(), repairable, remove);
+    return ToolBuilder.tryRepairTool(getInputs(), repairable, remove, bOnlyCraftable);
   }
 
   private ItemStack replaceToolParts(boolean remove) throws TinkerGuiException {
@@ -241,7 +244,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       return ItemStack.EMPTY;
     }
 
-    return ToolBuilder.tryReplaceToolParts(tool, getInputs(), remove);
+    return ToolBuilder.tryReplaceToolParts(tool, getInputs(), remove, bOnlyCraftable);
   }
 
   private ItemStack modifyTool(boolean remove) throws TinkerGuiException {
@@ -252,7 +255,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       return ItemStack.EMPTY;
     }
 
-    return ToolBuilder.tryModifyTool(getInputs(), modifyable, remove);
+    return ToolBuilder.tryModifyTool(getInputs(), modifyable, remove, bOnlyCraftable);
   }
 
   private ItemStack buildTool() {
@@ -261,7 +264,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       input.set(i, tile.getStackInSlot(i));
     }
 
-    return ToolBuilder.tryBuildTool(input, toolName, getBuildableTools());
+    return ToolBuilder.tryBuildTool(input, toolName, getBuildableTools(), bOnlyCraftable);
   }
 
   protected Set<ToolCore> getBuildableTools() {

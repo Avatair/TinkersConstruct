@@ -8,7 +8,7 @@ import slimeknights.tconstruct.tools.common.tileentity.TileToolStation;
 public class ContainerTinkersAnvil extends ContainerToolForge {
 
 	public ContainerTinkersAnvil(InventoryPlayer playerInventory, TileToolStation tile, boolean bHasOut) {
-		super(playerInventory, tile, bHasOut);
+		super(playerInventory, tile, bHasOut, false);
 	}
 
 	@Override
