@@ -46,6 +46,7 @@ public final class Config {
   public static String[] craftingStationBlacklist = new String[] {
       "de.ellpeck.actuallyadditions.mod.tile.TileEntityItemViewer"
   };
+  public static boolean tinkersItemIndestructible = true;
   //public static List<String> craftingStationBlacklist = Collections.emptyList();
 
   // Worldgen
@@ -118,6 +119,11 @@ public final class Config {
       String cat = "gameplay";
       List<String> propOrder = Lists.newArrayList();
       Gameplay = configFile.getCategory(cat);
+      
+      prop = configFile.get(cat, "itemEntitiesIndestructible", tinkersItemIndestructible);
+      prop.setComment("Items are indestructible when dropped and don't despawn.");
+      tinkersItemIndestructible = prop.getBoolean();
+      propOrder.add(prop.getName());
 
       prop = configFile.get(cat, "spawnWithBook", spawnWithBook);
       prop.setComment("Players who enter the world for the first time get a Tinkers' Book");

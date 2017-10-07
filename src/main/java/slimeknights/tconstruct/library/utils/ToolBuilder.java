@@ -320,6 +320,8 @@ public final class ToolBuilder {
     if( bOnlyCraftable ) {
       if( containsNonCraftable(toolPartsIn) )
         return ItemStack.EMPTY; 
+      if( toolContainNonCraftable(toolStack) )
+    	return ItemStack.EMPTY;
     }
     
     // we never modify the original. Caller can remove all of them if we return a result

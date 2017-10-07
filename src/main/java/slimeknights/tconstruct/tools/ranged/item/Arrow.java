@@ -47,6 +47,11 @@ public class Arrow extends ProjectileCore {
   public double attackSpeed() {
     return 1;
   }
+  
+  @Override
+  public int[] getRepairParts() {
+	    return new int[]{2};
+  }
 
   @Override
   public ProjectileNBT buildTagData(List<Material> materials) {

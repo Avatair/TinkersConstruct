@@ -102,6 +102,8 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
   @Nonnull
   @Override
   public Entity createEntity(World world, Entity location, ItemStack itemstack) {
+	if( !Config.tinkersItemIndestructible )
+		return null;
     EntityItem entity = new IndestructibleEntityItem(world, location.posX, location.posY, location.posZ, itemstack);
     if(location instanceof EntityItem) {
       // workaround for private access on that field >_>
