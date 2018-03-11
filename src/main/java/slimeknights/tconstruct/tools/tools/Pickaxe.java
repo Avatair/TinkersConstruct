@@ -16,58 +16,65 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.AoeToolCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.tools.TinkerTools;
 
 public class Pickaxe extends AoeToolCore {
 
-  public static final ImmutableSet<net.minecraft.block.material.Material> effective_materials =
-      ImmutableSet.of(net.minecraft.block.material.Material.IRON,
-                      net.minecraft.block.material.Material.ANVIL,
-                      net.minecraft.block.material.Material.ROCK,
-                      net.minecraft.block.material.Material.ICE,
-                      net.minecraft.block.material.Material.GLASS,
-                      net.minecraft.block.material.Material.PACKED_ICE,
-                      net.minecraft.block.material.Material.PISTON);
+	public static final ImmutableSet<net.minecraft.block.material.Material> effective_materials = ImmutableSet.of(
+			net.minecraft.block.material.Material.IRON, net.minecraft.block.material.Material.ANVIL,
+			net.minecraft.block.material.Material.ROCK, net.minecraft.block.material.Material.ICE,
+			net.minecraft.block.material.Material.GLASS, net.minecraft.block.material.Material.PACKED_ICE,
+			net.minecraft.block.material.Material.PISTON);
 
-  // Pick-head, binding, tool-rod
-  public Pickaxe() {
-    this(PartMaterialType.handle(TinkerTools.toolRod),
-         PartMaterialType.head(TinkerTools.pickHead),
-         PartMaterialType.extra(TinkerTools.binding));
-  }
+	// Pick-head, binding, tool-rod
+	public Pickaxe() {
+		this(PartMaterialType.handle(TinkerTools.toolRod), PartMaterialType.head(TinkerTools.pickHead),
+				PartMaterialType.extra(TinkerTools.binding));
+	}
 
-  public Pickaxe(PartMaterialType... requiredComponents) {
-    super(requiredComponents);
+	public Pickaxe(PartMaterialType... requiredComponents) {
+		super(requiredComponents);
 
-    addCategory(Category.HARVEST);
+		addCategory(Category.HARVEST);
 
-    // set the toolclass, actual harvestlevel is done by the overridden callback
-    this.setHarvestLevel("pickaxe", 0);
-  }
+		// set the toolclass, actual harvestlevel is done by the overridden callback
+		this.setHarvestLevel("pickaxe", 0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Pair<Integer, Integer>[] getRepairParts() {
+		return new Pair[] {
+				new Pair<Integer, Integer>(1, 60),
+				new Pair<Integer, Integer>(0, 30),
+				new Pair<Integer, Integer>(0, 10)
+				};
+		// index 1 usually is the head. 0 is handle.
+	}
 
-  @Override
-  public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-    addDefaultSubItems(subItems);
-    addInfiTool(subItems, "InfiHarvester");
-  }
+	@Override
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+		addDefaultSubItems(subItems);
+		addInfiTool(subItems, "InfiHarvester");
+	}
 
-  @Override
-  public boolean isEffective(IBlockState state) {
-    return effective_materials.contains(state.getMaterial()) || ItemPickaxe.EFFECTIVE_ON.contains(state.getBlock());
-  }
+	@Override
+	public boolean isEffective(IBlockState state) {
+		return effective_materials.contains(state.getMaterial()) || ItemPickaxe.EFFECTIVE_ON.contains(state.getBlock());
+	}
 
-  @Override
-  public float damagePotential() {
-    return 1f;
-  }
+	@Override
+	public float damagePotential() {
+		return 1f;
+	}
 
-  @Override
-  public double attackSpeed() {
-    return 1.2f;
-  }
+	@Override
+	public double attackSpeed() {
+		return 1.2f;
+	}
 
-  @Override
-  protected ToolNBT buildTagData(List<Material> materials) {
-    return buildDefaultTag(materials);
-  }
+	@Override
+	protected ToolNBT buildTagData(List<Material> materials) {
+		return buildDefaultTag(materials);
+	}
 }

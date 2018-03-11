@@ -41,6 +41,7 @@ import slimeknights.tconstruct.library.materials.MaterialTypes;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ProjectileLauncherNBT;
 import slimeknights.tconstruct.library.tools.ranged.BowCore;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.TagUtil;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerMaterials;
@@ -49,174 +50,184 @@ import slimeknights.tconstruct.tools.ranged.TinkerRangedWeapons;
 
 public class CrossBow extends BowCore implements ICustomCrosshairUser {
 
-  private static final String TAG_Loaded = "Loaded";
+	private static final String TAG_Loaded = "Loaded";
 
-  protected static final ResourceLocation PROPERTY_IS_LOADED = new ResourceLocation("loaded");
+	protected static final ResourceLocation PROPERTY_IS_LOADED = new ResourceLocation("loaded");
 
-  public CrossBow() {
-    super(PartMaterialType.crossbow(TinkerTools.toughToolRod),
-          PartMaterialType.bow(TinkerTools.bowLimb),
-          PartMaterialType.extra(TinkerTools.toughBinding),
-          PartMaterialType.bowstring(TinkerTools.bowString));
+	public CrossBow() {
+		super(PartMaterialType.crossbow(TinkerTools.toughToolRod), PartMaterialType.bow(TinkerTools.bowLimb),
+				PartMaterialType.extra(TinkerTools.toughBinding), PartMaterialType.bowstring(TinkerTools.bowString));
 
-    this.addPropertyOverride(PROPERTY_PULL_PROGRESS, pullProgressPropertyGetter);
-    this.addPropertyOverride(PROPERTY_IS_PULLING, isPullingPropertyGetter);
-    this.addPropertyOverride(PROPERTY_IS_LOADED, new BooleanItemPropertyGetter() {
-      @Override
-      public boolean applyIf(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
-        return entityIn != null && isLoaded(stack);
-      }
-    });
-  }
+		this.addPropertyOverride(PROPERTY_PULL_PROGRESS, pullProgressPropertyGetter);
+		this.addPropertyOverride(PROPERTY_IS_PULLING, isPullingPropertyGetter);
+		this.addPropertyOverride(PROPERTY_IS_LOADED, new BooleanItemPropertyGetter() {
+			@Override
+			public boolean applyIf(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
+				return entityIn != null && isLoaded(stack);
+			}
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<Integer, Integer>[] getRepairParts() {
+		// return new int[]{0, 1};
+		return new Pair[] {
+				new Pair<Integer, Integer>(1, 40),
+				new Pair<Integer, Integer>(3, 20),
+				new Pair<Integer, Integer>(0, 20),
+				new Pair<Integer, Integer>(1, 20)
+				};
+	}
 
-  @Override
-  public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-    addDefaultSubItems(subItems, null, null, null, TinkerMaterials.string);
-  }
+	@Override
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+		addDefaultSubItems(subItems, null, null, null, TinkerMaterials.string);
+	}
 
-  @Override
-  public float damagePotential() {
-    return 1f;
-  }
+	@Override
+	public float damagePotential() {
+		return 1f;
+	}
 
-  @Override
-  public double attackSpeed() {
-    return 2;
-  }
+	@Override
+	public double attackSpeed() {
+		return 2;
+	}
 
-  @Override
-  public float baseProjectileDamage() {
-    return 3f;
-  }
+	@Override
+	public float baseProjectileDamage() {
+		return 3f;
+	}
 
-  @Override
-  protected float baseProjectileSpeed() {
-    return 7f;
-  }
+	@Override
+	protected float baseProjectileSpeed() {
+		return 7f;
+	}
 
-  @Override
-  public float projectileDamageModifier() {
-    return 1.3f;
-  }
+	@Override
+	public float projectileDamageModifier() {
+		return 1.3f;
+	}
 
-  @Override
-  public int getDrawTime() {
-    return 45;
-  }
+	@Override
+	public int getDrawTime() {
+		return 45;
+	}
 
-  public boolean isLoaded(ItemStack stack) {
-    return TagUtil.getTagSafe(stack).getBoolean(TAG_Loaded);
-  }
+	public boolean isLoaded(ItemStack stack) {
+		return TagUtil.getTagSafe(stack).getBoolean(TAG_Loaded);
+	}
 
-  public void setLoaded(ItemStack stack, boolean isLoaded) {
-    NBTTagCompound tag = TagUtil.getTagSafe(stack);
-    tag.setBoolean(TAG_Loaded, isLoaded);
-    stack.setTagCompound(tag);
-  }
+	public void setLoaded(ItemStack stack, boolean isLoaded) {
+		NBTTagCompound tag = TagUtil.getTagSafe(stack);
+		tag.setBoolean(TAG_Loaded, isLoaded);
+		stack.setTagCompound(tag);
+	}
 
-  @Override
-  public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-    // has to be done in onUpdate because onTickUsing is too early and gets overwritten. bleh.
-    preventSlowDown(entityIn, 0.195f);
+	@Override
+	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		// has to be done in onUpdate because onTickUsing is too early and gets
+		// overwritten. bleh.
+		preventSlowDown(entityIn, 0.195f);
 
-    super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
-  }
+		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
+	}
 
-  @Nonnull
-  @Override
-  public EnumAction getItemUseAction(ItemStack stack) {
-    return EnumAction.NONE;
-  }
+	@Nonnull
+	@Override
+	public EnumAction getItemUseAction(ItemStack stack) {
+		return EnumAction.NONE;
+	}
 
-  @Nonnull
-  @Override
-  public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
-    ItemStack itemStackIn = playerIn.getHeldItem(hand);
-    if(isLoaded(itemStackIn) && !ToolHelper.isBroken(itemStackIn)) {
-      super.onPlayerStoppedUsing(itemStackIn, worldIn, playerIn, 0);
-      setLoaded(itemStackIn, false);
-    }
-    else {
-      return super.onItemRightClick(worldIn, playerIn, hand);
-    }
-    return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
-  }
+	@Nonnull
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+		ItemStack itemStackIn = playerIn.getHeldItem(hand);
+		if (isLoaded(itemStackIn) && !ToolHelper.isBroken(itemStackIn)) {
+			super.onPlayerStoppedUsing(itemStackIn, worldIn, playerIn, 0);
+			setLoaded(itemStackIn, false);
+		} else {
+			return super.onItemRightClick(worldIn, playerIn, hand);
+		}
+		return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
+	}
 
-  @Override
-  public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
-    if(!ToolHelper.isBroken(stack) && (entityLiving instanceof EntityPlayer)) {
-      int useTime = this.getMaxItemUseDuration(stack) - timeLeft;
-      if(getDrawbackProgress(stack, useTime) >= 1f) {
-        Sounds.PlaySoundForPlayer(entityLiving, Sounds.crossbow_reload, 1.5f, 0.9f + itemRand.nextFloat()*0.1f);
-        setLoaded(stack, true);
-      }
-    }
-  }
+	@Override
+	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
+		if (!ToolHelper.isBroken(stack) && (entityLiving instanceof EntityPlayer)) {
+			int useTime = this.getMaxItemUseDuration(stack) - timeLeft;
+			if (getDrawbackProgress(stack, useTime) >= 1f) {
+				Sounds.PlaySoundForPlayer(entityLiving, Sounds.crossbow_reload, 1.5f,
+						0.9f + itemRand.nextFloat() * 0.1f);
+				setLoaded(stack, true);
+			}
+		}
+	}
 
-  @Override
-  public void playShootSound(float power, World world, EntityPlayer entityPlayer) {
-    world.playSound(null, entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.NEUTRAL, 1.0F, 0.5f + itemRand.nextFloat()*0.1f);
-  }
+	@Override
+	public void playShootSound(float power, World world, EntityPlayer entityPlayer) {
+		world.playSound(null, entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT,
+				SoundCategory.NEUTRAL, 1.0F, 0.5f + itemRand.nextFloat() * 0.1f);
+	}
 
-  @Override
-  public ItemStack getAmmoToRender(ItemStack weapon, EntityLivingBase player) {
-    if(!isLoaded(weapon)) {
-      return ItemStack.EMPTY;
-    }
-    return super.getAmmoToRender(weapon, player);
-  }
+	@Override
+	public ItemStack getAmmoToRender(ItemStack weapon, EntityLivingBase player) {
+		if (!isLoaded(weapon)) {
+			return ItemStack.EMPTY;
+		}
+		return super.getAmmoToRender(weapon, player);
+	}
 
-  private ImmutableList<Item> boltMatches = null;
+	private ImmutableList<Item> boltMatches = null;
 
-  @Override
-  protected List<Item> getAmmoItems() {
-    if(boltMatches == null) {
-      ImmutableList.Builder<Item> builder = ImmutableList.builder();
-      if(TinkerRangedWeapons.bolt != null) {
-        builder.add(TinkerRangedWeapons.bolt);
-      }
-      boltMatches = builder.build();
-    }
-    return boltMatches;
-  }
+	@Override
+	protected List<Item> getAmmoItems() {
+		if (boltMatches == null) {
+			ImmutableList.Builder<Item> builder = ImmutableList.builder();
+			if (TinkerRangedWeapons.bolt != null) {
+				builder.add(TinkerRangedWeapons.bolt);
+			}
+			boltMatches = builder.build();
+		}
+		return boltMatches;
+	}
 
-  @Override
-  public ProjectileLauncherNBT buildTagData(List<Material> materials) {
-    ProjectileLauncherNBT data = new ProjectileLauncherNBT();
-    HandleMaterialStats body = materials.get(0).getStatsOrUnknown(MaterialTypes.HANDLE);
-    ExtraMaterialStats bodyExtra = materials.get(0).getStatsOrUnknown(MaterialTypes.EXTRA);
-    HeadMaterialStats head = materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD);
-    BowMaterialStats limb = materials.get(1).getStatsOrUnknown(MaterialTypes.BOW);
-    ExtraMaterialStats binding = materials.get(2).getStatsOrUnknown(MaterialTypes.EXTRA);
-    BowStringMaterialStats bowstring = materials.get(3).getStatsOrUnknown(MaterialTypes.BOWSTRING);
+	@Override
+	public ProjectileLauncherNBT buildTagData(List<Material> materials) {
+		ProjectileLauncherNBT data = new ProjectileLauncherNBT();
+		HandleMaterialStats body = materials.get(0).getStatsOrUnknown(MaterialTypes.HANDLE);
+		ExtraMaterialStats bodyExtra = materials.get(0).getStatsOrUnknown(MaterialTypes.EXTRA);
+		HeadMaterialStats head = materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD);
+		BowMaterialStats limb = materials.get(1).getStatsOrUnknown(MaterialTypes.BOW);
+		ExtraMaterialStats binding = materials.get(2).getStatsOrUnknown(MaterialTypes.EXTRA);
+		BowStringMaterialStats bowstring = materials.get(3).getStatsOrUnknown(MaterialTypes.BOWSTRING);
 
+		data.head(head);
+		data.limb(limb);
+		data.extra(binding, bodyExtra);
+		data.handle(body);
+		data.bowstring(bowstring);
 
-    data.head(head);
-    data.limb(limb);
-    data.extra(binding, bodyExtra);
-    data.handle(body);
-    data.bowstring(bowstring);
+		data.bonusDamage *= 1.5f;
 
-    data.bonusDamage *= 1.5f;
+		return data;
+	}
 
-    return data;
-  }
+	@SideOnly(Side.CLIENT)
+	@Override
+	public ICrosshair getCrosshair(ItemStack itemStack, EntityPlayer player) {
+		return Crosshairs.T;
+	}
 
-  @SideOnly(Side.CLIENT)
-  @Override
-  public ICrosshair getCrosshair(ItemStack itemStack, EntityPlayer player) {
-    return Crosshairs.T;
-  }
-
-  @SideOnly(Side.CLIENT)
-  @Override
-  public float getCrosshairState(ItemStack itemStack, EntityPlayer player) {
-    if(isLoaded(itemStack)) {
-      return 1f;
-    }
-    else if(player.getActiveItemStack() != itemStack) {
-      return 0f;
-    }
-    return getDrawbackProgress(itemStack, player);
-  }
+	@SideOnly(Side.CLIENT)
+	@Override
+	public float getCrosshairState(ItemStack itemStack, EntityPlayer player) {
+		if (isLoaded(itemStack)) {
+			return 1f;
+		} else if (player.getActiveItemStack() != itemStack) {
+			return 0f;
+		}
+		return getDrawbackProgress(itemStack, player);
+	}
 }

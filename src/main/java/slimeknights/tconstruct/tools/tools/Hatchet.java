@@ -21,107 +21,117 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.AoeToolCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 
 public class Hatchet extends AoeToolCore {
 
-  public static final ImmutableSet<net.minecraft.block.material.Material> effective_materials =
-      ImmutableSet.of(net.minecraft.block.material.Material.WOOD,
-                      net.minecraft.block.material.Material.VINE,
-                      net.minecraft.block.material.Material.PLANTS,
-                      net.minecraft.block.material.Material.GOURD,
-                      net.minecraft.block.material.Material.CACTUS);
+	public static final ImmutableSet<net.minecraft.block.material.Material> effective_materials = ImmutableSet.of(
+			net.minecraft.block.material.Material.WOOD, net.minecraft.block.material.Material.VINE,
+			net.minecraft.block.material.Material.PLANTS, net.minecraft.block.material.Material.GOURD,
+			net.minecraft.block.material.Material.CACTUS);
 
-  public Hatchet() {
-    this(PartMaterialType.handle(TinkerTools.toolRod),
-         PartMaterialType.head(TinkerTools.axeHead),
-         PartMaterialType.extra(TinkerTools.binding));
-  }
+	public Hatchet() {
+		this(PartMaterialType.handle(TinkerTools.toolRod), PartMaterialType.head(TinkerTools.axeHead),
+				PartMaterialType.extra(TinkerTools.binding));
+	}
 
-  protected Hatchet(PartMaterialType... requiredComponents) {
-    super(requiredComponents);
+	protected Hatchet(PartMaterialType... requiredComponents) {
+		super(requiredComponents);
 
-    addCategory(Category.HARVEST);
-    addCategory(Category.WEAPON);
+		addCategory(Category.HARVEST);
+		addCategory(Category.WEAPON);
 
-    this.setHarvestLevel("axe", 0);
-  }
+		this.setHarvestLevel("axe", 0);
+	}
 
-  @Override
-  public boolean isEffective(IBlockState state) {
-    return effective_materials.contains(state.getMaterial()) || ItemAxe.EFFECTIVE_ON.contains(state.getBlock());
-  }
+	@SuppressWarnings("unchecked")
+	public Pair<Integer, Integer>[] getRepairParts() {
+		return new Pair[] {
+				new Pair<Integer, Integer>(1, 60),
+				new Pair<Integer, Integer>(0, 30),
+				new Pair<Integer, Integer>(0, 10)
+				};
+		// index 1 usually is the head. 0 is handle.
+	}
 
-  @Override
-  public float damagePotential() {
-    return 1.1f;
-  }
+	@Override
+	public boolean isEffective(IBlockState state) {
+		return effective_materials.contains(state.getMaterial()) || ItemAxe.EFFECTIVE_ON.contains(state.getBlock());
+	}
 
-  @Override
-  public double attackSpeed() {
-    return 1.1f; // a bit faster than vanilla axes
-  }
+	@Override
+	public float damagePotential() {
+		return 1.1f;
+	}
 
-  @Override
-  public float knockback() {
-    return 1.3f;
-  }
+	@Override
+	public double attackSpeed() {
+		return 1.1f; // a bit faster than vanilla axes
+	}
 
-  // hatches 1 : leaves 0
-  @Override
-  public float getStrVsBlock(ItemStack stack, IBlockState state) {
-    if(state.getBlock().getMaterial(state) == net.minecraft.block.material.Material.LEAVES) {
-      return ToolHelper.calcDigSpeed(stack, state);
-    }
-    return super.getStrVsBlock(stack, state);
-  }
+	@Override
+	public float knockback() {
+		return 1.3f;
+	}
 
-  @Override
-  public void afterBlockBreak(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase player, int damage, boolean wasEffective) {
-    // breaking leaves does not reduce durability
-    if(state.getBlock().isLeaves(state, world, pos)) {
-      damage = 0;
-    }
-    super.afterBlockBreak(stack, world, state, pos, player, damage, wasEffective);
-  }
+	// hatches 1 : leaves 0
+	@Override
+	public float getStrVsBlock(ItemStack stack, IBlockState state) {
+		if (state.getBlock().getMaterial(state) == net.minecraft.block.material.Material.LEAVES) {
+			return ToolHelper.calcDigSpeed(stack, state);
+		}
+		return super.getStrVsBlock(stack, state);
+	}
 
-  @Override
-  public boolean dealDamage(ItemStack stack, EntityLivingBase player, Entity entity, float damage) {
-    boolean hit = super.dealDamage(stack, player, entity, damage);
+	@Override
+	public void afterBlockBreak(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase player,
+			int damage, boolean wasEffective) {
+		// breaking leaves does not reduce durability
+		if (state.getBlock().isLeaves(state, world, pos)) {
+			damage = 0;
+		}
+		super.afterBlockBreak(stack, world, state, pos, player, damage, wasEffective);
+	}
 
-    if(hit && readyForSpecialAttack(player)) {
-      TinkerTools.proxy.spawnAttackParticle(Particles.HATCHET_ATTACK, player, 0.8d);
-    }
+	@Override
+	public boolean dealDamage(ItemStack stack, EntityLivingBase player, Entity entity, float damage) {
+		boolean hit = super.dealDamage(stack, player, entity, damage);
 
-    // vanilla axe shieldbreak attack. See EntityPlayer#attackTargetEntityWithCurrentItem()
-    if(hit && !ToolHelper.isBroken(stack) && !player.getEntityWorld().isRemote && entity instanceof EntityPlayer) {
-      EntityPlayer entityplayer = (EntityPlayer) entity;
-      ItemStack itemstack2 = player.getHeldItemMainhand();
-      ItemStack itemstack3 = entityplayer.isHandActive() ? entityplayer.getActiveItemStack() : ItemStack.EMPTY;
+		if (hit && readyForSpecialAttack(player)) {
+			TinkerTools.proxy.spawnAttackParticle(Particles.HATCHET_ATTACK, player, 0.8d);
+		}
 
-      // todo: possibly check for itemUseAction instead of is shield?
-      if(itemstack2.getItem() == this && itemstack3.getItem() == Items.SHIELD) {
-        float f3 = 0.25F + (float) EnchantmentHelper.getEfficiencyModifier(player) * 0.05F;
+		// vanilla axe shieldbreak attack. See
+		// EntityPlayer#attackTargetEntityWithCurrentItem()
+		if (hit && !ToolHelper.isBroken(stack) && !player.getEntityWorld().isRemote && entity instanceof EntityPlayer) {
+			EntityPlayer entityplayer = (EntityPlayer) entity;
+			ItemStack itemstack2 = player.getHeldItemMainhand();
+			ItemStack itemstack3 = entityplayer.isHandActive() ? entityplayer.getActiveItemStack() : ItemStack.EMPTY;
 
-        if(player.isSprinting()) {
-          f3 += 0.75F;
-        }
+			// todo: possibly check for itemUseAction instead of is shield?
+			if (itemstack2.getItem() == this && itemstack3.getItem() == Items.SHIELD) {
+				float f3 = 0.25F + (float) EnchantmentHelper.getEfficiencyModifier(player) * 0.05F;
 
-        if(player.getRNG().nextFloat() < f3) {
-          entityplayer.getCooldownTracker().setCooldown(Items.SHIELD, 100);
-          player.getEntityWorld().setEntityState(entityplayer, (byte) 30);
-        }
-      }
-    }
+				if (player.isSprinting()) {
+					f3 += 0.75F;
+				}
 
-    return hit;
-  }
+				if (player.getRNG().nextFloat() < f3) {
+					entityplayer.getCooldownTracker().setCooldown(Items.SHIELD, 100);
+					player.getEntityWorld().setEntityState(entityplayer, (byte) 30);
+				}
+			}
+		}
 
-  @Override
-  protected ToolNBT buildTagData(List<Material> materials) {
-    ToolNBT data = buildDefaultTag(materials);
-    data.attack += 0.5f;
-    return data;
-  }
+		return hit;
+	}
+
+	@Override
+	protected ToolNBT buildTagData(List<Material> materials) {
+		ToolNBT data = buildDefaultTag(materials);
+		data.attack += 0.5f;
+		return data;
+	}
 }
