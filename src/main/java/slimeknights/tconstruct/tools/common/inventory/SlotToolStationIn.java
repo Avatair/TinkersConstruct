@@ -72,7 +72,7 @@ public class SlotToolStationIn extends Slot {
   public void updateIcon() {
     icon = null;
     if(restriction != null) {
-      Iterator<IToolPart> iterator = restriction.getPossibleParts().iterator();
+      Iterator<IToolPart> iterator = restriction.getPossiblePartAsSet().iterator();
       while(iterator.hasNext() && icon == null) {
         icon = iterator.next().getOutlineRenderStack();
       }

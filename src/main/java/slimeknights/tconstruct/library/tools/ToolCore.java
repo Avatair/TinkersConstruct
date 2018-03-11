@@ -321,7 +321,7 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
 			Material material = materials.get(i);
 
 			// get (one possible) toolpart used to craft the thing
-			Iterator<IToolPart> partIter = pmt.getPossibleParts().iterator();
+			Iterator<IToolPart> partIter = pmt.getPossiblePartAsSet().iterator();
 			if (!partIter.hasNext()) {
 				continue;
 			}

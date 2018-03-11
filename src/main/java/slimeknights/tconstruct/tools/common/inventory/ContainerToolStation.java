@@ -249,8 +249,12 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
 		if (tool.isEmpty() || !(tool.getItem() instanceof TinkersItem)) {
 			return ItemStack.EMPTY;
 		}
-
-		return ToolBuilder.tryReplaceToolParts(tool, getInputs(), remove, bOnlyCraftable);
+		
+		NonNullList<ItemStack> invContent = getInputs();
+		ItemStack output = ToolBuilder.tryReplaceToolParts(tool, invContent, remove, bOnlyCraftable);
+		if( remove )
+			setInputs( invContent );
+		return output;
 	}
 
 	private ItemStack modifyTool(boolean remove) throws TinkerGuiException {
@@ -322,6 +326,12 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
 		}
 
 		return input;
+	}
+	
+	private void setInputs(NonNullList<ItemStack> stacks) {
+		for (int i = 1; i < tile.getSizeInventory(); i++) {
+			tile.setInventorySlotContents(i, stacks.get(i-1));
+		}
 	}
 
 	@Override

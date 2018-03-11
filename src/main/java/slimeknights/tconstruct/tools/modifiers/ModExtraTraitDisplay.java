@@ -38,7 +38,7 @@ public class ModExtraTraitDisplay extends Modifier implements IModifierDisplay {
   @Override
   public List<List<ItemStack>> getItems() {
     return TinkerHarvestTools.pickaxe.getRequiredComponents().stream()
-                              .map(PartMaterialType::getPossibleParts)
+                              .map(PartMaterialType::getPossiblePartAsSet)
                               .flatMap(Collection::stream)
                               .map(this::getItems)
                               .collect(Collectors.toList());

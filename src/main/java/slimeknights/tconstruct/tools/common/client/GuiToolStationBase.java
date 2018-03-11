@@ -310,7 +310,7 @@ public class GuiToolStationBase extends GuiTinkerStation {
         }
 
         sb.append(" * ");
-        for(IToolPart part : pmt.getPossibleParts()) {
+        for(IToolPart part : pmt.getPossiblePartAsSet()) {
           if(part instanceof Item) {
             sb.append(((Item) part).getItemStackDisplayName(new ItemStack((Item) part)));
             sb.append("/");

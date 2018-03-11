@@ -221,7 +221,7 @@ public class TinkerModifiers extends AbstractToolPulse {
   }
 
   private void registerExtraTraitModifiers(Material material, ToolCore tool, PartMaterialType partMaterialType) {
-    partMaterialType.getPossibleParts().forEach(part -> registerExtraTraitModifiers(material, tool, partMaterialType, part));
+    partMaterialType.getPossiblePartAsSet().forEach(part -> registerExtraTraitModifiers(material, tool, partMaterialType, part));
   }
 
   private <T extends Item & IToolPart> void registerExtraTraitModifiers(Material material, ToolCore tool, PartMaterialType partMaterialType, IToolPart toolPart) {

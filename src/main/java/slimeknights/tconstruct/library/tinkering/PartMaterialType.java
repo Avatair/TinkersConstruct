@@ -92,15 +92,20 @@ public class PartMaterialType {
 	}
 	
 	public RecipeMatch getMatcher(Material material) {
-		IToolPart part = neededPart.iterator().next();	//NOTE: Assumed, amount of parts is exactly 1.
+		IToolPart part = getPossiblePart();
 		ItemStack stack = part.getItemstackWithMaterial(material);
 		return RecipeMatch.of(stack);
 	}
 
-	public Set<IToolPart> getPossibleParts() {
+	public Set<IToolPart> getPossiblePartAsSet() {
 		return ImmutableSet.copyOf(neededPart);
 	}
-
+	
+	public final IToolPart getPossiblePart() {
+		IToolPart part = neededPart.iterator().next();	//NOTE: Assumed, amount of parts is exactly 1.
+		return part;
+	}
+	
 	public static PartMaterialType head(IToolPart part) {
 		return new PartMaterialType(part, MaterialTypes.HEAD);
 	}

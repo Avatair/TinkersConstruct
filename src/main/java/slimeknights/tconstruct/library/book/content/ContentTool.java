@@ -70,7 +70,7 @@ public class ContentTool extends TinkerPage {
     }
     if(parts == null) {
       parts = tool.getToolBuildComponents().stream()
-                  .map(PartMaterialType::getPossibleParts)
+                  .map(PartMaterialType::getPossiblePartAsSet)
                   .collect(Collectors.toList());
     }
   }
