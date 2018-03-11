@@ -52,6 +52,8 @@ import slimeknights.tconstruct.tools.tools.Hammer;
 public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventory */ {
 
 	public static final String PROGRESS_TAG = "progress";
+	
+	private long lastHitTime = -1000;
 
 	public TileTinkersAnvil() {
 		super("gui.tinkersanvil.name"); // 2 slots. 0 == input, 1 == output
@@ -312,13 +314,16 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 		if (item instanceof Hammer) {
 			if (ToolHelper.isBroken(heldItem))
 				return true;
-			if (playerIn.getCooldownTracker().hasCooldown(heldItem.getItem()))
+//			if (playerIn.getCooldownTracker().hasCooldown(heldItem.getItem()))
+//				return true;
+			if ( getWorld().getTotalWorldTime() - lastHitTime < 6 )
 				return true;
+			lastHitTime = getWorld().getTotalWorldTime();
 
 			int progress = getProgress();
 			progress++;
 
-			boolean bCraftingFinished = progress >= 10;
+			boolean bCraftingFinished = progress >= 25;
 
 			ContainerTinkersAnvil theContainer = createContainer(playerIn.inventory, world, getPos());
 			boolean bIsValidRecipe = !theContainer.getResult().isEmpty();
@@ -365,7 +370,7 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 						(double) this.getPos().getZ() + 0.5D, Sounds.anvil_hit, SoundCategory.BLOCKS, 0.25F, 1.0F,
 						false);
 			} else {
-				playerIn.getCooldownTracker().setCooldown(heldItem.getItem(), 15);
+//				playerIn.getCooldownTracker().setCooldown(heldItem.getItem(), 15);
 				ToolHelper.damageTool(heldItem, 1, playerIn);
 
 				if (bCraftingFinished || theContainer.getResult().isEmpty())

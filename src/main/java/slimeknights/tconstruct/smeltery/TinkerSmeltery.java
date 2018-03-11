@@ -18,6 +18,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.IStringSerializable;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -72,6 +73,7 @@ import slimeknights.tconstruct.smeltery.block.BlockSmelteryIO;
 import slimeknights.tconstruct.smeltery.block.BlockTank;
 import slimeknights.tconstruct.smeltery.block.BlockTinkerAnvil;
 import slimeknights.tconstruct.smeltery.block.BlockTinkerTankController;
+import slimeknights.tconstruct.smeltery.events.TinkerForgingEvents;
 import slimeknights.tconstruct.smeltery.item.CastCustom;
 import slimeknights.tconstruct.smeltery.item.ItemTank;
 import slimeknights.tconstruct.smeltery.tileentity.TileCastingBasin;
@@ -402,6 +404,8 @@ public class TinkerSmeltery extends TinkerPulse {
       TinkerRegistry.registerTableCasting(new CastingRecipe(castIngot, RecipeMatch.of("ingotBrickNether"), fs, true, true));
       TinkerRegistry.registerTableCasting(new CastingRecipe(castIngot, new RecipeMatch.Item(TinkerCommons.searedBrick, 1), fs, true, true));
     }
+    
+    MinecraftForge.EVENT_BUS.register(new TinkerForgingEvents());
 
     proxy.postInit();
   }
