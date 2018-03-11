@@ -317,9 +317,9 @@ public final class ToolBuilder {
     }
     
     // Reject if not fully repaired
-    float origDur = TagUtil.getOriginalToolStats(toolStack).durability;
-    float actualDur = ToolHelper.getDurabilityStat(toolStack);
-    if( actualDur < origDur )
+	int maxDur = ToolHelper.getDurabilityStat(toolStack);
+	int actualDur = Math.max(ToolHelper.getDurabilityStat(toolStack) - toolStack.getItemDamage(), 0);
+    if( actualDur < maxDur )
     	return ItemStack.EMPTY;
     
     // Reject if stack sizes are more than one somewhere
