@@ -19,70 +19,74 @@ import slimeknights.tconstruct.library.materials.Material;
 import slimeknights.tconstruct.library.materials.MaterialTypes;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 
 public class Excavator extends Shovel {
 
-  public static final float DURABILITY_MODIFIER = 1.75f;
+	public static final float DURABILITY_MODIFIER = 1.75f;
 
-  public Excavator() {
-    super(PartMaterialType.handle(TinkerTools.toughToolRod),
-          PartMaterialType.head(TinkerTools.excavatorHead),
-          PartMaterialType.extra(TinkerTools.toughBinding),
-          PartMaterialType.head(TinkerTools.largePlate) );
-  }
+	public Excavator() {
+		super(PartMaterialType.handle(TinkerTools.toughToolRod), PartMaterialType.head(TinkerTools.excavatorHead),
+				PartMaterialType.extra(TinkerTools.toughBinding), PartMaterialType.head(TinkerTools.largePlate));
+	}
 
-  @Override
-  public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-    addDefaultSubItems(subItems);
-    addInfiTool(subItems, "InfiDigger");
-  }
+	@Override
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+		addDefaultSubItems(subItems);
+		addInfiTool(subItems, "InfiDigger");
+	}
 
-  @Override
-  public float miningSpeedModifier() {
-    return 0.28f; // a bit faster than hammers to make terraforming easier
-  }
+	@Override
+	public float miningSpeedModifier() {
+		return 0.28f; // a bit faster than hammers to make terraforming easier
+	}
 
-  @Override
-  public float damagePotential() {
-    return 1.25f;
-  }
+	@Override
+	public float damagePotential() {
+		return 1.25f;
+	}
 
-  @Override
-  public double attackSpeed() {
-    return 0.7f;
-  }
+	@Override
+	public double attackSpeed() {
+		return 0.7f;
+	}
 
-  @Override
-  public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
-    return ToolHelper.calcAOEBlocks(stack, world, player, origin, 3, 3, 1);
-  }
+	@Override
+	public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
+		return ToolHelper.calcAOEBlocks(stack, world, player, origin, 3, 3, 1);
+	}
 
-  @Override
-  public int[] getRepairParts() {
-    return new int[]{1, 2};
-  }
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<Integer, Integer>[] getRepairParts() {
+//		return new int[] { 1, 2 };
+		return new Pair[] {
+				new Pair<Integer, Integer>(1, 50),
+				new Pair<Integer, Integer>(2, 50)
+				};		
+	}
 
-  @Override
-  public float getRepairModifierForPart(int index) {
-    return index == 1 ? DURABILITY_MODIFIER : DURABILITY_MODIFIER * 0.75f;
-  }
+	@Override
+	public float getRepairModifierForPart(int index) {
+		return index == 1 ? DURABILITY_MODIFIER : DURABILITY_MODIFIER * 0.75f;
+	}
 
-  @Override
-  public ToolNBT buildTagData(List<Material> materials) {
-    HandleMaterialStats handle = materials.get(0).getStatsOrUnknown(MaterialTypes.HANDLE);
-    HeadMaterialStats head = materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD);
-    HeadMaterialStats plate = materials.get(3).getStatsOrUnknown(MaterialTypes.HEAD);
-    ExtraMaterialStats binding = materials.get(2).getStatsOrUnknown(MaterialTypes.EXTRA);
+	@Override
+	public ToolNBT buildTagData(List<Material> materials) {
+		HandleMaterialStats handle = materials.get(0).getStatsOrUnknown(MaterialTypes.HANDLE);
+		HeadMaterialStats head = materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD);
+		HeadMaterialStats plate = materials.get(3).getStatsOrUnknown(MaterialTypes.HEAD);
+		ExtraMaterialStats binding = materials.get(2).getStatsOrUnknown(MaterialTypes.EXTRA);
 
-    ToolNBT data = new ToolNBT();
-    data.head(head, plate);
-    data.extra(binding);
-    data.handle(handle);
+		ToolNBT data = new ToolNBT();
+		data.head(head, plate);
+		data.extra(binding);
+		data.handle(handle);
 
-    data.durability *= DURABILITY_MODIFIER;
+		data.durability *= DURABILITY_MODIFIER;
 
-    return data;
-  }
+		return data;
+	}
 }

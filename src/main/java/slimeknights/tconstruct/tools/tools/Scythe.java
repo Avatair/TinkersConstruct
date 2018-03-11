@@ -43,330 +43,344 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.AoeToolCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 
 public class Scythe extends AoeToolCore {
 
-  public static final float DURABILITY_MODIFIER = 2.2f;
+	public static final float DURABILITY_MODIFIER = 2.2f;
 
-  public static final ImmutableSet<net.minecraft.block.material.Material> effective_materials =
-      ImmutableSet.of(net.minecraft.block.material.Material.WEB,
-                      net.minecraft.block.material.Material.LEAVES,
-                      net.minecraft.block.material.Material.PLANTS,
-                      net.minecraft.block.material.Material.VINE,
-                      net.minecraft.block.material.Material.GOURD,
-                      net.minecraft.block.material.Material.CACTUS);
+	public static final ImmutableSet<net.minecraft.block.material.Material> effective_materials = ImmutableSet.of(
+			net.minecraft.block.material.Material.WEB, net.minecraft.block.material.Material.LEAVES,
+			net.minecraft.block.material.Material.PLANTS, net.minecraft.block.material.Material.VINE,
+			net.minecraft.block.material.Material.GOURD, net.minecraft.block.material.Material.CACTUS);
 
+	public Scythe() {
+		super(PartMaterialType.handle(TinkerTools.toughToolRod), PartMaterialType.head(TinkerTools.scytheHead),
+				PartMaterialType.extra(TinkerTools.toughBinding), PartMaterialType.handle(TinkerTools.toughToolRod));
 
-  public Scythe() {
-    super(PartMaterialType.handle(TinkerTools.toughToolRod),
-          PartMaterialType.head(TinkerTools.scytheHead),
-          PartMaterialType.extra(TinkerTools.toughBinding),
-          PartMaterialType.handle(TinkerTools.toughToolRod));
+		addCategory(Category.HARVEST, Category.WEAPON);
+	}
 
-    addCategory(Category.HARVEST, Category.WEAPON);
-  }
+	@Override
+	public float damagePotential() {
+		return 0.75f;
+	}
 
-  @Override
-  public float damagePotential() {
-    return 0.75f;
-  }
+	@Override
+	public double attackSpeed() {
+		return 0.9f;
+	}
 
-  @Override
-  public double attackSpeed() {
-    return 0.9f;
-  }
+	@Override
+	public boolean isEffective(IBlockState state) {
+		return effective_materials.contains(state.getMaterial());
+	}
 
-  @Override
-  public boolean isEffective(IBlockState state) {
-    return effective_materials.contains(state.getMaterial());
-  }
+	protected void breakBlock(ItemStack stack, EntityPlayer player, BlockPos pos, BlockPos refPos) {
+		// silktouch gives us shears :D
+		if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0) {
+			if (ToolHelper.shearBlock(stack, player.getEntityWorld(), player, pos)) {
+				return;
+			}
+		}
 
-  protected void breakBlock(ItemStack stack, EntityPlayer player, BlockPos pos, BlockPos refPos) {
-    // silktouch gives us shears :D
-    if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0) {
-      if(ToolHelper.shearBlock(stack, player.getEntityWorld(), player, pos)) {
-        return;
-      }
-    }
+		// can't be sheared or no silktouch. break it
+		ToolHelper.breakExtraBlock(stack, player.getEntityWorld(), player, pos, refPos);
+	}
 
-    // can't be sheared or no silktouch. break it
-    ToolHelper.breakExtraBlock(stack, player.getEntityWorld(), player, pos, refPos);
-  }
+	@Override
+	public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
+		if (!ToolHelper.isBroken(stack) && this.isAoeHarvestTool()) {
+			for (BlockPos extraPos : this.getAOEBlocks(stack, player.getEntityWorld(), player, pos)) {
+				breakBlock(stack, player, extraPos, pos);
+			}
+		}
 
+		return super.onBlockStartBreak(stack, pos, player);
+	}
 
-  @Override
-  public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
-    if(!ToolHelper.isBroken(stack) && this.isAoeHarvestTool()) {
-      for(BlockPos extraPos : this.getAOEBlocks(stack, player.getEntityWorld(), player, pos)) {
-        breakBlock(stack, player, extraPos, pos);
-      }
-    }
+	@Override
+	public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
+		return ToolHelper.calcAOEBlocks(stack, world, player, origin, 3, 3, 3);
+	}
 
-    return super.onBlockStartBreak(stack, pos, player);
-  }
+	@Override
+	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity target) {
 
-  @Override
-  public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
-    return ToolHelper.calcAOEBlocks(stack, world, player, origin, 3, 3, 3);
-  }
+		// only do AOE attack if the attack meter is charged
+		if (player.getCooledAttackStrength(0.5F) <= 0.9f) {
+			return super.onLeftClickEntity(stack, player, target);
+		}
 
-  @Override
-  public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity target) {
+		// increase the size based on the AOE stuffs
+		TinkerToolEvent.ExtraBlockBreak event = TinkerToolEvent.ExtraBlockBreak.fireEvent(stack, player,
+				player.getEntityWorld().getBlockState(target.getPosition()), 3, 3, 3, -1);
+		if (event.isCanceled()) {
+			return false;
+		}
 
-    // only do AOE attack if the attack meter is charged
-    if(player.getCooledAttackStrength(0.5F) <= 0.9f) {
-      return super.onLeftClickEntity(stack, player, target);
-    }
+		// AOE attack!
+		player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ,
+				SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, player.getSoundCategory(), 1.0F, 1.0F);
+		player.spawnSweepParticles();
 
-    // increase the size based on the AOE stuffs
-    TinkerToolEvent.ExtraBlockBreak event = TinkerToolEvent.ExtraBlockBreak.fireEvent(stack, player, player.getEntityWorld().getBlockState(target.getPosition()), 3, 3, 3, -1);
-    if(event.isCanceled()) {
-      return false;
-    }
+		int distance = event.distance;
+		boolean hit = false;
+		// we cache the cooldown here since it resets as soon as the first entity is hit
+		for (Entity entity : getAoeEntities(player, target, event)) {
+			if (distance < 0 || entity.getDistanceToEntity(target) <= distance) {
+				hit |= ToolHelper.attackEntity(stack, this, player, entity, null, false);
+			}
+		}
 
-    // AOE attack!
-    player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, player.getSoundCategory(), 1.0F, 1.0F);
-    player.spawnSweepParticles();
+		if (hit) {
+			player.resetCooldown();
+		}
 
-    int distance = event.distance;
-    boolean hit = false;
-    // we cache the cooldown here since it resets as soon as the first entity is hit
-    for(Entity entity : getAoeEntities(player, target, event)) {
-      if(distance < 0 || entity.getDistanceToEntity(target) <= distance) {
-        hit |= ToolHelper.attackEntity(stack, this, player, entity, null, false);
-      }
-    }
+		// subtract the default box and then half as this number is the amount to
+		// increase the box by
+		return hit;
+	}
 
-    if(hit) {
-      player.resetCooldown();
-    }
+	private List<Entity> getAoeEntities(EntityPlayer player, Entity target, TinkerToolEvent.ExtraBlockBreak event) {
+		int width = (event.width - 1) / 2;
+		int height = (event.width - 1) / 2;
+		AxisAlignedBB box = new AxisAlignedBB(target.posX, target.posY, target.posZ, target.posX + 1.0D,
+				target.posY + 1.0D, target.posZ + 1.0D).expand(width, height, width);
 
-    // subtract the default box and then half as this number is the amount to increase the box by
-    return hit;
-  }
+		return player.getEntityWorld().getEntitiesWithinAABBExcludingEntity(player, box);
+	}
 
-  private List<Entity> getAoeEntities(EntityPlayer player, Entity target, TinkerToolEvent.ExtraBlockBreak event) {
-    int width = (event.width - 1) / 2;
-    int height = (event.width - 1) / 2;
-    AxisAlignedBB box = new AxisAlignedBB(target.posX, target.posY, target.posZ, target.posX + 1.0D, target.posY + 1.0D, target.posZ + 1.0D).expand(width, height, width);
+	@Nonnull
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+		ItemStack itemStackIn = playerIn.getHeldItem(hand);
+		if (ToolHelper.isBroken(itemStackIn)) {
+			return ActionResult.newResult(EnumActionResult.FAIL, itemStackIn);
+		}
 
-    return player.getEntityWorld().getEntitiesWithinAABBExcludingEntity(player, box);
-  }
+		RayTraceResult trace = this.rayTrace(worldIn, playerIn, true);
+		if (trace == null || trace.typeOfHit != RayTraceResult.Type.BLOCK) {
+			return ActionResult.newResult(EnumActionResult.PASS, itemStackIn);
+		}
 
-  @Nonnull
-  @Override
-  public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
-    ItemStack itemStackIn = playerIn.getHeldItem(hand);
-    if(ToolHelper.isBroken(itemStackIn)) {
-      return ActionResult.newResult(EnumActionResult.FAIL, itemStackIn);
-    }
+		int fortune = ToolHelper.getFortuneLevel(itemStackIn);
 
-    RayTraceResult trace = this.rayTrace(worldIn, playerIn, true);
-    if(trace == null || trace.typeOfHit != RayTraceResult.Type.BLOCK) {
-      return ActionResult.newResult(EnumActionResult.PASS, itemStackIn);
-    }
+		BlockPos origin = trace.getBlockPos();
 
-    int fortune = ToolHelper.getFortuneLevel(itemStackIn);
+		boolean harvestedSomething = false;
+		for (BlockPos pos : this.getAOEBlocks(itemStackIn, playerIn.getEntityWorld(), playerIn, origin)) {
+			harvestedSomething |= harvestCrop(itemStackIn, worldIn, playerIn, pos, fortune);
+		}
 
-    BlockPos origin = trace.getBlockPos();
+		// center space done after the loop to prevent from changing the hitbox before
+		// AOE runs
+		harvestedSomething |= harvestCrop(itemStackIn, worldIn, playerIn, origin, fortune);
 
-    boolean harvestedSomething = false;
-    for(BlockPos pos : this.getAOEBlocks(itemStackIn, playerIn.getEntityWorld(), playerIn, origin)) {
-      harvestedSomething |= harvestCrop(itemStackIn, worldIn, playerIn, pos, fortune);
-    }
+		if (harvestedSomething) {
+			playerIn.swingArm(hand);
+			playerIn.getEntityWorld().playSound(null, playerIn.posX, playerIn.posY, playerIn.posZ,
+					SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, playerIn.getSoundCategory(), 1.0F, 1.0F);
+			playerIn.spawnSweepParticles();
+			return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
+		}
 
-    // center space done after the loop to prevent from changing the hitbox before AOE runs
-    harvestedSomething |= harvestCrop(itemStackIn, worldIn, playerIn, origin, fortune);
+		return ActionResult.newResult(EnumActionResult.PASS, itemStackIn);
+	}
 
-    if(harvestedSomething) {
-      playerIn.swingArm(hand);
-      playerIn.getEntityWorld().playSound(null, playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, playerIn.getSoundCategory(), 1.0F, 1.0F);
-      playerIn.spawnSweepParticles();
-      return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
-    }
+	protected boolean canHarvestCrop(IBlockState state) {
+		boolean canHarvest = state.getBlock() instanceof BlockReed;
 
-    return ActionResult.newResult(EnumActionResult.PASS, itemStackIn);
-  }
+		if (state.getBlock() instanceof BlockCrops && ((BlockCrops) state.getBlock()).isMaxAge(state)) {
+			canHarvest = true;
+		}
+		return canHarvest;
+	}
 
-  protected boolean canHarvestCrop(IBlockState state) {
-    boolean canHarvest = state.getBlock() instanceof BlockReed;
+	/**
+	 * Returns true if the item can be used on the given entity, e.g. shears on
+	 * sheep.
+	 */
+	@Override
+	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target,
+			EnumHand hand) {
+		// only run AOE on shearable entities
+		if (!(target instanceof IShearable)) {
+			return false;
+		}
 
-    if(state.getBlock() instanceof BlockCrops && ((BlockCrops) state.getBlock()).isMaxAge(state)) {
-      canHarvest = true;
-    }
-    return canHarvest;
-  }
+		// increase the size based on the AOE stuffs
+		TinkerToolEvent.ExtraBlockBreak event = TinkerToolEvent.ExtraBlockBreak.fireEvent(stack, player,
+				player.getEntityWorld().getBlockState(target.getPosition()), 3, 3, 3, -1);
+		if (event.isCanceled()) {
+			return false;
+		}
 
-  /**
-   * Returns true if the item can be used on the given entity, e.g. shears on sheep.
-   */
-  @Override
-  public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target, EnumHand hand) {
-    // only run AOE on shearable entities
-    if(!(target instanceof IShearable)) {
-      return false;
-    }
+		int distance = event.distance;
+		boolean shorn = false;
 
-    // increase the size based on the AOE stuffs
-    TinkerToolEvent.ExtraBlockBreak event = TinkerToolEvent.ExtraBlockBreak.fireEvent(stack, player, player.getEntityWorld().getBlockState(target.getPosition()), 3, 3, 3, -1);
-    if(event.isCanceled()) {
-      return false;
-    }
+		int fortune = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
+		for (Entity entity : getAoeEntities(player, target, event)) {
+			if (distance < 0 || entity.getDistanceToEntity(target) <= distance) {
+				shorn |= shearEntity(stack, player.getEntityWorld(), player, entity, fortune);
+			}
+		}
 
-    int distance = event.distance;
-    boolean shorn = false;
+		if (shorn) {
+			player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ,
+					SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, player.getSoundCategory(), 1.0F, 1.0F);
+			player.spawnSweepParticles();
+		}
 
-    int fortune = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
-    for(Entity entity : getAoeEntities(player, target, event)) {
-      if(distance < 0 || entity.getDistanceToEntity(target) <= distance) {
-        shorn |= shearEntity(stack, player.getEntityWorld(), player, entity, fortune);
-      }
-    }
+		return shorn;
+	}
 
-    if(shorn) {
-      player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, player.getSoundCategory(), 1.0F, 1.0F);
-      player.spawnSweepParticles();
-    }
+	public boolean harvestCrop(ItemStack stack, World world, EntityPlayer player, BlockPos pos, int fortune) {
+		IBlockState state = world.getBlockState(pos);
 
-    return shorn;
-  }
+		boolean canHarvest = canHarvestCrop(state);
 
-  public boolean harvestCrop(ItemStack stack, World world, EntityPlayer player, BlockPos pos, int fortune) {
-    IBlockState state = world.getBlockState(pos);
+		// do not harvest bottom row reeds
+		if (state.getBlock() instanceof BlockReed
+				&& !(world.getBlockState(pos.down()).getBlock() instanceof BlockReed)) {
+			canHarvest = false;
+		}
 
-    boolean canHarvest = canHarvestCrop(state);
+		TinkerToolEvent.OnScytheHarvest event = TinkerToolEvent.OnScytheHarvest.fireEvent(stack, player, world, pos,
+				state, canHarvest);
 
-    // do not harvest bottom row reeds
-    if(state.getBlock() instanceof BlockReed && !(world.getBlockState(pos.down()).getBlock() instanceof BlockReed)) {
-      canHarvest = false;
-    }
+		// can't harvest
+		if (event.isCanceled()) {
+			return false;
+		}
 
-    TinkerToolEvent.OnScytheHarvest event = TinkerToolEvent.OnScytheHarvest.fireEvent(stack, player, world, pos, state, canHarvest);
+		// harvest handled by event
+		if (event.getResult() == Event.Result.DENY) {
+			return true;
+		}
+		// should harwest block nontheless
+		else if (event.getResult() == Event.Result.ALLOW) {
+			canHarvest = true;
+		}
 
-    // can't harvest
-    if(event.isCanceled()) {
-      return false;
-    }
+		if (!canHarvest) {
+			return false;
+		}
 
-    // harvest handled by event
-    if(event.getResult() == Event.Result.DENY) {
-      return true;
-    }
-    // should harwest block nontheless
-    else if(event.getResult() == Event.Result.ALLOW) {
-      canHarvest = true;
-    }
+		// can be harvested, always just return true clientside for the animation stuff
+		if (!world.isRemote) {
+			doHarvestCrop(stack, world, player, pos, fortune, state);
+		}
 
-    if(!canHarvest) {
-      return false;
-    }
+		return true;
+	}
 
-    // can be harvested, always just return true clientside for the animation stuff
-    if(!world.isRemote) {
-      doHarvestCrop(stack, world, player, pos, fortune, state);
-    }
+	protected void doHarvestCrop(ItemStack stack, World world, EntityPlayer player, BlockPos pos, int fortune,
+			IBlockState state) {
+		// first, try getting a seed from the drops, if we don't have one we don't
+		// replant
+		float chance = 1.0f;
+		List<ItemStack> drops = state.getBlock().getDrops(world, pos, state, fortune);
+		chance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, fortune, chance, false, player);
 
-    return true;
-  }
+		IPlantable seed = null;
+		for (ItemStack drop : drops) {
+			if (drop != null && drop.getItem() instanceof IPlantable) {
+				seed = (IPlantable) drop.getItem();
+				drop.shrink(1);
+				if (drop.isEmpty()) {
+					drops.remove(drop);
+				}
 
-  protected void doHarvestCrop(ItemStack stack, World world, EntityPlayer player, BlockPos pos, int fortune, IBlockState state) {
-    // first, try getting a seed from the drops, if we don't have one we don't replant
-    float chance = 1.0f;
-    List<ItemStack> drops = state.getBlock().getDrops(world, pos, state, fortune);
-    chance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, fortune, chance, false, player);
+				break;
+			}
+		}
 
-    IPlantable seed = null;
-    for(ItemStack drop : drops) {
-      if(drop != null && drop.getItem() instanceof IPlantable) {
-        seed = (IPlantable) drop.getItem();
-        drop.shrink(1);
-        if(drop.isEmpty()) {
-          drops.remove(drop);
-        }
+		// if we have a valid seed, try to plant the crop
+		boolean replanted = false;
+		if (seed != null) {
+			// make sure the plant is allowed here. should already be, mainly just covers
+			// the case of seeds from grass
+			IBlockState down = world.getBlockState(pos.down());
+			if (down.getBlock().canSustainPlant(down, world, pos.down(), EnumFacing.UP, seed)) {
+				// success! place the plant and drop the rest of the items
+				IBlockState crop = seed.getPlant(world, pos);
 
-        break;
-      }
-    }
+				// only place the block/damage the tool if its a different state
+				if (crop != state) {
+					world.setBlockState(pos, seed.getPlant(world, pos));
+					ToolHelper.damageTool(stack, 1, player);
+				}
 
-    // if we have a valid seed, try to plant the crop
-    boolean replanted = false;
-    if(seed != null) {
-      // make sure the plant is allowed here. should already be, mainly just covers the case of seeds from grass
-      IBlockState down = world.getBlockState(pos.down());
-      if(down.getBlock().canSustainPlant(down, world, pos.down(), EnumFacing.UP, seed)) {
-        // success! place the plant and drop the rest of the items
-        IBlockState crop = seed.getPlant(world, pos);
+				// drop the remainder of the items
+				for (ItemStack drop : drops) {
+					if (world.rand.nextFloat() <= chance) {
+						Block.spawnAsEntity(world, pos, drop);
+					}
+				}
+				replanted = true;
+			}
+		}
 
-        // only place the block/damage the tool if its a different state
-        if(crop != state) {
-          world.setBlockState(pos, seed.getPlant(world, pos));
-          ToolHelper.damageTool(stack, 1, player);
-        }
+		// can't plant? just break the block directly
+		if (!replanted) {
+			breakBlock(stack, player, pos, pos);
+		}
+	}
 
-        // drop the remainder of the items
-        for(ItemStack drop : drops) {
-          if(world.rand.nextFloat() <= chance) {
-            Block.spawnAsEntity(world, pos, drop);
-          }
-        }
-        replanted = true;
-      }
-    }
+	public boolean shearEntity(ItemStack stack, World world, EntityPlayer player, Entity entity, int fortune) {
+		if (!(entity instanceof IShearable)) {
+			return false;
+		}
 
-    // can't plant? just break the block directly
-    if(!replanted) {
-      breakBlock(stack, player, pos, pos);
-    }
-  }
+		IShearable shearable = (IShearable) entity;
+		if (shearable.isShearable(stack, world, entity.getPosition())) {
+			if (!world.isRemote) {
+				List<ItemStack> drops = shearable.onSheared(stack, world, entity.getPosition(), fortune);
+				Random rand = world.rand;
+				for (ItemStack drop : drops) {
+					EntityItem entityItem = entity.entityDropItem(drop, 1.0F);
+					if (entityItem != null) {
+						entityItem.motionY += rand.nextFloat() * 0.05F;
+						entityItem.motionX += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
+						entityItem.motionZ += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
+					}
+				}
+			}
+			ToolHelper.damageTool(stack, 1, player);
 
-  public boolean shearEntity(ItemStack stack, World world, EntityPlayer player, Entity entity, int fortune) {
-    if(!(entity instanceof IShearable)) {
-      return false;
-    }
+			return true;
+		}
 
-    IShearable shearable = (IShearable) entity;
-    if(shearable.isShearable(stack, world, entity.getPosition())) {
-      if(!world.isRemote) {
-        List<ItemStack> drops = shearable.onSheared(stack, world, entity.getPosition(), fortune);
-        Random rand = world.rand;
-        for(ItemStack drop : drops) {
-          EntityItem entityItem = entity.entityDropItem(drop, 1.0F);
-          if(entityItem != null) {
-            entityItem.motionY += rand.nextFloat() * 0.05F;
-            entityItem.motionX += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
-            entityItem.motionZ += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
-          }
-        }
-      }
-      ToolHelper.damageTool(stack, 1, player);
+		return false;
+	}
 
-      return true;
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<Integer, Integer>[] getRepairParts() {
+		// return new int[]{1, 2};
+		return new Pair[] {
+				new Pair<Integer, Integer>(1, 50),
+				new Pair<Integer, Integer>(2, 50)
+				};
+	}
 
-    return false;
-  }
+	@Override
+	public ToolNBT buildTagData(List<Material> materials) {
+		HandleMaterialStats handle = materials.get(0).getStatsOrUnknown(MaterialTypes.HANDLE);
+		HeadMaterialStats head = materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD);
+		ExtraMaterialStats extra = materials.get(2).getStatsOrUnknown(MaterialTypes.EXTRA);
+		HandleMaterialStats handle2 = materials.get(3).getStatsOrUnknown(MaterialTypes.HANDLE);
 
-  @Override
-  public int[] getRepairParts() {
-    return new int[]{1, 2};
-  }
+		ToolNBT data = new ToolNBT();
+		data.head(head);
+		data.extra(extra);
+		data.handle(handle, handle2);
 
-  @Override
-  public ToolNBT buildTagData(List<Material> materials) {
-    HandleMaterialStats handle = materials.get(0).getStatsOrUnknown(MaterialTypes.HANDLE);
-    HeadMaterialStats head = materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD);
-    ExtraMaterialStats extra = materials.get(2).getStatsOrUnknown(MaterialTypes.EXTRA);
-    HandleMaterialStats handle2 = materials.get(3).getStatsOrUnknown(MaterialTypes.HANDLE);
+		data.durability *= DURABILITY_MODIFIER;
 
-    ToolNBT data = new ToolNBT();
-    data.head(head);
-    data.extra(extra);
-    data.handle(handle, handle2);
-
-    data.durability *= DURABILITY_MODIFIER;
-
-    return data;
-  }
+		return data;
+	}
 }

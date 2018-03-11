@@ -306,14 +306,26 @@ public final class ToolBuilder {
    *
    * @param toolStack   The tool to replace the parts in
    * @param toolPartsIn The toolparts.
-   * @param removeItems If true the applied items will be removed from the array
+   * @param performAction If true the applied items will be removed from the array
    * @return The tool with the replaced parts or null if the conditions have not been met.
    */
   @Nonnull
-  public static ItemStack tryReplaceToolParts(ItemStack toolStack, final NonNullList<ItemStack> toolPartsIn, final boolean removeItems, boolean bOnlyCraftable)
+  public static ItemStack tryReplaceToolParts(ItemStack toolStack, final NonNullList<ItemStack> toolPartsIn, final boolean performAction, boolean bOnlyCraftable)
       throws TinkerGuiException {
     if(toolStack == null || !(toolStack.getItem() instanceof TinkersItem)) {
       return ItemStack.EMPTY;
+    }
+    
+    // Reject if not fully repaired
+    float origDur = TagUtil.getOriginalToolStats(toolStack).durability;
+    float actualDur = ToolHelper.getDurabilityStat(toolStack);
+    if( actualDur < origDur )
+    	return ItemStack.EMPTY;
+    
+    // Reject if stack sizes are more than one somewhere
+    for( ItemStack partInput : toolPartsIn ) {
+    	if( partInput.getCount() > 1 )
+    		return ItemStack.EMPTY;
     }
     
     // Reject if no castable parts are allowed
@@ -323,6 +335,8 @@ public final class ToolBuilder {
       if( toolContainNonCraftable(toolStack) )
     	return ItemStack.EMPTY;
     }
+    
+    
     
     // we never modify the original. Caller can remove all of them if we return a result
     NonNullList<ItemStack> inputItems = ItemStackList.of(Util.deepCopyFixedNonNullList(toolPartsIn));
@@ -387,7 +401,7 @@ public final class ToolBuilder {
     assigned.forEachEntry((i, j) -> {
       String mat = ((IToolPart) toolParts.get(i).getItem()).getMaterial(toolParts.get(i)).getIdentifier();
       materialList.set(j, new NBTTagString(mat));
-      if(removeItems) {
+      if(performAction) {
         if(i < toolPartsIn.size() && !toolPartsIn.get(i).isEmpty()) {
           toolPartsIn.get(i).shrink(1);
         }

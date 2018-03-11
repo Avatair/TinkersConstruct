@@ -19,60 +19,66 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ProjectileNBT;
 import slimeknights.tconstruct.library.tools.ranged.ProjectileCore;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.tools.TinkerMaterials;
 import slimeknights.tconstruct.tools.TinkerTools;
 import slimeknights.tconstruct.tools.common.entity.EntityArrow;
 
 public class Arrow extends ProjectileCore {
 
-  public Arrow() {
-    super(PartMaterialType.arrowShaft(TinkerTools.arrowShaft),
-    	  PartMaterialType.fletching(TinkerTools.fletching),
-    	  PartMaterialType.arrowHead(TinkerTools.arrowHead) );
+	public Arrow() {
+		super(PartMaterialType.arrowShaft(TinkerTools.arrowShaft), PartMaterialType.fletching(TinkerTools.fletching),
+				PartMaterialType.arrowHead(TinkerTools.arrowHead));
 
-    addCategory(Category.NO_MELEE, Category.PROJECTILE);
-  }
+		addCategory(Category.NO_MELEE, Category.PROJECTILE);
+	}
 
-  @Override
-  public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-    addDefaultSubItems(subItems, TinkerMaterials.wood, null, TinkerMaterials.feather);
-  }
+	@Override
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+		addDefaultSubItems(subItems, TinkerMaterials.wood, null, TinkerMaterials.feather);
+	}
 
-  @Override
-  public float damagePotential() {
-    return 1f;
-  }
+	@Override
+	public float damagePotential() {
+		return 1f;
+	}
 
-  @Override
-  public double attackSpeed() {
-    return 1;
-  }
-  
-  @Override
-  public int[] getRepairParts() {
-	    return new int[]{2};
-  }
+	@Override
+	public double attackSpeed() {
+		return 1;
+	}
 
-  @Override
-  public ProjectileNBT buildTagData(List<Material> materials) {
-    ProjectileNBT data = new ProjectileNBT();
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<Integer, Integer>[] getRepairParts() {
+//		return new int[] { 2 };
+		return new Pair[] {
+				new Pair<Integer, Integer>(2, 100)
+				};
+	}
 
-    ArrowShaftMaterialStats shaft = materials.get(0).getStatsOrUnknown(MaterialTypes.SHAFT);
-    HeadMaterialStats head = materials.get(2).getStatsOrUnknown(MaterialTypes.HEAD);
-    FletchingMaterialStats fletching = materials.get(1).getStatsOrUnknown(MaterialTypes.FLETCHING);
+	@Override
+	public ProjectileNBT buildTagData(List<Material> materials) {
+		ProjectileNBT data = new ProjectileNBT();
 
-    data.head(head);
-    data.fletchings(fletching);
-    data.shafts(this, shaft);
+		ArrowShaftMaterialStats shaft = materials.get(0).getStatsOrUnknown(MaterialTypes.SHAFT);
+		HeadMaterialStats head = materials.get(2).getStatsOrUnknown(MaterialTypes.HEAD);
+		FletchingMaterialStats fletching = materials.get(1).getStatsOrUnknown(MaterialTypes.FLETCHING);
 
-    data.attack += 2;
+		data.head(head);
+		data.fletchings(fletching);
+		data.shafts(this, shaft);
 
-    return data;
-  }
+		data.attack += 2;
 
-  @Override
-  public EntityProjectileBase getProjectile(ItemStack stack, ItemStack bow, World world, EntityPlayer player, float speed, float inaccuracy, float power, boolean usedAmmo) {
-    inaccuracy -= (1f - 1f/ProjectileNBT.from(stack).accuracy) * speed/2f;
-    return new EntityArrow(world, player, speed, inaccuracy, power, getProjectileStack(stack, world, player, usedAmmo), bow);
-  }
+		return data;
+	}
+
+	@Override
+	public EntityProjectileBase getProjectile(ItemStack stack, ItemStack bow, World world, EntityPlayer player,
+			float speed, float inaccuracy, float power, boolean usedAmmo) {
+		inaccuracy -= (1f - 1f / ProjectileNBT.from(stack).accuracy) * speed / 2f;
+		return new EntityArrow(world, player, speed, inaccuracy, power,
+				getProjectileStack(stack, world, player, usedAmmo), bow);
+	}
 }

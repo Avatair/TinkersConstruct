@@ -18,70 +18,82 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ProjectileNBT;
 import slimeknights.tconstruct.library.tools.ranged.ProjectileCore;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 import slimeknights.tconstruct.tools.common.entity.EntityShuriken;
 
 public class Shuriken extends ProjectileCore {
 
-  private static PartMaterialType shurikenPMT = new PartMaterialType(TinkerTools.knifeBlade, MaterialTypes.HEAD, MaterialTypes.EXTRA, MaterialTypes.PROJECTILE);
+	private static PartMaterialType shurikenPMT = new PartMaterialType(TinkerTools.knifeBlade, MaterialTypes.HEAD,
+			MaterialTypes.EXTRA, MaterialTypes.PROJECTILE);
 
-  public Shuriken() {
-    super(shurikenPMT, shurikenPMT, shurikenPMT, shurikenPMT);
+	public Shuriken() {
+		super(shurikenPMT, shurikenPMT, shurikenPMT, shurikenPMT);
 
-    addCategory(Category.NO_MELEE, Category.PROJECTILE);
-  }
+		addCategory(Category.NO_MELEE, Category.PROJECTILE);
+	}
 
-  @Override
-  public int[] getRepairParts() {
-    return new int[]{0, 1, 2, 3};
-  }
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<Integer, Integer>[] getRepairParts() {
+		// return new int[]{0, 1, 2, 3};
+		return new Pair[] {
+				new Pair<Integer, Integer>(0, 25),
+				new Pair<Integer, Integer>(1, 25),
+				new Pair<Integer, Integer>(2, 25),
+				new Pair<Integer, Integer>(3, 25)
+				};
+	}
 
-  @Override
-  public float damagePotential() {
-    return 0.7f;
-  }
+	@Override
+	public float damagePotential() {
+		return 0.7f;
+	}
 
-  @Nonnull
-  @Override
-  public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
-    ItemStack itemStackIn = playerIn.getHeldItem(hand);
-    if(ToolHelper.isBroken(itemStackIn)) {
-      return ActionResult.newResult(EnumActionResult.FAIL, itemStackIn);
-    }
-    playerIn.getCooldownTracker().setCooldown(itemStackIn.getItem(), 4);
+	@Nonnull
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+		ItemStack itemStackIn = playerIn.getHeldItem(hand);
+		if (ToolHelper.isBroken(itemStackIn)) {
+			return ActionResult.newResult(EnumActionResult.FAIL, itemStackIn);
+		}
+		playerIn.getCooldownTracker().setCooldown(itemStackIn.getItem(), 4);
 
-    if(!worldIn.isRemote) {
-      boolean usedAmmo = useAmmo(itemStackIn, playerIn);
-      EntityProjectileBase projectile = getProjectile(itemStackIn, itemStackIn, worldIn, playerIn, 2.1f, 0f, 1f, usedAmmo);
-      worldIn.spawnEntity(projectile);
-    }
+		if (!worldIn.isRemote) {
+			boolean usedAmmo = useAmmo(itemStackIn, playerIn);
+			EntityProjectileBase projectile = getProjectile(itemStackIn, itemStackIn, worldIn, playerIn, 2.1f, 0f, 1f,
+					usedAmmo);
+			worldIn.spawnEntity(projectile);
+		}
 
-    return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
-  }
+		return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
+	}
 
-  @Override
-  public ProjectileNBT buildTagData(List<Material> materials) {
-    ProjectileNBT data = new ProjectileNBT();
-    data.head(materials.get(0).getStatsOrUnknown(MaterialTypes.HEAD),
-              materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD),
-              materials.get(2).getStatsOrUnknown(MaterialTypes.HEAD),
-              materials.get(3).getStatsOrUnknown(MaterialTypes.HEAD));
+	@Override
+	public ProjectileNBT buildTagData(List<Material> materials) {
+		ProjectileNBT data = new ProjectileNBT();
+		data.head(materials.get(0).getStatsOrUnknown(MaterialTypes.HEAD),
+				materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD),
+				materials.get(2).getStatsOrUnknown(MaterialTypes.HEAD),
+				materials.get(3).getStatsOrUnknown(MaterialTypes.HEAD));
 
-    data.extra(materials.get(0).getStatsOrUnknown(MaterialTypes.EXTRA),
-               materials.get(1).getStatsOrUnknown(MaterialTypes.EXTRA),
-               materials.get(2).getStatsOrUnknown(MaterialTypes.EXTRA),
-               materials.get(3).getStatsOrUnknown(MaterialTypes.EXTRA));
+		data.extra(materials.get(0).getStatsOrUnknown(MaterialTypes.EXTRA),
+				materials.get(1).getStatsOrUnknown(MaterialTypes.EXTRA),
+				materials.get(2).getStatsOrUnknown(MaterialTypes.EXTRA),
+				materials.get(3).getStatsOrUnknown(MaterialTypes.EXTRA));
 
-    data.attack += 1f;
-    data.accuracy = 1f;
+		data.attack += 1f;
+		data.accuracy = 1f;
 
-    return data;
-  }
+		return data;
+	}
 
-  @Override
-  public EntityProjectileBase getProjectile(ItemStack stack, ItemStack launcher, World world, EntityPlayer player, float speed, float inaccuracy, float progress, boolean usedAmmo) {
-    inaccuracy *= ProjectileNBT.from(stack).accuracy;
-    return new EntityShuriken(world, player, speed, inaccuracy, getProjectileStack(stack, world, player, usedAmmo), launcher);
-  }
+	@Override
+	public EntityProjectileBase getProjectile(ItemStack stack, ItemStack launcher, World world, EntityPlayer player,
+			float speed, float inaccuracy, float progress, boolean usedAmmo) {
+		inaccuracy *= ProjectileNBT.from(stack).accuracy;
+		return new EntityShuriken(world, player, speed, inaccuracy, getProjectileStack(stack, world, player, usedAmmo),
+				launcher);
+	}
 }

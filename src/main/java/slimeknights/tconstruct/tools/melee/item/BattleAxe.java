@@ -21,6 +21,7 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.AoeToolCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 
@@ -28,83 +29,89 @@ import slimeknights.tconstruct.tools.TinkerTools;
 // Screen turns red/with a red border (steal from thaumcraft) and you can't switch item while berserk is active
 public class BattleAxe extends AoeToolCore {
 
-  public BattleAxe() {
-    super(PartMaterialType.handle(TinkerTools.toughToolRod),
-          PartMaterialType.head(TinkerTools.broadAxeHead),
-          PartMaterialType.head(TinkerTools.broadAxeHead),
-          PartMaterialType.extra(TinkerTools.toughBinding));
+	public BattleAxe() {
+		super(PartMaterialType.handle(TinkerTools.toughToolRod), PartMaterialType.head(TinkerTools.broadAxeHead),
+				PartMaterialType.head(TinkerTools.broadAxeHead), PartMaterialType.extra(TinkerTools.toughBinding));
 
-    addCategory(Category.WEAPON);
+		addCategory(Category.WEAPON);
 
-    setHarvestLevel("axe", 0);
-  }
+		setHarvestLevel("axe", 0);
+	}
 
-  @Override
-  public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
-    return ToolHelper.calcAOEBlocks(stack, world, player, origin, 2, 2, 1);
-  }
+	@Override
+	public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
+		return ToolHelper.calcAOEBlocks(stack, world, player, origin, 2, 2, 1);
+	}
 
-  @Override
-  public float damagePotential() {
-    return 2.0f;
-  }
+	@Override
+	public float damagePotential() {
+		return 2.0f;
+	}
 
-  @Override
-  public float damageCutoff() {
-    return 30f;
-  }
+	@Override
+	public float damageCutoff() {
+		return 30f;
+	}
 
-  @Override
-  public double attackSpeed() {
-    return 1f;
-  }
+	@Override
+	public double attackSpeed() {
+		return 1f;
+	}
 
-  @Override
-  public int[] getRepairParts() {
-    return new int[]{1, 2};
-  }
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<Integer, Integer>[] getRepairParts() {
+		// return new int[]{1, 2};
+		return new Pair[] {
+				new Pair<Integer, Integer>(1, 50),
+				new Pair<Integer, Integer>(2, 50)
+				};
+	}
 
-  @Nonnull
-  @Override
-  public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-    // todo: special action - beserk rage stuff
-    return EnumActionResult.FAIL;
-  }
+	@Nonnull
+	@Override
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
+			EnumFacing facing, float hitX, float hitY, float hitZ) {
+		// todo: special action - beserk rage stuff
+		return EnumActionResult.FAIL;
+	}
 
-  @Override
-  public ToolNBT buildTagData(List<Material> materials) {
-    HeadMaterialStats handle = materials.get(0).getStats(MaterialTypes.HEAD);
-    HeadMaterialStats head1 = materials.get(1).getStats(MaterialTypes.HEAD);
-    HeadMaterialStats head2 = materials.get(2).getStats(MaterialTypes.HEAD);
-    HeadMaterialStats binding = materials.get(3).getStats(MaterialTypes.HEAD);
+	@Override
+	public ToolNBT buildTagData(List<Material> materials) {
+		HeadMaterialStats handle = materials.get(0).getStats(MaterialTypes.HEAD);
+		HeadMaterialStats head1 = materials.get(1).getStats(MaterialTypes.HEAD);
+		HeadMaterialStats head2 = materials.get(2).getStats(MaterialTypes.HEAD);
+		HeadMaterialStats binding = materials.get(3).getStats(MaterialTypes.HEAD);
 
-    ToolNBT data = new ToolNBT();
+		ToolNBT data = new ToolNBT();
 
-    data.harvestLevel = Math.max(head1.harvestLevel, head2.harvestLevel);
+		data.harvestLevel = Math.max(head1.harvestLevel, head2.harvestLevel);
 
-    data.durability = (head1.durability + head2.durability) / 2;
-    //data.handle(handle).extra(binding);
+		data.durability = (head1.durability + head2.durability) / 2;
+		// data.handle(handle).extra(binding);
 
-    //data.durability *= 1f + 0.15f * (binding.extraQuality - 0.5f);
-    //data.speed *= 1f + 0.1f * (handle.modifier * handle.miningspeed);
-    data.speed *= 0.5f; // slower because AOE
-    // no base damage but higher damage potential
-    data.attack = (head1.attack + head2.attack) * 3f / 2f;
-    //data.attack *= 1f + 0.1f * handle.modifier * binding.extraQuality;
+		// data.durability *= 1f + 0.15f * (binding.extraQuality - 0.5f);
+		// data.speed *= 1f + 0.1f * (handle.modifier * handle.miningspeed);
+		data.speed *= 0.5f; // slower because AOE
+		// no base damage but higher damage potential
+		data.attack = (head1.attack + head2.attack) * 3f / 2f;
+		// data.attack *= 1f + 0.1f * handle.modifier * binding.extraQuality;
 
-    /*
-    data.durability += head1.durability * (0.2f * head2.extraQuality + 0.2f * binding.extraQuality + 0.1f * handle.modifier);
-    data.durability += head2.durability * (0.2f * head1.extraQuality + 0.2f * binding.extraQuality + 0.1f * handle.modifier);
-    data.durability += binding.durability * binding.extraQuality * 0.5f;
-    data.durability += handle.durability * 0.1f;
+		/*
+		 * data.durability += head1.durability * (0.2f * head2.extraQuality + 0.2f *
+		 * binding.extraQuality + 0.1f * handle.modifier); data.durability +=
+		 * head2.durability * (0.2f * head1.extraQuality + 0.2f * binding.extraQuality +
+		 * 0.1f * handle.modifier); data.durability += binding.durability *
+		 * binding.extraQuality * 0.5f; data.durability += handle.durability * 0.1f;
+		 * 
+		 * data.attack = (head1.attack + head2.attack)*2f/3f; data.attack += (0.2f +
+		 * 0.7f * handle.modifier * binding.extraQuality) * (head1.attack +
+		 * head2.attack) / 3f;
+		 * 
+		 * data.speed = head1.miningspeed/2f + head2.miningspeed/2f; data.speed *= 0.3f
+		 * + 0.3f * handle.modifier * binding.extraQuality;
+		 */
 
-    data.attack = (head1.attack + head2.attack)*2f/3f;
-    data.attack += (0.2f + 0.7f * handle.modifier * binding.extraQuality) * (head1.attack + head2.attack) / 3f;
-
-    data.speed = head1.miningspeed/2f + head2.miningspeed/2f;
-    data.speed *= 0.3f + 0.3f * handle.modifier * binding.extraQuality;
-*/
-
-    return data;
-  }
+		return data;
+	}
 }
