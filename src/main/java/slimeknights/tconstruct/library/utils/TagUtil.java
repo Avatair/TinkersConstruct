@@ -1,11 +1,13 @@
 package slimeknights.tconstruct.library.utils;
 
+import java.util.Comparator;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.BlockPos;
-
+import scala.actors.threadpool.Arrays;
 import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tools.ToolNBT;
 
@@ -237,6 +239,15 @@ public final class TagUtil {
 
   public static void setCategories(NBTTagCompound root, Category[] categories) {
     NBTTagList list = new NBTTagList();
+
+    Arrays.sort(categories, new Comparator<Category>() {
+
+		@Override
+		public int compare(Category o1, Category o2) {
+			return o1.name.compareTo(o2.name);
+		}
+
+    });
     for(Category category : categories) {
       list.appendTag(new NBTTagString(category.name));
     }
