@@ -96,15 +96,18 @@ public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventor
 		Item heldItem = heldItemStack.getItem();
 
 		// Special interactions
-		if (!player.isSneaking()) {
-			// Maybe use crafting
-			if (heldItem instanceof Hammer) {
-				return maybeCraft(player);
-			}
-		} else {
-			if (!(heldItem instanceof Hammer))
-				return false;
-		}
+//		if (!player.isSneaking()) {
+//			// Maybe use crafting
+//			if (heldItem instanceof Hammer) {
+//				return maybeCraft(player);
+//			}
+//		} else {
+//			if (!(heldItem instanceof Hammer))
+//				return false;
+//		}
+		
+		if (player.isSneaking())
+			return false;
 
 		if (!heldItemStack.isEmpty()) {
 			// find next empty space

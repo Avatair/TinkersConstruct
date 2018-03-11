@@ -117,7 +117,7 @@ public class BlockTinkerAnvil extends BlockTable implements ITinkerStationBlock 
 	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
 		TileEntity te = worldIn.getTileEntity(pos);
 		if (te instanceof TileTinkersAnvil) {
-			((TileTinkersAnvil) te).interact(playerIn);
+			((TileTinkersAnvil) te).maybeCraft(playerIn);
 		}
 	}
 	
@@ -127,11 +127,11 @@ public class BlockTinkerAnvil extends BlockTable implements ITinkerStationBlock 
 		/*
 		 * if (playerIn.isSneaking()) { return false; }
 		 */
-//		TileEntity te = worldIn.getTileEntity(pos);
-//		if (te instanceof TileTinkersAnvil) {
-//			if (((TileTinkersAnvil) te).interact(playerIn))
-//				return true;
-//		}
+		TileEntity te = worldIn.getTileEntity(pos);
+		if (te instanceof TileTinkersAnvil) {
+			if (((TileTinkersAnvil) te).interact(playerIn))
+				return true;
+		}
 
 		if (!worldIn.isRemote) {
 			return this.openGui(playerIn, worldIn, pos);
