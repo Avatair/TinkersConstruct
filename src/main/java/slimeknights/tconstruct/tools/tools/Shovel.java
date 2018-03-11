@@ -55,7 +55,7 @@ public class Shovel extends AoeToolCore {
 		return new Pair[] {
 				new Pair<Integer, Integer>(1, 60),
 				new Pair<Integer, Integer>(0, 30),
-				new Pair<Integer, Integer>(0, 10)
+				new Pair<Integer, Integer>(2, 10)
 				};
 		// index 1 usually is the head. 0 is handle.
 	}

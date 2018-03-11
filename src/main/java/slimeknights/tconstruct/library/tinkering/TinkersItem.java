@@ -341,8 +341,8 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
 				
 		// ensure the items only contain valid items
 		List<PartMaterialType> pms = tool.getRequiredComponents();
-//		NonNullList<ItemStack> items = Util.deepCopyFixedNonNullList(repairItems);
-//		boolean foundMatch = false;
+		NonNullList<ItemStack> consumedItemTypes = Util.deepCopyFixedNonNullList(repairItems);
+		boolean foundMatch = false;
 		int summedScore = 0;
 		for (Pair<Integer, Integer> repRecord : getRepairParts()) {
 			int index = repRecord.getFirst();
@@ -355,18 +355,25 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
 			float repairRatio = (float)summedScore / (float)totalScore;
 			if( curRatio < repairRatio ) {
 				// Repair and consume item
-				Optional<RecipeMatch.Match> match = pmt.getMatcher(material).matches(repairItems);
+				RecipeMatch matcher = pmt.getMatcher(material);
+				Optional<RecipeMatch.Match> match = matcher.matches(repairItems);
 
 				// not a single match -> nothing to repair with
 				if (!match.isPresent()) {
 					break;
 				}
 				
+				foundMatch = true;
+				
 				int increase = (int) Math.ceil(repairRatio * (float)maxDur - actualDur);
 				actualDur += increase;
 				ToolHelper.repairTool(repairedTool, increase);
 				
 				RecipeMatch.removeMatch(repairItems, match.get());
+				
+				while ((match = matcher.matches(consumedItemTypes)).isPresent()) {
+					RecipeMatch.removeMatch(consumedItemTypes, match.get());
+				}
 			}
 			
 //			if (repairCustom(material, items) > 0) {
@@ -384,6 +391,20 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
 //			while ((match = material.matches(items)).isPresent()) {
 //				RecipeMatch.removeMatch(items, match.get());
 //			}
+		}
+		
+		if (!foundMatch) {
+			return ItemStack.EMPTY;
+		}
+
+		// check if all items were used
+		for (int i = 0; i < consumedItemTypes.size(); i++) {
+			// was non-null and did not get modified (stacksize changed or null now,
+			// usually)
+			if (!consumedItemTypes.get(i).isEmpty() /* && ItemStack.areItemStacksEqual(repairItems.get(i), items.get(i))*/) {
+				// found an item that was not touched
+				return ItemStack.EMPTY;
+			}
 		}
 		
 //		// save that we repaired it :I
