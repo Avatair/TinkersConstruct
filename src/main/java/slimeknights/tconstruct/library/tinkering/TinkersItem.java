@@ -91,6 +91,10 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
 
 		return out;
 	}
+	
+	public int getCraftingOutputAmount(ItemStack stack) {
+		return 1;
+	}
 
 	/* INDESTRUCTIBLE */
 
@@ -167,6 +171,8 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
 	public ItemStack buildItem(List<Material> materials) {
 		ItemStack tool = new ItemStack(this);
 		tool.setTagCompound(buildItemNBT(materials));
+		int count = Math.min(getCraftingOutputAmount(tool), tool.getMaxStackSize());
+		tool.setCount(count);
 
 		return tool;
 	}

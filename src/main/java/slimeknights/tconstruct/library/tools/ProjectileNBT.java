@@ -70,13 +70,13 @@ public class ProjectileNBT extends ToolNBT {
   @Override
   public void read(NBTTagCompound tag) {
     super.read(tag);
-    this.accuracy = tag.getFloat(Tags.ACCURACY);
+    this.accuracy = (float)tag.getInteger(Tags.ACCURACY) / Tags.FLOAT_ACCURACY;
   }
 
   @Override
   public void write(NBTTagCompound tag) {
     super.write(tag);
-    tag.setFloat(Tags.ACCURACY, accuracy);
+    tag.setInteger(Tags.ACCURACY, (int)(accuracy * Tags.FLOAT_ACCURACY));
   }
 
   public static ProjectileNBT from(ItemStack itemStack) {

@@ -82,11 +82,11 @@ public final class ToolHelper {
 	 * getActualMiningSpeed
 	 */
 	public static float getMiningSpeedStat(ItemStack stack) {
-		return getfloatTag(stack, Tags.MININGSPEED);
+		return (float)getIntTag(stack, Tags.MININGSPEED) / Tags.FLOAT_ACCURACY;
 	}
 
 	public static float getAttackStat(ItemStack stack) {
-		return getfloatTag(stack, Tags.ATTACK);
+		return (float)getIntTag(stack, Tags.ATTACK) / Tags.FLOAT_ACCURACY;
 	}
 
 	public static float getActualAttack(ItemStack stack) {
@@ -102,7 +102,7 @@ public final class ToolHelper {
 	 * from 1 to 2, the actual attack speed is in getActualAttackSpeed
 	 */
 	public static float getAttackSpeedStat(ItemStack stack) {
-		return getfloatTag(stack, Tags.ATTACKSPEEDMULTIPLIER);
+		return getIntTag(stack, Tags.ATTACKSPEEDMULTIPLIER) / Tags.FLOAT_ACCURACY;
 	}
 
 	/** Returns the actual attack speed */
@@ -166,7 +166,7 @@ public final class ToolHelper {
 
 		// calculate speed depending on stats
 		NBTTagCompound tag = TagUtil.getToolTag(stack);
-		float speed = tag.getFloat(Tags.MININGSPEED);
+		float speed = (float)tag.getInteger(Tags.MININGSPEED) / Tags.FLOAT_ACCURACY;
 
 		if (stack.getItem() instanceof ToolCore) {
 			speed *= ((ToolCore) stack.getItem()).miningSpeedModifier();
@@ -865,9 +865,9 @@ public final class ToolHelper {
 		return tag.getInteger(key);
 	}
 
-	static float getfloatTag(ItemStack stack, String key) {
-		NBTTagCompound tag = TagUtil.getToolTag(stack);
-
-		return tag.getFloat(key);
-	}
+//	static float getfloatTag(ItemStack stack, String key) {
+//		NBTTagCompound tag = TagUtil.getToolTag(stack);
+//
+//		return tag.getFloat(key);
+//	}
 }

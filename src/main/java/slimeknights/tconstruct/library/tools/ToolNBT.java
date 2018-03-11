@@ -101,18 +101,18 @@ public class ToolNBT {
   public void read(NBTTagCompound tag) {
     durability = tag.getInteger(Tags.DURABILITY);
     harvestLevel = tag.getInteger(Tags.HARVESTLEVEL);
-    attack = tag.getFloat(Tags.ATTACK);
-    speed = tag.getFloat(Tags.MININGSPEED);
-    attackSpeedMultiplier = tag.getFloat(Tags.ATTACKSPEEDMULTIPLIER);
+    attack = (float)tag.getInteger(Tags.ATTACK) / Tags.FLOAT_ACCURACY;
+    speed = (float)tag.getInteger(Tags.MININGSPEED) / Tags.FLOAT_ACCURACY;
+    attackSpeedMultiplier = (float)tag.getInteger(Tags.ATTACKSPEEDMULTIPLIER) / Tags.FLOAT_ACCURACY;
     modifiers = tag.getInteger(Tags.FREE_MODIFIERS);
   }
 
   public void write(NBTTagCompound tag) {
     tag.setInteger(Tags.DURABILITY, durability);
     tag.setInteger(Tags.HARVESTLEVEL, harvestLevel);
-    tag.setFloat(Tags.ATTACK, attack);
-    tag.setFloat(Tags.MININGSPEED, speed);
-    tag.setFloat(Tags.ATTACKSPEEDMULTIPLIER, attackSpeedMultiplier);
+    tag.setInteger(Tags.ATTACK, (int)(attack * Tags.FLOAT_ACCURACY));
+    tag.setInteger(Tags.MININGSPEED, (int)(speed* Tags.FLOAT_ACCURACY));
+    tag.setInteger(Tags.ATTACKSPEEDMULTIPLIER, (int)(attackSpeedMultiplier * Tags.FLOAT_ACCURACY));
     tag.setInteger(Tags.FREE_MODIFIERS, modifiers);
   }
 

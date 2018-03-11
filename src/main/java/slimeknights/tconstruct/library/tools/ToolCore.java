@@ -403,6 +403,7 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
 			}
 
 			ItemStack tool = buildItem(mats);
+			tool.setCount(1);
 			// only valid ones
 			if (hasValidMaterials(tool)) {
 				subItems.add(tool);
