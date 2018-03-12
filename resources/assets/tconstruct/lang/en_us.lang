@@ -503,6 +503,7 @@ fluid.tconstruct.steel.name=Molten Steel
 fluid.tconstruct.aluminum.name=Molten Aluminum
 fluid.tconstruct.alubrass.name=Molten Aluminum Brass
 fluid.tconstruct.ender.name=Molten Ender
+fluid.tconstruct.magnite.name=Molten Magnite
 
 #################
 #    Potions    #
@@ -546,6 +547,9 @@ material.lead.name=Lead
 material.silver.name=Silver
 material.electrum.name=Electrum
 material.steel.name=Steel
+material.magnite.name=Magnite
+material.hexcite.name=Hexcite
+material.manalite.name=Manalite
 
 material.string.name=String
 material.vine.name=Vines

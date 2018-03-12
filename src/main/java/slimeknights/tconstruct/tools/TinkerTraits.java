@@ -80,6 +80,7 @@ public class TinkerTraits {
   public static final AbstractTrait lightweight = new TraitLightweight();
   public static final AbstractTrait magnetic = new TraitMagnetic(1);
   public static final AbstractTrait magnetic2 = new TraitMagnetic(2);
+  public static final AbstractTrait magnetic3 = new TraitMagnetic(3);
   public static final AbstractTrait momentum = new TraitMomentum();
   public static final AbstractTrait petramor = new TraitPetramor();
   public static final AbstractTrait poisonous = new TraitPoisonous();

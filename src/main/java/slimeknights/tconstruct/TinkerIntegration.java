@@ -82,6 +82,9 @@ public class TinkerIntegration extends TinkerPulse {
     integrate(TinkerMaterials.silver, TinkerFluids.silver, "Silver").toolforge();
     integrate(TinkerMaterials.electrum, TinkerFluids.electrum, "Electrum").toolforge();
     integrate(TinkerMaterials.steel, TinkerFluids.steel, "Steel").toolforge();
+    integrate(TinkerMaterials.magnite, TinkerFluids.magnite, "Magnite").toolforge();
+    integrate(TinkerMaterials.manalite, "gemManalite");
+    integrate(TinkerMaterials.hexcite, "gemHexcite");
 
     // non-toolmaterial integration
     integrate(TinkerFluids.gold, "Gold").toolforge();
