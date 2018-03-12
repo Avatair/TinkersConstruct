@@ -48,15 +48,6 @@ public class Arrow extends ProjectileCore {
 		return 1;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Pair<Integer, Integer>[] getRepairParts() {
-//		return new int[] { 2 };
-		return new Pair[] {
-				new Pair<Integer, Integer>(2, 100)
-				};
-	}
-
 	@Override
 	public ProjectileNBT buildTagData(List<Material> materials) {
 		ProjectileNBT data = new ProjectileNBT();

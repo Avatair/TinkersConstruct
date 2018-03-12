@@ -47,9 +47,9 @@ public class ShortBow extends BowCore implements ICustomCrosshairUser {
 	public Pair<Integer, Integer>[] getRepairParts() {
 		// return new int[]{0, 1};
 		return new Pair[] {
-				new Pair<Integer, Integer>(0, 40),
+				new Pair<Integer, Integer>(2, 20),
 				new Pair<Integer, Integer>(1, 40),
-				new Pair<Integer, Integer>(2, 20)
+				new Pair<Integer, Integer>(0, 40)
 				};
 	}
 

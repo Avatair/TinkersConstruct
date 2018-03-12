@@ -41,10 +41,10 @@ public class LongBow extends ShortBow {
 	public Pair<Integer, Integer>[] getRepairParts() {
 		// return new int[]{0, 1};
 		return new Pair[] {
-				new Pair<Integer, Integer>(0, 30),
-				new Pair<Integer, Integer>(1, 30),
+				new Pair<Integer, Integer>(3, 10),
 				new Pair<Integer, Integer>(2, 30),
-				new Pair<Integer, Integer>(3, 10)
+				new Pair<Integer, Integer>(1, 30),
+				new Pair<Integer, Integer>(0, 30)
 				};
 	}
 

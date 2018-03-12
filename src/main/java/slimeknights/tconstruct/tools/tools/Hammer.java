@@ -85,10 +85,10 @@ public class Hammer extends Pickaxe {
 	public Pair<Integer, Integer>[] getRepairParts() {
 //		return new int[] { 1, 2, 3 };
 		return new Pair[] {
-				new Pair<Integer, Integer>(1, 40),
-				new Pair<Integer, Integer>(2, 20),
+				new Pair<Integer, Integer>(0, 20),
 				new Pair<Integer, Integer>(3, 20),
-				new Pair<Integer, Integer>(0, 20)
+				new Pair<Integer, Integer>(2, 20),
+				new Pair<Integer, Integer>(1, 40)
 				};
 	}
 

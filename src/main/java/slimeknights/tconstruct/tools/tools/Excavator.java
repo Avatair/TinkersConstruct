@@ -63,10 +63,10 @@ public class Excavator extends Shovel {
 	public Pair<Integer, Integer>[] getRepairParts() {
 //		return new int[] { 1, 2 };
 		return new Pair[] {
-				new Pair<Integer, Integer>(1, 40),
-				new Pair<Integer, Integer>(3, 40),
-				new Pair<Integer, Integer>(0, 10),
 				new Pair<Integer, Integer>(2, 10),
+				new Pair<Integer, Integer>(0, 10),
+				new Pair<Integer, Integer>(3, 40),
+				new Pair<Integer, Integer>(1, 40)
 				};		
 	}
 

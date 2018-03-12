@@ -53,9 +53,9 @@ public class Shovel extends AoeToolCore {
 	@SuppressWarnings("unchecked")
 	public Pair<Integer, Integer>[] getRepairParts() {
 		return new Pair[] {
-				new Pair<Integer, Integer>(1, 60),
+				new Pair<Integer, Integer>(2, 10),
 				new Pair<Integer, Integer>(0, 30),
-				new Pair<Integer, Integer>(2, 10)
+				new Pair<Integer, Integer>(1, 60)
 				};
 		// index 1 usually is the head. 0 is handle.
 	}

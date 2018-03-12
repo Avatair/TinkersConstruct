@@ -24,6 +24,7 @@ import slimeknights.tconstruct.library.materials.Material;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ProjectileNBT;
 import slimeknights.tconstruct.library.tools.TinkerToolCore;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.library.utils.TooltipBuilder;
 import slimeknights.tconstruct.tools.traits.TraitEnderference;
@@ -43,6 +44,12 @@ public abstract class ProjectileCore extends TinkerToolCore implements IProjecti
 		super(requiredComponents);
 		durabilityPerAmmo = 10;
 		this.setMaxStackSize(64);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<Integer, Integer>[] getRepairParts() {
+		return new Pair[0];
 	}
 
 	/* Ammo Handling */
