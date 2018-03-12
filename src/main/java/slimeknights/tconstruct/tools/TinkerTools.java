@@ -41,7 +41,6 @@ import slimeknights.tconstruct.shared.tileentity.TileTable;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 import slimeknights.tconstruct.tools.common.RepairRecipe;
 import slimeknights.tconstruct.tools.common.TableRecipe;
-import slimeknights.tconstruct.tools.common.block.BlockToolForge;
 import slimeknights.tconstruct.tools.common.block.BlockToolTable;
 import slimeknights.tconstruct.tools.common.item.ItemBlockTable;
 import slimeknights.tconstruct.tools.common.item.SharpeningKit;
@@ -50,7 +49,6 @@ import slimeknights.tconstruct.tools.common.tileentity.TilePartBuilder;
 import slimeknights.tconstruct.tools.common.tileentity.TilePartChest;
 import slimeknights.tconstruct.tools.common.tileentity.TilePatternChest;
 import slimeknights.tconstruct.tools.common.tileentity.TileStencilTable;
-import slimeknights.tconstruct.tools.common.tileentity.TileToolForge;
 import slimeknights.tconstruct.tools.common.tileentity.TileToolStation;
 import slimeknights.tconstruct.tools.ranged.item.BoltCore;
 
@@ -65,7 +63,7 @@ public class TinkerTools extends AbstractToolPulse {
 
   // Blocks
   public static BlockToolTable toolTables;
-  public static BlockToolForge toolForge;
+//  public static BlockToolForge toolForge;
 
   // General Items
   public static Pattern pattern;
@@ -121,7 +119,7 @@ public class TinkerTools extends AbstractToolPulse {
 
     // register blocks
     toolTables = registerBlock(new ItemBlockTable(new BlockToolTable()), "tooltables");
-    toolForge = registerBlock(new ItemBlockTable(new BlockToolForge()), "toolforge");
+//    toolForge = registerBlock(new ItemBlockTable(new BlockToolForge()), "toolforge");
 
     ItemBlockMeta.setMappingProperty(toolTables, BlockToolTable.TABLES);
 
@@ -132,7 +130,7 @@ public class TinkerTools extends AbstractToolPulse {
     registerTE(TilePatternChest.class, "patternchest");
     registerTE(TilePartChest.class, "partchest");
     registerTE(TileToolStation.class, "toolstation");
-    registerTE(TileToolForge.class, "toolforge");
+//    registerTE(TileToolForge.class, "toolforge");
 
     // register entities
 
@@ -366,7 +364,7 @@ public class TinkerTools extends AbstractToolPulse {
     CraftingManager.getInstance().addRecipe(new RepairRecipe());
   }
 
-  public static void registerToolForgeBlock(String oredict) {
+/*  public static void registerToolForgeBlock(String oredict) {
     if(toolForge != null) {
       toolForge.baseBlocks.add(oredict);
       registerToolForgeRecipe(oredict);
@@ -386,7 +384,7 @@ public class TinkerTools extends AbstractToolPulse {
                                    'B', brick,
                                    'M', oredict,
                                    'T', new ItemStack(toolTables, 1, BlockToolTable.TableTypes.ToolStation.meta)));
-  }
+  } */
 
   // POST-INITIALIZATION
   @Override

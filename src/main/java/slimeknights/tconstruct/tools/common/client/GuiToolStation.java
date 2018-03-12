@@ -1,6 +1,7 @@
 package slimeknights.tconstruct.tools.common.client;
 
 import java.io.IOException;
+import java.util.Set;
 
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -9,7 +10,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import slimeknights.mantle.client.gui.GuiElement;
 import slimeknights.tconstruct.common.TinkerNetwork;
+import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.library.Util;
+import slimeknights.tconstruct.library.tools.ToolCore;
 import slimeknights.tconstruct.tools.common.inventory.ContainerToolStation;
 import slimeknights.tconstruct.tools.common.network.ToolStationTextPacket;
 import slimeknights.tconstruct.tools.common.tileentity.TileToolStation;
@@ -23,10 +26,14 @@ public class GuiToolStation extends GuiToolStationBase {
 	public GuiToolStation(InventoryPlayer playerInv, World world, BlockPos pos, TileToolStation tile,
 			ResourceLocation backgroundTexture) {
 		super(playerInv, world, pos, tile, backgroundTexture);
+
+//		metal();
 	}
 
 	public GuiToolStation(InventoryPlayer playerInv, World world, BlockPos pos, TileToolStation tile) {
 		super(playerInv, world, pos, tile, Util.getResource("textures/gui/toolstation.png"));
+
+//		metal();
 	}
 
 	@Override
@@ -77,6 +84,11 @@ public class GuiToolStation extends GuiToolStationBase {
 
 		// draw textfield
 		textField.drawTextBox();
+	}
+
+	@Override
+	public Set<ToolCore> getBuildableItems() {
+		return TinkerRegistry.getToolForgeCrafting();
 	}
 
 }

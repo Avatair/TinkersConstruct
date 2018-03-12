@@ -6,12 +6,9 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPane;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -19,37 +16,28 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import slimeknights.tconstruct.common.Sounds;
-import slimeknights.tconstruct.common.config.Config;
 import slimeknights.tconstruct.library.client.ToolBuildGuiInfo;
 import slimeknights.tconstruct.library.tools.TinkerToolCore;
 import slimeknights.tconstruct.library.tools.ToolPart;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.shared.block.PropertyTableItem;
-import slimeknights.tconstruct.shared.tileentity.TileTable;
 import slimeknights.tconstruct.tools.common.client.GuiButtonRepair;
 import slimeknights.tconstruct.tools.common.client.GuiTinkersAnvil;
-import slimeknights.tconstruct.tools.common.client.GuiToolForge;
 import slimeknights.tconstruct.tools.common.inventory.ContainerTinkersAnvil;
-import slimeknights.tconstruct.tools.common.inventory.ContainerToolForge;
-import slimeknights.tconstruct.tools.common.inventory.ContainerToolStation;
-import slimeknights.tconstruct.tools.common.tileentity.TileToolForge;
 import slimeknights.tconstruct.tools.common.tileentity.TileToolStation;
 import slimeknights.tconstruct.tools.tools.Hammer;
 
-public class TileTinkersAnvil extends TileToolForge /* implements ISidedInventory */ {
+public class TileTinkersAnvil extends TileToolStation /* implements ISidedInventory */ {
 
 	public static final String PROGRESS_TAG = "progress";
 	

@@ -124,9 +124,9 @@ public class MaterialIntegration {
     }
 
     // add toolforge recipe
-    if(toolforge && oreSuffix != null && !oreSuffix.isEmpty()) {
-      TinkerTools.registerToolForgeBlock("block" + oreSuffix);
-    }
+//    if(toolforge && oreSuffix != null && !oreSuffix.isEmpty()) {
+//      TinkerTools.registerToolForgeBlock("block" + oreSuffix);
+//    }
   }
 
   public void integrateRecipes() {

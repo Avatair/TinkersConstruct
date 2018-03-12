@@ -68,7 +68,7 @@ public class JEIPlugin implements IModPlugin {
     if(TConstruct.pulseManager.isPulseLoaded(TinkerTools.PulseId)) {
       // tool tables
       registry.registerSubtypeInterpreter(Item.getItemFromBlock(TinkerTools.toolTables), tableInterpreter);
-      registry.registerSubtypeInterpreter(Item.getItemFromBlock(TinkerTools.toolForge), tableInterpreter);
+//      registry.registerSubtypeInterpreter(Item.getItemFromBlock(TinkerTools.toolForge), tableInterpreter);
 
       // tool parts
       ToolPartSubtypeInterpreter toolPartInterpreter = new ToolPartSubtypeInterpreter();

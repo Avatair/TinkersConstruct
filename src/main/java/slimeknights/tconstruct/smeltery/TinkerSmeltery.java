@@ -88,6 +88,8 @@ import slimeknights.tconstruct.smeltery.tileentity.TileTinkerTank;
 import slimeknights.tconstruct.smeltery.tileentity.TileTinkersAnvil;
 import slimeknights.tconstruct.tools.TinkerMaterials;
 import slimeknights.tconstruct.tools.TinkerTools;
+import slimeknights.tconstruct.tools.common.block.BlockToolTable;
+import slimeknights.tconstruct.tools.common.block.BlockToolTable.TableTypes;
 
 @Pulse(id = TinkerSmeltery.PulseId, description = "The smeltery and items needed for it")
 public class TinkerSmeltery extends TinkerPulse {
@@ -323,7 +325,7 @@ public class TinkerSmeltery extends TinkerPulse {
     GameRegistry.addRecipe(new ItemStack(castingBlock, 1, BlockCasting.CastingType.BASIN.getMeta()),
                            "b b", "b b", "bbb", 'b', searedBrick); // Basin
     GameRegistry.addRecipe(new ItemStack(anvilBlock, 1, BlockTinkerAnvil.AnvilType.ANVIL.getMeta()),
-            			   "BBB", " f ", "bbb", 'B', Blocks.IRON_BLOCK, 'b', Items.IRON_INGOT, 'f', TinkerTools.toolForge ); // Anvil
+            			   "BBB", " f ", "bbb", 'B', Blocks.IRON_BLOCK, 'b', Items.IRON_INGOT, 'f', new ItemStack( TinkerTools.toolTables, 1, BlockToolTable.TableTypes.ToolStation.meta ) ); // Anvil
     GameRegistry.addRecipe(new ItemStack(faucet),
                            "b b", " b ", 'b', searedBrick); // Faucet
     //GameRegistry.addRecipe(new ItemStack(TinkerSmeltery.castingChannel, 4, 0), "b b", "bbb", 'b', searedBrick); // Channel

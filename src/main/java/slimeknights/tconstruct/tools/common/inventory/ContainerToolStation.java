@@ -301,7 +301,8 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
 	}
 
 	protected Set<ToolCore> getBuildableTools() {
-		return TinkerRegistry.getToolStationCrafting();
+//		return TinkerRegistry.getToolStationCrafting();
+		return TinkerRegistry.getToolForgeCrafting();
 	}
 
 	/**
