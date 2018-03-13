@@ -329,12 +329,12 @@ public final class TinkerMaterials {
 		magnite.addTrait(magnetic3);
 		
 		manalite.addCommonItems("Manalite");
-		manalite.addTrait(prickly, HEAD);
+		manalite.addTrait(shocking, HEAD);
 		manalite.addTrait(holy);
 		manalite.addItemIngot("gemManalite");
 		
 		hexcite.addCommonItems("Hexcite");
-		hexcite.addTrait(shocking, HEAD);
+		hexcite.addTrait(prickly, HEAD);
 		hexcite.addItemIngot("gemHexcite");
 
 		// bowstring
@@ -477,11 +477,11 @@ public final class TinkerMaterials {
 		TinkerRegistry.addMaterialStats(magnite, new HeadMaterialStats(10, 16.00f, 11.00f, OBSIDIAN),
 				new HandleMaterialStats(1.0f, 30), new ExtraMaterialStats(25));
 		
-		TinkerRegistry.addMaterialStats(manalite, new HeadMaterialStats(400, 1.00f, 2.00f, OBSIDIAN),
+		TinkerRegistry.addMaterialStats(manalite, new HeadMaterialStats(100, 1.00f, 2.00f, OBSIDIAN),
 				new HandleMaterialStats(0.5f, 150), new ExtraMaterialStats(30));
 		
-		TinkerRegistry.addMaterialStats(hexcite, new HeadMaterialStats(800, 6.00f, 5.00f, OBSIDIAN),
-				new HandleMaterialStats(0.8f, 150), new ExtraMaterialStats(40));
+		TinkerRegistry.addMaterialStats(hexcite, new HeadMaterialStats(200, 6.00f, 4.00f, OBSIDIAN),
+				new HandleMaterialStats(0.8f, 80), new ExtraMaterialStats(40));
 
 		// TinkerRegistry.addMaterialStats(xu, new ToolMaterialStats(97, 1.00f, 1.00f,
 		// 0.10f, 0.20f, DIAMOND));

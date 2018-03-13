@@ -359,7 +359,7 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
 			summedScore += score;			
 			float curRatio = (float)actualDur / (float)maxDur;
 			float repairRatio = (float)summedScore / (float)totalScore;
-			if( curRatio < repairRatio ) {
+			if( curRatio <= repairRatio ) {
 				// Repair and consume item
 				RecipeMatch matcher = pmt.getMatcher(material);
 				Optional<RecipeMatch.Match> match = matcher.matches(repairItems);

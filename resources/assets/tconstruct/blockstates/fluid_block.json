@@ -82,6 +82,9 @@
         "steel": [{
             "custom": { "fluid": "steel" }
         }],
+        "magnite": [{
+            "custom": { "fluid": "magnite" }
+        }],
         "aluminum": [{
             "custom": { "fluid": "aluminum" }
         }],
