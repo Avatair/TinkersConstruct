@@ -143,6 +143,7 @@ public final class TinkerMaterials {
 	public static final Material magnite = mat("magnite", 0xe22b00);
 	public static final Material hexcite = mat("hexcite", 0xe9e9e9);
 	public static final Material manalite = mat("manalite", 0xc6e2ea);
+	public static final Material aquamarine = mat("aquamarine", 0x9de3e1);
 
 	// specul
 	public static final Material xu;
@@ -330,12 +331,15 @@ public final class TinkerMaterials {
 		
 		manalite.addCommonItems("Manalite");
 		manalite.addTrait(shocking, HEAD);
-		manalite.addTrait(holy);
 		manalite.addItemIngot("gemManalite");
 		
 		hexcite.addCommonItems("Hexcite");
 		hexcite.addTrait(prickly, HEAD);
 		hexcite.addItemIngot("gemHexcite");
+		
+		aquamarine.addCommonItems("Aquamarine");
+		aquamarine.addTrait(aquadynamic, HEAD);
+		aquamarine.addItemIngot("gemAquamarine");
 
 		// bowstring
 		string.addItemIngot("string");
@@ -477,11 +481,14 @@ public final class TinkerMaterials {
 		TinkerRegistry.addMaterialStats(magnite, new HeadMaterialStats(10, 16.00f, 11.00f, OBSIDIAN),
 				new HandleMaterialStats(1.0f, 30), new ExtraMaterialStats(25));
 		
-		TinkerRegistry.addMaterialStats(manalite, new HeadMaterialStats(100, 1.00f, 2.00f, OBSIDIAN),
+		TinkerRegistry.addMaterialStats(manalite, new HeadMaterialStats(200, 3.00f, 3.00f, OBSIDIAN),
 				new HandleMaterialStats(0.5f, 150), new ExtraMaterialStats(30));
 		
-		TinkerRegistry.addMaterialStats(hexcite, new HeadMaterialStats(200, 6.00f, 4.00f, OBSIDIAN),
+		TinkerRegistry.addMaterialStats(hexcite, new HeadMaterialStats(300, 6.00f, 4.00f, OBSIDIAN),
 				new HandleMaterialStats(0.8f, 80), new ExtraMaterialStats(40));
+		
+		TinkerRegistry.addMaterialStats(aquamarine, new HeadMaterialStats(100, 4.50f, 1.50f, OBSIDIAN),
+				new HandleMaterialStats(0.5f, 100), new ExtraMaterialStats(40));
 
 		// TinkerRegistry.addMaterialStats(xu, new ToolMaterialStats(97, 1.00f, 1.00f,
 		// 0.10f, 0.20f, DIAMOND));
@@ -525,7 +532,6 @@ public final class TinkerMaterials {
 		TinkerRegistry.addMaterialStats(silver, new BowMaterialStats(1.2f, 0.8f, 2f));
 		TinkerRegistry.addMaterialStats(electrum, new BowMaterialStats(1.5f, 1f, 4f));
 		TinkerRegistry.addMaterialStats(steel, new BowMaterialStats(0.4f, 2f, 9f));
-//		TinkerRegistry.addMaterialStats(magnite, new BowMaterialStats(2.0f, 2f, 9f));
 
 		// Bowstring materials
 		BowStringMaterialStats bowstring = new BowStringMaterialStats(1f);
