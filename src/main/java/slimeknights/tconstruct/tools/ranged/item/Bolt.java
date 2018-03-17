@@ -152,9 +152,14 @@ public class Bolt extends ProjectileCore {
   }
 
   @Override
-  public EntityProjectileBase getProjectile(ItemStack stack, ItemStack bow, World world, EntityPlayer player, float speed, float inaccuracy, float power, boolean usedAmmo) {
+  public EntityProjectileBase getProjectile(ItemStack stack, ItemStack bow, World world, EntityPlayer player, float speed, float inaccuracy, float power, int punch, int fireTime, boolean usedAmmo) {
     inaccuracy -= (1f - 1f/ProjectileNBT.from(stack).accuracy) * speed/2f;
-    return new EntityBolt(world, player, speed, inaccuracy, power, getProjectileStack(stack, world, player, usedAmmo), bow);
+    EntityBolt bolt = new EntityBolt(world, player, speed, inaccuracy, power, getProjectileStack(stack, world, player, usedAmmo), bow);
+    if( punch > 0 )
+    	bolt.setKnockbackStrength(punch);
+    if( fireTime > 0 )
+    	bolt.setFire(fireTime);
+    return bolt;
   }
 
   private static class BoltHeadPartMaterialType extends PartMaterialType {

@@ -695,8 +695,8 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
 	@Override
     public int getItemEnchantability(ItemStack stack)
     {
-		if( canContainSwordEnchantments() || canContainBowEnchantments() || canContainDigToolEnchantments() )
-			return ToolHelper.getEnchantabilityStat(stack);
-		return 0;
+//		if( canContainSwordEnchantments() || canContainBowEnchantments() || canContainDigToolEnchantments() )
+		return ToolHelper.getEnchantabilityStat(stack);
+//		return 0;
     }
 }
