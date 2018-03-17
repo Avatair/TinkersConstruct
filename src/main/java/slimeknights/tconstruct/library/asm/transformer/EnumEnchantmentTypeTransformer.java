@@ -12,6 +12,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -56,6 +57,7 @@ public class EnumEnchantmentTypeTransformer implements IClassTransformer
                 InsnList insnList = new InsnList();
                 insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                 insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, className, methodName, methodDescriptor, false) );
+                insnList.add(new InsnNode(Opcodes.IRETURN));
                 
                 //Insert our new instructions before returning
                 methodNode.instructions.insertBefore(methodNode.instructions.get(0), insnList);
