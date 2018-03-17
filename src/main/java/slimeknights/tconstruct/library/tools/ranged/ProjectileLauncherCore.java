@@ -13,14 +13,19 @@ import slimeknights.tconstruct.library.tools.ToolNBT;
 
 public abstract class ProjectileLauncherCore extends TinkerToolCore {
 
-  public ProjectileLauncherCore(PartMaterialType... requiredComponents) {
-    super(requiredComponents);
-  }
+	public ProjectileLauncherCore(PartMaterialType... requiredComponents) {
+		super(requiredComponents);
+	}
 
-  protected ProjectileLauncherNBT getData(ItemStack stack) {
-    return ProjectileLauncherNBT.from(stack);
-  }
+	protected ProjectileLauncherNBT getData(ItemStack stack) {
+		return ProjectileLauncherNBT.from(stack);
+	}
 
-  @Override
-  public abstract ProjectileLauncherNBT buildTagData(List<Material> materials);
+	@Override
+	public abstract ProjectileLauncherNBT buildTagData(List<Material> materials);
+	
+	@Override
+	public boolean canContainBowEnchantments() {
+		return true;
+	}
 }

@@ -42,6 +42,11 @@ public class BattleAxe extends AoeToolCore {
 	public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
 		return ToolHelper.calcAOEBlocks(stack, world, player, origin, 2, 2, 1);
 	}
+	
+	@Override
+	public boolean canContainSwordEnchantments() {
+		return true;
+	}
 
 	@Override
 	public float damagePotential() {

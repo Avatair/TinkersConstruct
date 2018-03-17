@@ -62,6 +62,11 @@ public class Scythe extends AoeToolCore {
 
 		addCategory(Category.HARVEST, Category.WEAPON);
 	}
+	
+	@Override
+	public boolean canContainDigToolEnchantments() {
+		return true;
+	}
 
 	@Override
 	public float damagePotential() {

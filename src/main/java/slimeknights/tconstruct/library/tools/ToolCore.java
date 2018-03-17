@@ -360,7 +360,7 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
 	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean hasEffect(ItemStack stack) {
-		return TagUtil.hasEnchantEffect(stack);
+		return stack.isItemEnchanted() || TagUtil.hasEnchantEffect(stack);
 	}
 
 	@Nonnull
@@ -676,4 +676,27 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
 																							// used
 				TagUtil.getOriginalToolStats(tag1).equals(TagUtil.getOriginalToolStats(tag2)); // unmodified base stats
 	}
+
+	public boolean canContainSwordEnchantments() {
+		return false;
+	}
+
+	public boolean canContainBowEnchantments() {
+		return false;
+	}
+
+	public boolean canContainDigToolEnchantments() {
+		return false;
+	}
+	
+    /**
+     * Return the enchantability factor of the item, most of the time is based on material.
+     */
+	@Override
+    public int getItemEnchantability()
+    {
+		if( canContainSwordEnchantments() || canContainBowEnchantments() || canContainDigToolEnchantments() )
+			return 1;
+		return 0;
+    }
 }

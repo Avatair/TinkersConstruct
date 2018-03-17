@@ -49,6 +49,11 @@ public class Shovel extends AoeToolCore {
 
 		setHarvestLevel("shovel", 0);
 	}
+	
+	@Override
+	public boolean canContainDigToolEnchantments() {
+		return true;
+	}
 
 	@SuppressWarnings("unchecked")
 	public Pair<Integer, Integer>[] getRepairParts() {

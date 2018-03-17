@@ -58,6 +58,11 @@ public class Mattock extends AoeToolCore {
 		// unused, but we give mattock its own tool class
 		this.setHarvestLevel("mattock", 0);
 	}
+	
+	@Override
+	public boolean canContainDigToolEnchantments() {
+		return true;
+	}
 
 	@Override
 	public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player,

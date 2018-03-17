@@ -59,6 +59,11 @@ public class LumberAxe extends AoeToolCore {
 
 		this.setHarvestLevel("axe", 0);
 	}
+	
+	@Override
+	public boolean canContainDigToolEnchantments() {
+		return true;
+	}
 
 	@Override
 	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {

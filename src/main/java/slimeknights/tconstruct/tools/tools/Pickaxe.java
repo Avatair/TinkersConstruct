@@ -42,6 +42,11 @@ public class Pickaxe extends AoeToolCore {
 		this.setHarvestLevel("pickaxe", 0);
 	}
 	
+	@Override
+	public boolean canContainDigToolEnchantments() {
+		return true;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public Pair<Integer, Integer>[] getRepairParts() {
 		return new Pair[] {
