@@ -9,9 +9,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,6 +43,7 @@ import net.minecraftforge.common.IShearable;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.List;
+import java.util.Random;
 
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.TinkerNetwork;
@@ -56,6 +59,8 @@ import slimeknights.tconstruct.tools.common.network.ToolBreakAnimationPacket;
 import slimeknights.tconstruct.tools.modifiers.ModReinforced;
 
 public final class ToolHelper {
+	
+	private static Random rand = new Random();
 
 	private ToolHelper() {
 	}
@@ -527,6 +532,9 @@ public final class ToolHelper {
 				}
 			}
 		}
+		
+		// Vanilla enchantment mechanics
+		actualAmount = reduceDamageBasedOnEnchantment(stack, actualAmount);
 
 		// extra compatibility for unbreaking.. because things just love to mess it up..
 		// like 3rd party stuff
@@ -541,6 +549,24 @@ public final class ToolHelper {
 		if (getCurrentDurability(stack) == 0) {
 			breakTool(stack, entity);
 		}
+	}
+	
+	public static int reduceDamageBasedOnEnchantment(ItemStack stack, int amount) {
+        int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
+        int j = 0;
+
+        for (int k = 0; i > 0 && k < amount; ++k)
+        {
+            if (EnchantmentDurability.negateDamage(stack, i, rand))
+            {
+                ++j;
+            }
+        }
+
+        amount -= j;
+        if( amount < 0 )
+        	amount = 0;
+        return amount;
 	}
 
 	public static void healTool(ItemStack stack, int amount, EntityLivingBase entity) {
@@ -641,12 +667,19 @@ public final class ToolHelper {
 		float baseDamage = (float) attacker.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE)
 				.getAttributeValue();
 
+        if (targetEntity instanceof EntityLivingBase)
+        	baseDamage += EnchantmentHelper.getModifierForCreature(stack, ((EntityLivingBase)targetEntity).getCreatureAttribute());
+        else
+        	baseDamage += EnchantmentHelper.getModifierForCreature(stack, EnumCreatureAttribute.UNDEFINED);
+
+		
 		// missing because not supported by tcon tools: vanilla damage enchantments, we
 		// have our own modifiers
 		// missing because not supported by tcon tools: vanilla knockback enchantments,
 		// we have our own modifiers
 		float baseKnockback = attacker.isSprinting() ? 1 : 0;
-
+		baseKnockback += EnchantmentHelper.getKnockbackModifier(attacker);
+		
 		// calculate if it's a critical hit
 		boolean isCritical = attacker.fallDistance > 0.0F && !attacker.onGround && !attacker.isOnLadder()
 				&& !attacker.isInWater() && !attacker.isPotionActive(MobEffects.BLINDNESS) && !attacker.isRiding();
@@ -663,7 +696,7 @@ public final class ToolHelper {
 				damage = trait.damage(stack, attacker, target, baseDamage, damage, isCritical);
 			}
 		}
-
+		
 		// apply critical damage
 		if (isCritical) {
 			damage *= 1.5f;
@@ -706,6 +739,12 @@ public final class ToolHelper {
 				trait.onHit(stack, attacker, target, damage, isCritical);
 				// reset hurt reristant time
 				target.hurtResistantTime = hurtResistantTime;
+			}
+			
+			// apply fire aspect
+			int j = EnchantmentHelper.getFireAspectModifier(attacker);
+			if (j > 0 && !targetEntity.isBurning()) {
+				targetEntity.setFire(1);
 			}
 		}
 
