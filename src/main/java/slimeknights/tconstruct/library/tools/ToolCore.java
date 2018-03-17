@@ -693,10 +693,10 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
      * Return the enchantability factor of the item, most of the time is based on material.
      */
 	@Override
-    public int getItemEnchantability()
+    public int getItemEnchantability(ItemStack stack)
     {
 		if( canContainSwordEnchantments() || canContainBowEnchantments() || canContainDigToolEnchantments() )
-			return 1;
+			return ToolHelper.getEnchantabilityStat(stack);
 		return 0;
     }
 }

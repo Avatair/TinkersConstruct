@@ -409,86 +409,86 @@ public final class TinkerMaterials {
 	public void registerToolMaterialStats() {
 		// Stats: Durability, speed, attack, handle, extra, harvestlevel
 		// natural resources/blocks
-		TinkerRegistry.addMaterialStats(wood, new HeadMaterialStats(35, 2.00f, 2.00f, STONE),
+		TinkerRegistry.addMaterialStats(wood, new HeadMaterialStats(35, 2.00f, 2.00f, STONE, 15),
 				new HandleMaterialStats(1.00f, 25), new ExtraMaterialStats(15));
 
-		TinkerRegistry.addMaterialStats(stone, new HeadMaterialStats(120, 4.00f, 3.00f, IRON),
+		TinkerRegistry.addMaterialStats(stone, new HeadMaterialStats(120, 4.00f, 3.00f, IRON, 5),
 				new HandleMaterialStats(0.50f, -50), new ExtraMaterialStats(20));
-		TinkerRegistry.addMaterialStats(flint, new HeadMaterialStats(150, 5.00f, 2.90f, IRON),
+		TinkerRegistry.addMaterialStats(flint, new HeadMaterialStats(150, 5.00f, 2.90f, IRON, 5),
 				new HandleMaterialStats(0.60f, -60), new ExtraMaterialStats(40));
-		TinkerRegistry.addMaterialStats(cactus, new HeadMaterialStats(210, 4.00f, 3.40f, IRON),
-				new HandleMaterialStats(0.85f, 20), new ExtraMaterialStats(50));
-		TinkerRegistry.addMaterialStats(bone, new HeadMaterialStats(200, 5.09f, 2.50f, IRON),
-				new HandleMaterialStats(1.10f, 50), new ExtraMaterialStats(65));
-		TinkerRegistry.addMaterialStats(obsidian, new HeadMaterialStats(139, 7.07f, 4.20f, COBALT),
-				new HandleMaterialStats(0.90f, -100), new ExtraMaterialStats(90));
-		TinkerRegistry.addMaterialStats(prismarine, new HeadMaterialStats(430, 5.50f, 6.00f, IRON),
-				new HandleMaterialStats(0.60f, -150), new ExtraMaterialStats(100));
-		TinkerRegistry.addMaterialStats(endstone, new HeadMaterialStats(420, 3.23f, 3.23f, OBSIDIAN),
-				new HandleMaterialStats(0.85f, 0), new ExtraMaterialStats(42));
-		TinkerRegistry.addMaterialStats(paper, new HeadMaterialStats(12, 0.51f, 0.05f, STONE),
-				new HandleMaterialStats(0.10f, 5), new ExtraMaterialStats(15));
-		TinkerRegistry.addMaterialStats(sponge, new HeadMaterialStats(1050, 3.02f, 0.00f, STONE),
-				new HandleMaterialStats(1.20f, 250), new ExtraMaterialStats(250));
+		TinkerRegistry.addMaterialStats(cactus, new HeadMaterialStats(210, 4.00f, 3.40f, IRON, 10),
+				new HandleMaterialStats(0.85f, 20), new ExtraMaterialStats(50));	// Balancing: Bio = Enchantability zw. wood und stone
+		TinkerRegistry.addMaterialStats(bone, new HeadMaterialStats(200, 5.09f, 2.50f, IRON, 10),
+				new HandleMaterialStats(1.10f, 50), new ExtraMaterialStats(65));	// Balancing: Bio
+		TinkerRegistry.addMaterialStats(obsidian, new HeadMaterialStats(139, 7.07f, 4.20f, COBALT, 10), 
+				new HandleMaterialStats(0.90f, -100), new ExtraMaterialStats(90));  // Balancing: Hart = Enchantability Diamond
+		TinkerRegistry.addMaterialStats(prismarine, new HeadMaterialStats(430, 5.50f, 6.00f, IRON, 14),
+				new HandleMaterialStats(0.60f, -150), new ExtraMaterialStats(100));  // Balancing: Eisen = stats ähnlich zu Eisen
+		TinkerRegistry.addMaterialStats(endstone, new HeadMaterialStats(420, 3.23f, 3.23f, OBSIDIAN, 18),
+				new HandleMaterialStats(0.85f, 0), new ExtraMaterialStats(42));    // Balancing: Endstone = magisch, aber nicht so wie Gold, da stats zu hoch
+		TinkerRegistry.addMaterialStats(paper, new HeadMaterialStats(12, 0.51f, 0.05f, STONE, 30),
+				new HandleMaterialStats(0.10f, 5), new ExtraMaterialStats(15));   // Balancing: Weich = mehr als Gold
+		TinkerRegistry.addMaterialStats(sponge, new HeadMaterialStats(1050, 3.02f, 0.00f, STONE, 6),
+				new HandleMaterialStats(1.20f, 250), new ExtraMaterialStats(250));  // Balancing: Extra Hart = kleiner als Diamond
 
 		// Slime
-		TinkerRegistry.addMaterialStats(slime, new HeadMaterialStats(1000, 4.24f, 1.80f, STONE),
-				new HandleMaterialStats(0.70f, 0), new ExtraMaterialStats(350));
-		TinkerRegistry.addMaterialStats(blueslime, new HeadMaterialStats(780, 4.03f, 1.80f, STONE),
-				new HandleMaterialStats(1.30f, -50), new ExtraMaterialStats(200));
-		TinkerRegistry.addMaterialStats(knightslime, new HeadMaterialStats(850, 5.8f, 5.10f, OBSIDIAN),
-				new HandleMaterialStats(0.50f, 500), new ExtraMaterialStats(125));
-		TinkerRegistry.addMaterialStats(magmaslime, new HeadMaterialStats(600, 2.1f, 7.00f, STONE),
-				new HandleMaterialStats(0.85f, -200), new ExtraMaterialStats(150));
+		TinkerRegistry.addMaterialStats(slime, new HeadMaterialStats(1000, 4.24f, 1.80f, STONE, 6),
+				new HandleMaterialStats(0.70f, 0), new ExtraMaterialStats(350));   // Balancing: Extra Hart = kleiner als Diamond
+		TinkerRegistry.addMaterialStats(blueslime, new HeadMaterialStats(780, 4.03f, 1.80f, STONE, 7),
+				new HandleMaterialStats(1.30f, -50), new ExtraMaterialStats(200));   // Balancing: Extra Hart = kleiner als Diamond
+		TinkerRegistry.addMaterialStats(knightslime, new HeadMaterialStats(850, 5.8f, 5.10f, OBSIDIAN, 6),
+				new HandleMaterialStats(0.50f, 500), new ExtraMaterialStats(125));   // Balancing: Extra Hart = kleiner als Diamond
+		TinkerRegistry.addMaterialStats(magmaslime, new HeadMaterialStats(600, 2.1f, 7.00f, STONE, 10),
+				new HandleMaterialStats(0.85f, -200), new ExtraMaterialStats(150));   // Balancing: Extra Hart = kleiner als Diamond
 
 		// Nether
-		TinkerRegistry.addMaterialStats(netherrack, new HeadMaterialStats(270, 4.50f, 3.00f, IRON),
-				new HandleMaterialStats(0.85f, -150), new ExtraMaterialStats(75));
-		TinkerRegistry.addMaterialStats(cobalt, new HeadMaterialStats(780, 12.00f, 4.10f, COBALT),
-				new HandleMaterialStats(0.90f, 100), new ExtraMaterialStats(300));
-		TinkerRegistry.addMaterialStats(ardite, new HeadMaterialStats(990, 3.50f, 3.60f, COBALT),
-				new HandleMaterialStats(1.40f, -200), new ExtraMaterialStats(450));
-		TinkerRegistry.addMaterialStats(manyullyn, new HeadMaterialStats(820, 7.02f, 8.72f, COBALT),
-				new HandleMaterialStats(0.50f, 250), new ExtraMaterialStats(50));
-		TinkerRegistry.addMaterialStats(firewood, new HeadMaterialStats(550, 6.00f, 5.50f, STONE),
-				new HandleMaterialStats(1.0f, -200), new ExtraMaterialStats(150));
+		TinkerRegistry.addMaterialStats(netherrack, new HeadMaterialStats(270, 4.50f, 3.00f, IRON, 5),
+				new HandleMaterialStats(0.85f, -150), new ExtraMaterialStats(75));    // Balancing: Stein
+		TinkerRegistry.addMaterialStats(cobalt, new HeadMaterialStats(780, 12.00f, 4.10f, COBALT, 8),
+				new HandleMaterialStats(0.90f, 100), new ExtraMaterialStats(300));    // Balancing: Extra Hart = kleiner als Diamond
+		TinkerRegistry.addMaterialStats(ardite, new HeadMaterialStats(990, 3.50f, 3.60f, COBALT, 6),
+				new HandleMaterialStats(1.40f, -200), new ExtraMaterialStats(450));    // Balancing: Extra Hart = kleiner als Diamond
+		TinkerRegistry.addMaterialStats(manyullyn, new HeadMaterialStats(820, 7.02f, 8.72f, COBALT, 7),
+				new HandleMaterialStats(0.50f, 250), new ExtraMaterialStats(50));    // Balancing: Extra Hart = kleiner als Diamond
+		TinkerRegistry.addMaterialStats(firewood, new HeadMaterialStats(550, 6.00f, 5.50f, STONE, 15),
+				new HandleMaterialStats(1.0f, -200), new ExtraMaterialStats(150));   // Balancing: Holz
 
 		// Metals
-		TinkerRegistry.addMaterialStats(iron, new HeadMaterialStats(204, 6.00f, 4.00f, DIAMOND),
-				new HandleMaterialStats(0.85f, 60), new ExtraMaterialStats(50));
-		TinkerRegistry.addMaterialStats(pigiron, new HeadMaterialStats(380, 6.20f, 4.50f, OBSIDIAN),
-				new HandleMaterialStats(1.20f, -100), new ExtraMaterialStats(170));
+		TinkerRegistry.addMaterialStats(iron, new HeadMaterialStats(204, 6.00f, 4.00f, DIAMOND, 14),
+				new HandleMaterialStats(0.85f, 60), new ExtraMaterialStats(50));   // Balancing: Eisen
+		TinkerRegistry.addMaterialStats(pigiron, new HeadMaterialStats(380, 6.20f, 4.50f, OBSIDIAN, 13),
+				new HandleMaterialStats(1.20f, -100), new ExtraMaterialStats(170));   // Balancing: Eisen
 
 		// Mod Integration
-		TinkerRegistry.addMaterialStats(copper, new HeadMaterialStats(210, 5.30f, 3.00f, IRON),
-				new HandleMaterialStats(1.05f, 30), new ExtraMaterialStats(100));
+		TinkerRegistry.addMaterialStats(copper, new HeadMaterialStats(210, 5.30f, 3.00f, IRON, 13),
+				new HandleMaterialStats(1.05f, 30), new ExtraMaterialStats(100));  // Balancing: Eisen
 
-		TinkerRegistry.addMaterialStats(bronze, new HeadMaterialStats(430, 6.80f, 3.50f, DIAMOND),
-				new HandleMaterialStats(1.10f, 70), new ExtraMaterialStats(80));
+		TinkerRegistry.addMaterialStats(bronze, new HeadMaterialStats(430, 6.80f, 3.50f, DIAMOND, 12),
+				new HandleMaterialStats(1.10f, 70), new ExtraMaterialStats(80));   // Balancing: Hart
 
-		TinkerRegistry.addMaterialStats(lead, new HeadMaterialStats(334, 5.25f, 3.50f, IRON),
-				new HandleMaterialStats(0.70f, -50), new ExtraMaterialStats(100));
+		TinkerRegistry.addMaterialStats(lead, new HeadMaterialStats(334, 5.25f, 3.50f, IRON, 13),
+				new HandleMaterialStats(0.70f, -50), new ExtraMaterialStats(100));   // Balancing: Hart
 
-		TinkerRegistry.addMaterialStats(silver, new HeadMaterialStats(250, 5.00f, 5.00f, IRON),
-				new HandleMaterialStats(0.95f, 50), new ExtraMaterialStats(150));
+		TinkerRegistry.addMaterialStats(silver, new HeadMaterialStats(250, 5.00f, 5.00f, IRON, 15),
+				new HandleMaterialStats(0.95f, 50), new ExtraMaterialStats(150));   // Balancing: Weich
 
-		TinkerRegistry.addMaterialStats(electrum, new HeadMaterialStats(50, 12.00f, 3.00f, IRON),
-				new HandleMaterialStats(1.10f, -25), new ExtraMaterialStats(250));
+		TinkerRegistry.addMaterialStats(electrum, new HeadMaterialStats(50, 12.00f, 3.00f, IRON, 22),
+				new HandleMaterialStats(1.10f, -25), new ExtraMaterialStats(250));    // Balancing: Magisch
 
-		TinkerRegistry.addMaterialStats(steel, new HeadMaterialStats(540, 7.00f, 6.00f, OBSIDIAN),
-				new HandleMaterialStats(0.9f, 150), new ExtraMaterialStats(25));
+		TinkerRegistry.addMaterialStats(steel, new HeadMaterialStats(540, 7.00f, 6.00f, OBSIDIAN, 10),
+				new HandleMaterialStats(0.9f, 150), new ExtraMaterialStats(25));    // Balancing: Hart
 
-		TinkerRegistry.addMaterialStats(magnite, new HeadMaterialStats(10, 16.00f, 11.00f, OBSIDIAN),
-				new HandleMaterialStats(1.0f, 30), new ExtraMaterialStats(25));
+		TinkerRegistry.addMaterialStats(magnite, new HeadMaterialStats(10, 16.00f, 11.00f, OBSIDIAN, 18),
+				new HandleMaterialStats(1.0f, 30), new ExtraMaterialStats(25));     // Balancing: Magisch
 		
-		TinkerRegistry.addMaterialStats(manalite, new HeadMaterialStats(200, 3.00f, 3.00f, OBSIDIAN),
-				new HandleMaterialStats(0.5f, 150), new ExtraMaterialStats(30));
+		TinkerRegistry.addMaterialStats(manalite, new HeadMaterialStats(200, 3.00f, 3.00f, OBSIDIAN, 18),
+				new HandleMaterialStats(0.5f, 150), new ExtraMaterialStats(30));    // Balancing: Magisch
 		
-		TinkerRegistry.addMaterialStats(hexcite, new HeadMaterialStats(300, 6.00f, 4.00f, OBSIDIAN),
-				new HandleMaterialStats(0.8f, 80), new ExtraMaterialStats(40));
+		TinkerRegistry.addMaterialStats(hexcite, new HeadMaterialStats(300, 6.00f, 4.00f, OBSIDIAN, 13),
+				new HandleMaterialStats(0.8f, 80), new ExtraMaterialStats(40));		// Balancing: Hart
 		
-		TinkerRegistry.addMaterialStats(aquamarine, new HeadMaterialStats(100, 4.50f, 1.50f, OBSIDIAN),
-				new HandleMaterialStats(0.5f, 100), new ExtraMaterialStats(40));
+		TinkerRegistry.addMaterialStats(aquamarine, new HeadMaterialStats(100, 4.50f, 1.50f, OBSIDIAN, 15),
+				new HandleMaterialStats(0.5f, 100), new ExtraMaterialStats(40));	// Balancing: Weich = wie Holz
 
 		// TinkerRegistry.addMaterialStats(xu, new ToolMaterialStats(97, 1.00f, 1.00f,
 		// 0.10f, 0.20f, DIAMOND));

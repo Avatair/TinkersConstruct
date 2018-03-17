@@ -37,7 +37,7 @@ public class DumpMaterialTest extends CommandBase {
 
   public DumpMaterialTest() {
     baseMaterial = new Material("Baseline", TextFormatting.WHITE);
-    baseMaterial.addStats(new HeadMaterialStats(500, 10, 10, 1));
+    baseMaterial.addStats(new HeadMaterialStats(500, 10, 10, 1, 10));
   }
 
   @Override

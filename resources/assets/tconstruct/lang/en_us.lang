@@ -580,6 +580,8 @@ stat.head.harvestlevel.name=Mining Level
 stat.head.harvestlevel.desc=What range of blocks a tool with a tool head of this material can mine.
 stat.head.attack.name=Attack
 stat.head.attack.desc=Base value for attack calculations.\nThe end result depends on the tool itself and the other components used.
+stat.head.enchantability.name=Enchantability
+stat.head.enchantability.desc=Enchantability for enchantment table.
 
 stat.handle.name=Handle
 stat.handle.modifier.name=Modifier

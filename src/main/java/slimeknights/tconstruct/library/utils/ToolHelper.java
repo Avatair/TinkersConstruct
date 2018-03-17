@@ -88,6 +88,10 @@ public final class ToolHelper {
 	public static float getAttackStat(ItemStack stack) {
 		return (float)getIntTag(stack, Tags.ATTACK) / Tags.FLOAT_ACCURACY;
 	}
+	
+	public static int getEnchantabilityStat(ItemStack stack) {
+		return getIntTag(stack, Tags.ENCHANTABILITY);
+	}
 
 	public static float getActualAttack(ItemStack stack) {
 		float damage = getAttackStat(stack);
