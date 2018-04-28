@@ -59,7 +59,7 @@ public class TinkerIntegration extends TinkerPulse {
     integrate(TinkerMaterials.iron, TinkerFluids.iron, "Iron").toolforge();
     integrate(TinkerMaterials.pigiron, TinkerFluids.pigIron, "Pigiron").toolforge();
 //  integrate(TinkerMaterials.ender, TinkerFluids.moltenEnder, "Ender");
-    integrate(TinkerFluids.moltenEnder, "Ender");
+    integrate(TinkerFluids.moltenEnder, "Enderium");
     
     integrate(TinkerMaterials.knightslime, TinkerFluids.knightslime, "Knightslime").toolforge();
     integrate(TinkerMaterials.slime, "slimecrystalGreen");
