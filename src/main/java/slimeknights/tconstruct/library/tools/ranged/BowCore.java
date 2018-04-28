@@ -171,8 +171,8 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
       return;
     }
 
-	if (ammo.isEmpty() && isInfiniteAmmo) {
-		ammo = getInfiniteProjectileStack();
+	if (ammo.isEmpty()) {
+		ammo = getCreativeProjectileStack();
 	}
 
 	shootProjectile(ammo, stack, worldIn, player, useTime, isInfiniteAmmo);
@@ -285,8 +285,8 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
   }
 
   @Nonnull
-  protected ItemStack getInfiniteProjectileStack() {
-    return new ItemStack(Items.ARROW);
+  protected ItemStack getCreativeProjectileStack() {
+	return new ItemStack(Items.ARROW);
   }
 
   public void playShootSound(float power, World world, EntityPlayer entityPlayer) {
