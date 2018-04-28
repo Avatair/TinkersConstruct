@@ -6,8 +6,11 @@
     },
 	"variants": {
         "type": {
-            "mudbrick": {
-                "textures": { "all": "tconstruct:blocks/mud_brick" }
+            "mudbrick_dried": {
+                "textures": { "all": "tconstruct:blocks/mud_brick_dried" }
+            },
+            "mudbrick_cooked": {
+                "textures": { "all": "tconstruct:blocks/mud_brick_cooked" }
             }
         }
     }

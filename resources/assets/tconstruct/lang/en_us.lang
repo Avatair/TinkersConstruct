@@ -11,6 +11,7 @@ tile.tconstruct.tooltables.patternchest.tooltip=Holds either patterns or casts
 tile.tconstruct.tooltables.partchest.name=Part Chest
 tile.tconstruct.tooltables.partchest.tooltip=Can hold a large amount of toolparts
 tile.tconstruct.toolforge.name=Tool Forge
+tile.tconstruct.tinker_anvil.anvil.name=Tinker Anvil
 
 tile.tconstruct.soil.grout.name=Grout
 tile.tconstruct.soil.grout.tooltip=I am Grout!
@@ -25,8 +26,11 @@ tile.tconstruct.soil.graveyard.tooltip=Heals undead
 tile.tconstruct.soil.consecrated.name=Consecrated Soil
 tile.tconstruct.soil.consecrated.tooltip=Hurts undead
 
-tile.tconstruct.deco_ground.mudbrick.name=Mud Bricks
-tile.tconstruct.deco_ground_slab.mudbrick.name=Mud Bricks Slab
+tile.tconstruct.deco_ground_raw.mudbrick_raw.name=Wet Mud Bricks
+tile.tconstruct.deco_ground.mudbrick_dried.name=Mud Bricks
+tile.tconstruct.deco_ground.mudbrick_cooked.name=Hardened Mud Bricks
+tile.tconstruct.deco_ground_slab.mudbrick_dried.name=Mud Bricks Slab
+tile.tconstruct.deco_ground_slab.mudbrick_cooked.name=Hardened Mud Bricks Slab
 tile.tconstruct.mudbrick_stairs.name=Mud Bricks Stairs
 
 tile.tconstruct.ore.cobalt.name=Cobalt Ore
@@ -40,6 +44,7 @@ tile.tconstruct.metal.knightslime.name=Block of Knightslime
 tile.tconstruct.metal.pigiron.name=Block of Pigiron
 tile.tconstruct.metal.alubrass.name=Block of Aluminum Brass
 tile.tconstruct.metal.silky_jewel.name=Silky Block of Jewel
+tile.tconstruct.metal.ender.name=Block of Solid Ender
 
 tile.tconstruct.firewood.lavawood.name=Lavawood
 tile.tconstruct.firewood.firewood.name=Firewood
@@ -307,6 +312,7 @@ item.tconstruct.ingots.knightslime.tooltip=Slimy yet metallic but also stone? Fa
 item.tconstruct.ingots.pigiron.name=Pigiron Ingot
 item.tconstruct.ingots.pigiron.tooltip=Oink!
 item.tconstruct.ingots.alubrass.name=Aluminum Brass Ingot
+item.tconstruct.ingots.ender.name=Solid Ender Ingot
 
 item.tconstruct.nuggets.cobalt.name=Cobalt Nugget
 item.tconstruct.nuggets.ardite.name=Ardite Nugget
@@ -314,6 +320,7 @@ item.tconstruct.nuggets.manyullyn.name=Manyullyn Nugget
 item.tconstruct.nuggets.knightslime.name=Knightslime Nugget
 item.tconstruct.nuggets.pigiron.name=Pigiron Nugget
 item.tconstruct.nuggets.alubrass.name=Aluminum Brass Nugget
+item.tconstruct.nuggets.ender.name=Solid Ender Nugget
 
 item.tconstruct.pattern.blank=Blank Pattern
 item.tconstruct.pattern.name=%s Pattern
@@ -499,6 +506,8 @@ fluid.tconstruct.electrum.name=Molten Electrum
 fluid.tconstruct.steel.name=Molten Steel
 fluid.tconstruct.aluminum.name=Molten Aluminum
 fluid.tconstruct.alubrass.name=Molten Aluminum Brass
+fluid.tconstruct.ender.name=Molten Ender
+fluid.tconstruct.magnite.name=Molten Magnite
 
 #################
 #    Potions    #
@@ -542,6 +551,9 @@ material.lead.name=Lead
 material.silver.name=Silver
 material.electrum.name=Electrum
 material.steel.name=Steel
+material.magnite.name=Magnite
+material.hexcite.name=Hexcite
+material.manalite.name=Manalite
 
 material.string.name=String
 material.vine.name=Vines
@@ -572,6 +584,8 @@ stat.head.harvestlevel.name=Mining Level
 stat.head.harvestlevel.desc=What range of blocks a tool with a tool head of this material can mine.
 stat.head.attack.name=Attack
 stat.head.attack.desc=Base value for attack calculations.\nThe end result depends on the tool itself and the other components used.
+stat.head.enchantability.name=Enchantability
+stat.head.enchantability.desc=Enchantability for enchantment table.
 
 stat.handle.name=Handle
 stat.handle.modifier.name=Modifier
@@ -922,6 +936,7 @@ gui.partbuilder.material_value=Material Value: %s %s
 # Tool Station/Forge
 gui.toolstation.name=Tool Station
 gui.toolforge.name=Tool Forge
+gui.tinkersanvil.name=Tinker Anvil
 gui.toolstation.repair=Repair & Modify
 gui.toolstation.traits=Traits
 gui.toolstation.components=Components

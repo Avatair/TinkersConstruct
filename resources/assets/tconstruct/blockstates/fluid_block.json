@@ -34,6 +34,9 @@
         "emerald": [{
             "custom": { "fluid": "emerald" }
         }],
+        "ender": [{
+            "custom": { "fluid": "ender" }
+        }],
         "glass": [{
             "custom": { "fluid": "glass" }
         }],
@@ -78,6 +81,9 @@
         }],
         "steel": [{
             "custom": { "fluid": "steel" }
+        }],
+        "magnite": [{
+            "custom": { "fluid": "magnite" }
         }],
         "aluminum": [{
             "custom": { "fluid": "aluminum" }

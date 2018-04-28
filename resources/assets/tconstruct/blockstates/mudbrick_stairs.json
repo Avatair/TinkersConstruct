@@ -4,7 +4,7 @@
         "model": "stairs",
         "uvlock": true,
         "textures": {
-            "all": "tconstruct:blocks/mud_brick",
+            "all": "tconstruct:blocks/mud_brick_dried",
             "bottom": "#all",
             "top": "#all",
             "side": "#all"

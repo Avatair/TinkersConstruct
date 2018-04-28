@@ -11,6 +11,7 @@ tile.tconstruct.tooltables.patternchest.tooltip=Kann mit Schablonen und Gussform
 tile.tconstruct.tooltables.partchest.name=Werkzeugteiltruhe
 tile.tconstruct.tooltables.partchest.tooltip=Kann mit großen Mengen von Werkzeugteilen gefüllt werden
 tile.tconstruct.toolforge.name=Werkzeugesse
+tile.tconstruct.tinker_anvil.anvil.name=Tinker Amboss
 
 tile.tconstruct.soil.grout.name=Mörtel
 tile.tconstruct.soil.grout.tooltip=Ich bin Mörtel!
@@ -877,6 +878,7 @@ gui.partbuilder.material_value=Materialwert: %s %s
 # Tool Station/Forge
 gui.toolstation.name=Werkzeugstation
 gui.toolforge.name=Werkzeugesse
+gui.tinkersanvil.name=Tinker Amboss
 gui.toolstation.repair=Reparieren & Modifizieren
 gui.toolstation.traits=Eigenschaften
 gui.toolstation.components=Komponenten
