@@ -13,6 +13,8 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -54,10 +56,17 @@ public class EnumEnchantmentTypeTransformer implements IClassTransformer
         for (MethodNode methodNode : classNode.methods)
         {
             if (ASMHelper.methodEquals(methodNode, CAN_ENCHANT_ITEM_NAMES, methodDescriptor)) {
+            	
+            	LabelNode defaultBranch = new LabelNode();
+            	
                 InsnList insnList = new InsnList();
                 insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                 insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, className, methodName, methodDescriptor, false) );
+                insnList.add(new InsnNode(Opcodes.ICONST_1));
+                insnList.add(new JumpInsnNode(Opcodes.IF_ICMPNE, defaultBranch));
+                insnList.add(new InsnNode(Opcodes.ICONST_1));
                 insnList.add(new InsnNode(Opcodes.IRETURN));
+                insnList.add(defaultBranch);
                 
                 //Insert our new instructions before returning
                 methodNode.instructions.insertBefore(methodNode.instructions.get(0), insnList);

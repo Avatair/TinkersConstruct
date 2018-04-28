@@ -27,15 +27,15 @@ public class ToolASMHelper {
 	// asm entry points
 	
 	public static boolean canEnchantWeaponItem(Item itemIn) {
-		return itemIn instanceof ItemSword || isTinkerSwordWeapon(itemIn);	// 7
+		return /*itemIn instanceof ItemSword ||*/ isTinkerSwordWeapon(itemIn);	// 7
 	}
 	
 	public static boolean canEnchantDiggerItem(Item itemIn) {
-		return itemIn instanceof ItemTool || isTinkerDigTool(itemIn);	// 8
+		return /*itemIn instanceof ItemTool ||*/ isTinkerDigTool(itemIn);	// 8
 	}
 	
 	public static boolean canEnchantBowItem(Item itemIn) {
-		return itemIn instanceof ItemBow || isTinkerRangeWeapon(itemIn);	// 11
+		return /*itemIn instanceof ItemBow ||*/ isTinkerRangeWeapon(itemIn);	// 11
 	}
 
 }
