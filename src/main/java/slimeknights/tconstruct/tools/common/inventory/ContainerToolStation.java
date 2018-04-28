@@ -9,6 +9,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldServer;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.Sounds;
 import slimeknights.tconstruct.common.TinkerNetwork;
 import slimeknights.tconstruct.library.TinkerRegistry;
+import slimeknights.tconstruct.library.Util;
 import slimeknights.tconstruct.library.events.TinkerCraftingEvent;
 import slimeknights.tconstruct.library.modifiers.TinkerGuiException;
 import slimeknights.tconstruct.library.tinkering.IModifyable;
@@ -27,6 +29,7 @@ import slimeknights.tconstruct.library.tinkering.IRepairable;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tinkering.TinkersItem;
 import slimeknights.tconstruct.library.tools.ToolCore;
+import slimeknights.tconstruct.library.utils.TagUtil;
 import slimeknights.tconstruct.library.utils.ToolBuilder;
 import slimeknights.tconstruct.tools.common.client.GuiToolStation;
 import slimeknights.tconstruct.tools.common.network.ToolStationSelectionPacket;
@@ -139,6 +142,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       }
     }
 
+    onCraftMatrixChanged(tile);
     if(out.getHasStack()) {
       if(name != null && !name.isEmpty()) {
         out.inventory.getStackInSlot(0).setStackDisplayName(name);
@@ -238,7 +242,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
   }
 
   private ItemStack repairTool(boolean remove) {
-    ItemStack repairable = inventorySlots.get(0).getStack();
+    ItemStack repairable = getToolStack();
 
     // modifying possible?
     if(repairable.isEmpty() || !(repairable.getItem() instanceof IRepairable)) {
@@ -249,7 +253,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
   }
 
   private ItemStack replaceToolParts(boolean remove) throws TinkerGuiException {
-    ItemStack tool = inventorySlots.get(0).getStack();
+    ItemStack tool = getToolStack();
 
     if(tool.isEmpty() || !(tool.getItem() instanceof TinkersItem)) {
       return ItemStack.EMPTY;
@@ -263,7 +267,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
   }
 
   private ItemStack modifyTool(boolean remove) throws TinkerGuiException {
-    ItemStack modifyable = inventorySlots.get(0).getStack();
+    ItemStack modifyable = getToolStack();
 
     // modifying possible?
     if(modifyable.isEmpty() || !(modifyable.getItem() instanceof IModifyable)) {
@@ -278,21 +282,22 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
   }
   
   private ItemStack renameTool(boolean remove) throws TinkerGuiException {
-	ItemStack modifyable = inventorySlots.get(0).getStack();
+	ItemStack modifyable = getToolStack();
 
 	// modifying possible?
-	if (modifyable.isEmpty()) {
-	  return ItemStack.EMPTY;
-	}
-
-	// renaming possible?
-	if (toolName == null || toolName.isEmpty())
-	  return ItemStack.EMPTY;
-	if (modifyable.getDisplayName().equals(toolName))
-	  return ItemStack.EMPTY;
+    if(tool.isEmpty() ||
+       !(tool.getItem() instanceof TinkersItem) ||
+       StringUtils.isNullOrEmpty(toolName) ||
+       tool.getDisplayName().equals(toolName)) {
+      return ItemStack.EMPTY;
+    }
 
 	// rename tool
 	ItemStack newTool = modifyable.copy();
+    if(TagUtil.getNoRenameFlag(result)) {
+      throw new TinkerGuiException(Util.translate("gui.error.no_rename"));
+    }
+    
 	newTool.setStackDisplayName(toolName);
 	if (remove)
 	  modifyable.setCount(0);
@@ -318,6 +323,9 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
 	return TinkerRegistry.getToolForgeCrafting();
   }
 
+  private ItemStack getToolStack() {
+    return inventorySlots.get(0).getStack();
+  }
 
   /**
    * Removes the tool in the input slot and fixes all stacks that have stacksize 0 after being used up.

@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -88,9 +89,10 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
 
   @Override
   public void setDamage(ItemStack stack, int damage) {
-    super.setDamage(stack, damage);
+    int max = getMaxDamage(stack);
+    super.setDamage(stack, Math.min(max, damage));
 
-    if(getDamage(stack) == getMaxDamage(stack)) {
+    if(getDamage(stack) == max) {
       ToolHelper.breakTool(stack, null);
     }
   }
@@ -448,20 +450,33 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
     List<Material> materials = ImmutableList.of(TinkerMaterials.slime, TinkerMaterials.cobalt, TinkerMaterials.ardite, TinkerMaterials.ardite);
     materials = materials.subList(0, requiredComponents.length);
     ItemStack tool = buildItem(materials);
-    InfiTool.INSTANCE.apply(tool);
     tool.setStackDisplayName(name);
+    InfiTool.INSTANCE.apply(tool);
 
     return tool;
   }
 
   @Override
   public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
+    if(ToolHelper.isBroken(stack)) {
+      return -1;
+    }
+
     if(this.getToolClasses(stack).contains(toolClass)) {
       // will return 0 if the tag has no info anyway
       return ToolHelper.getHarvestLevelStat(stack);
     }
 
     return super.getHarvestLevel(stack, toolClass, player, blockState);
+  }
+
+  @Override
+  public Set<String> getToolClasses(ItemStack stack) {
+    // no classes if broken
+    if(ToolHelper.isBroken(stack)) {
+      return Collections.emptySet();
+    }
+    return super.getToolClasses(stack);
   }
 
   /** A simple string identifier for the tool, used for identification in texture generation etc. */

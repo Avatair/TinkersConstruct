@@ -189,7 +189,7 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
     TagUtil.setResetFlag(stack, true);
   }
 
-  public void shootProjectile(@Nonnull ItemStack ammo, @Nonnull ItemStack bow, World worldIn, EntityPlayer player,
+  public void shootProjectile(@Nonnull ItemStack ammoIn, @Nonnull ItemStack bow, World worldIn, EntityPlayer player,
 	  int useTime, boolean isInfiniteAmmo) {
     float progress = getDrawbackProgress(bow, useTime);
     float power = ItemBow.getArrowVelocity((int)(progress * 20f)) * progress * baseProjectileSpeed();
@@ -198,7 +198,7 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
     power *= ProjectileLauncherNBT.from(bow).range;
 
     if(!worldIn.isRemote) {
-      TinkerToolEvent.OnBowShoot event = TinkerToolEvent.OnBowShoot.fireEvent(bow, ammo, player, useTime,
+      TinkerToolEvent.OnBowShoot event = TinkerToolEvent.OnBowShoot.fireEvent(bow, ammoIn, player, useTime,
 		baseInaccuracy());
 		
       int powerLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, bow);
@@ -208,7 +208,7 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
       for(int i = 0; i < event.projectileCount; i++) {
         boolean usedAmmo = false;
 		if (!isInfiniteAmmo && (i == 0 || event.consumeAmmoPerProjectile)) {
-          usedAmmo = consumeAmmo(ammo, player);
+          usedAmmo = consumeAmmo(ammoIn, player);
         }
         float inaccuracy = event.getBaseInaccuracy();
         if(i > 0) {
@@ -222,7 +222,7 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
         if (flameLevel > 0)
         	fireTime += 100;
 		
-		EntityArrow projectile = getProjectileEntity(ammo, bow, worldIn, player, power, punch, fireTime, inaccuracy,
+		EntityArrow projectile = getProjectileEntity(ammoIn, bow, worldIn, player, power, punch, fireTime, inaccuracy,
 				progress * progress, usedAmmo);
 
         if(projectile != null && ProjectileEvent.OnLaunch.fireEvent(projectile, bow, player)) {
