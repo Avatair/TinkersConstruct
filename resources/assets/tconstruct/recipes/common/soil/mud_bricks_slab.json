@@ -17,16 +17,17 @@
     "type": "minecraft:crafting_shaped",
     "group": "tconstruct:mud_brick_slab",
     "pattern": [
-        "AA"
+        "AAA"
     ],
     "key": {
         "A": {
-            "item": "tconstruct:materials",
-            "data": 1
+            "item": "tconstruct:deco_ground",
+            "data": 0
         }
     },
     "result": {
         "item": "tconstruct:deco_ground_slab",
+		"count": 6,
         "data": 0
     }
 }

@@ -41,6 +41,7 @@ import slimeknights.tconstruct.library.materials.MaterialTypes;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ProjectileLauncherNBT;
 import slimeknights.tconstruct.library.tools.ranged.BowCore;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.TagUtil;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerMaterials;
@@ -67,6 +68,18 @@ public class CrossBow extends BowCore implements ICustomCrosshairUser {
         return entityIn != null && isLoaded(stack);
       }
     });
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public Pair<Integer, Integer>[] getRepairParts() {
+	// return new int[]{0, 1};
+	return new Pair[] {
+	  new Pair<Integer, Integer>(1, 20),
+	  new Pair<Integer, Integer>(0, 20),
+	  new Pair<Integer, Integer>(3, 20),
+	  new Pair<Integer, Integer>(1, 40)
+	};
   }
 
   @Override

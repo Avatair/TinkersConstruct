@@ -26,7 +26,7 @@
         }
     },
     "result": {
-        "item": "tconstruct:deco_ground",
+        "item": "tconstruct:deco_ground_raw",
         "data": 0
     }
 }

@@ -23,6 +23,7 @@ import slimeknights.tconstruct.library.materials.MaterialTypes;
 import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 
@@ -82,8 +83,20 @@ public class Hammer extends Pickaxe {
   }
 
   @Override
-  public int[] getRepairParts() {
-    return new int[] { 1, 2, 3 };
+  public boolean canContainDigToolEnchantments() {
+    return true;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public Pair<Integer, Integer>[] getRepairParts() {
+//	return new int[] { 1, 2, 3 };
+  	return new Pair[] {
+	  new Pair<Integer, Integer>(0, 20),
+	  new Pair<Integer, Integer>(3, 20),
+	  new Pair<Integer, Integer>(2, 20),
+	  new Pair<Integer, Integer>(1, 40)
+	};
   }
 
   @Override

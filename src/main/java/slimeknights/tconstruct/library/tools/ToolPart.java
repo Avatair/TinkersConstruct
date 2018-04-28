@@ -39,10 +39,20 @@ import slimeknights.tconstruct.library.utils.Tags;
 public class ToolPart extends MaterialItem implements IToolPart {
 
   protected int cost;
+  protected int[] toolTableSlotPrio = new int[0];
 
   public ToolPart(int cost) {
     this.setCreativeTab(TinkerRegistry.tabParts);
     this.cost = cost;
+  }
+  
+  public ToolPart assignSlotPrio(int ...prios) {
+	  this.toolTableSlotPrio = prios;
+	  return this;
+  }
+  
+  public int[] getSlotPrio() {
+	  return toolTableSlotPrio;
   }
 
   @Override

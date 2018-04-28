@@ -55,6 +55,7 @@ public class TinkerFluids extends TinkerPulse {
   public static FluidMolten knightslime;
   public static FluidMolten emerald;
   public static FluidMolten glass;
+  public static FluidMolten moltenEnder;
   public static FluidColored blood;
   public static FluidColored milk;
   public static FluidColored blueslime;
@@ -74,6 +75,7 @@ public class TinkerFluids extends TinkerPulse {
   public static FluidMolten electrum;
   public static FluidMolten steel;
   public static FluidMolten aluminum;
+  public static FluidMolten magnite;
 
   static {
     setupFluids();
@@ -86,6 +88,10 @@ public class TinkerFluids extends TinkerPulse {
     // Fluids for integration, getting registered by TinkerIntegration
     iron = fluidMetal(TinkerMaterials.iron.getIdentifier(), 0xa81212);
     iron.setTemperature(769);
+    
+	moltenEnder = fluidMetal("ender", 0x105e51);
+	moltenEnder.setTemperature(700);
+	moltenEnder.setRarity(EnumRarity.RARE);
 
     gold = fluidMetal("gold", 0xf6d609);
     gold.setTemperature(532);
@@ -149,6 +155,9 @@ public class TinkerFluids extends TinkerPulse {
 
     aluminum = fluidMetal("aluminum", 0xefe0d5);
     aluminum.setTemperature(330);
+    
+	magnite = fluidMetal(TinkerMaterials.magnite, 0xe8a70a);
+	magnite.setTemperature(500);
   }
 
   @SubscribeEvent
@@ -169,13 +178,19 @@ public class TinkerFluids extends TinkerPulse {
       registerMoltenBlock(registry, clay);
 
       dirt = fluidStone("dirt", 0xa68564);
-      dirt.setTemperature(500);
+      dirt.setTemperature(350);
       registerMoltenBlock(registry, dirt);
 
       emerald = fluidMetal("emerald", 0x58e78e);
       emerald.setTemperature(999);
       registerMoltenBlock(registry, emerald);
 
+	  /*
+	   * moltenEnder = fluidMetal("ender", 0x2c0d59); moltenEnder.setTemperature(700);
+	   * registerMoltenBlock(moltenEnder);
+	   * FluidRegistry.addBucketForFluid(moltenEnder);
+	   */
+      
       glass = fluidMetal("glass", 0xc0f5fe);
       glass.setTemperature(625);
       registerMoltenBlock(registry, glass);
@@ -261,6 +276,10 @@ public class TinkerFluids extends TinkerPulse {
     return fluidMetal(material.getIdentifier(), material.materialTextColor);
   }
 
+  private static FluidMolten fluidMetal(Material material, int fluidColor) {
+	return fluidMetal(material.getIdentifier(), fluidColor);
+  }
+  
   private static FluidMolten fluidMetal(String name, int color) {
     FluidMolten fluid = new FluidMolten(name, color);
     return registerFluid(fluid);

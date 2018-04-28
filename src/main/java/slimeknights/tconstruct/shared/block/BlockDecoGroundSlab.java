@@ -14,12 +14,12 @@ public class BlockDecoGroundSlab extends EnumBlockSlab<BlockDecoGround.DecoGroun
   public final static PropertyEnum<BlockDecoGround.DecoGroundType> TYPE = PropertyEnum.create("type", BlockDecoGround.DecoGroundType.class);
 
   public BlockDecoGroundSlab() {
-    super(Material.GROUND, TYPE, BlockDecoGround.DecoGroundType.class);
+    super(Material.ROCK, TYPE, BlockDecoGround.DecoGroundType.class);
     this.setHardness(2.0f);
 
-    this.setSoundType(SoundType.GROUND);
+    this.setSoundType(SoundType.STONE);
 
-    setHarvestLevel("shovel", -1);
+    setHarvestLevel("pickaxe", -1);
     setCreativeTab(TinkerRegistry.tabGeneral);
   }
 

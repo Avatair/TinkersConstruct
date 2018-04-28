@@ -186,7 +186,7 @@ public class ToolModelLoader implements ICustomModelLoader {
       CustomTextureCreator.registerTexture(resourceLocation);
     }
     else {
-      for(IToolPart part : toolCore.getRequiredComponents().get(i).getPossibleParts()) {
+      for(IToolPart part : toolCore.getRequiredComponents().get(i).getPossiblePartAsSet()) {
         CustomTextureCreator.registerTextureForPart(resourceLocation, part);
       }
     }

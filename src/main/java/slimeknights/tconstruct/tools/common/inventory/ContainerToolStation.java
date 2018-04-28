@@ -40,11 +40,15 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
   protected SlotToolStationOut out;
   protected ToolCore selectedTool; // needed for newly opened containers to sync
   protected int activeSlots;
+  protected final boolean bOnlyCraftable;
   public String toolName;
 
-  public ContainerToolStation(InventoryPlayer playerInventory, TileToolStation tile) {
+  public ContainerToolStation(InventoryPlayer playerInventory, TileToolStation tile, boolean bHasOut,
+	  boolean bOnlyCraftable) {
     super(tile);
 
+	this.bOnlyCraftable = bOnlyCraftable;
+    
     // input slots
     int i;
     for(i = 0; i < tile.getSizeInventory(); i++) {
@@ -53,7 +57,8 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
 
     // output slot
     out = new SlotToolStationOut(i, 124, 38, this);
-    addSlotToContainer(out);
+    if (bHasOut)
+    	addSlotToContainer(out);
     this.addPlayerInventory(playerInventory, 8, 84 + 8);
     onCraftMatrixChanged(null);
 
@@ -165,6 +170,10 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       if(result.isEmpty()) {
         result = buildTool();
       }
+      // 5. try rename the tool
+	  if (result.isEmpty()) {
+		result = renameTool(false);
+	  }
 
       out.inventory.setInventorySlotContents(0, result);
       updateGUI();
@@ -189,9 +198,8 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
     boolean resultTaken = false;
 
     try {
-      resultTaken = !repairTool(true).isEmpty() ||
-                    !replaceToolParts(true).isEmpty() ||
-                    !modifyTool(true).isEmpty();
+		resultTaken = !repairTool(true).isEmpty() || !replaceToolParts(true).isEmpty()
+				|| !modifyTool(true).isEmpty() || !renameTool(true).isEmpty();
     } catch(TinkerGuiException e) {
       // no error updating needed
       e.printStackTrace();
@@ -237,7 +245,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       return ItemStack.EMPTY;
     }
 
-    return ToolBuilder.tryRepairTool(getInputs(), repairable, remove);
+	return ToolBuilder.tryRepairTool(getInputs(), repairable, remove, bOnlyCraftable);
   }
 
   private ItemStack replaceToolParts(boolean remove) throws TinkerGuiException {
@@ -247,12 +255,11 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       return ItemStack.EMPTY;
     }
 
-    NonNullList<ItemStack> inputs = getInputs();
-    ItemStack result = ToolBuilder.tryReplaceToolParts(tool, inputs, remove);
-    if(!result.isEmpty()) {
-      TinkerCraftingEvent.ToolPartReplaceEvent.fireEvent(result, player, inputs);
-    }
-    return result;
+	NonNullList<ItemStack> invContent = getInputs();
+	ItemStack output = ToolBuilder.tryReplaceToolParts(tool, invContent, remove, bOnlyCraftable);
+	if( remove )
+		setInputs( invContent );
+	return output;
   }
 
   private ItemStack modifyTool(boolean remove) throws TinkerGuiException {
@@ -263,11 +270,34 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       return ItemStack.EMPTY;
     }
 
-    ItemStack result = ToolBuilder.tryModifyTool(getInputs(), modifyable, remove);
+    ItemStack result = ToolBuilder.tryModifyTool(getInputs(), modifyable, remove, bOnlyCraftable);
     if(!result.isEmpty()) {
       TinkerCraftingEvent.ToolModifyEvent.fireEvent(result, player, modifyable.copy());
     }
     return result;
+  }
+  
+  private ItemStack renameTool(boolean remove) throws TinkerGuiException {
+	ItemStack modifyable = inventorySlots.get(0).getStack();
+
+	// modifying possible?
+	if (modifyable.isEmpty()) {
+	  return ItemStack.EMPTY;
+	}
+
+	// renaming possible?
+	if (toolName == null || toolName.isEmpty())
+	  return ItemStack.EMPTY;
+	if (modifyable.getDisplayName().equals(toolName))
+	  return ItemStack.EMPTY;
+
+	// rename tool
+	ItemStack newTool = modifyable.copy();
+	newTool.setStackDisplayName(toolName);
+	if (remove)
+	  modifyable.setCount(0);
+
+	return newTool;
   }
 
   private ItemStack buildTool() throws TinkerGuiException {
@@ -276,7 +306,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
       input.set(i, tile.getStackInSlot(i));
     }
 
-    ItemStack result = ToolBuilder.tryBuildTool(input, toolName, getBuildableTools());
+    ItemStack result = ToolBuilder.tryBuildTool(input, toolName, getBuildableTools(), bOnlyCraftable);
     if(!result.isEmpty()) {
       TinkerCraftingEvent.ToolCraftingEvent.fireEvent(result, player, input);
     }
@@ -284,7 +314,8 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
   }
 
   protected Set<ToolCore> getBuildableTools() {
-    return TinkerRegistry.getToolStationCrafting();
+//	return TinkerRegistry.getToolStationCrafting();
+	return TinkerRegistry.getToolForgeCrafting();
   }
 
 
@@ -310,6 +341,12 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
     return input;
   }
 
+  private void setInputs(NonNullList<ItemStack> stacks) {
+	for (int i = 1; i < tile.getSizeInventory(); i++) {
+	  tile.setInventorySlotContents(i, stacks.get(i-1));
+	}
+  }
+  
   @Override
   public boolean canMergeSlot(ItemStack stack, Slot slot) {
     return slot != out && super.canMergeSlot(stack, slot);

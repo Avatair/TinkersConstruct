@@ -48,8 +48,8 @@ public class ModSharpness extends ToolModifier {
     // save it to the tool
     NBTTagCompound tag = TagUtil.getToolTag(rootCompound);
     attack -= toolData.attack;
-    attack += tag.getFloat(Tags.ATTACK);
-    tag.setFloat(Tags.ATTACK, attack);
+    attack += tag.getInteger(Tags.ATTACK) / Tags.FLOAT_ACCURACY;
+    tag.setInteger(Tags.ATTACK, (int)(attack * Tags.FLOAT_ACCURACY));
   }
 
   @Override

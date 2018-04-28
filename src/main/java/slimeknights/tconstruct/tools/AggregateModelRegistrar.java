@@ -67,7 +67,7 @@ public class AggregateModelRegistrar extends AbstractToolPulse {
   private void registerStencil(Item pattern, ToolPart toolPart) {
     for(ToolCore toolCore : TinkerRegistry.getTools()) {
       for(PartMaterialType partMaterialType : toolCore.getRequiredComponents()) {
-        if(partMaterialType.getPossibleParts().contains(toolPart)) {
+        if(partMaterialType.getPossiblePartAsSet().contains(toolPart)) {
           ItemStack stencil = new ItemStack(pattern);
           Pattern.setTagForPart(stencil, toolPart);
           TinkerRegistry.registerStencilTableCrafting(stencil);

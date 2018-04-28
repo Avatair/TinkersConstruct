@@ -346,7 +346,7 @@ public final class TinkerRegistry {
     tools.add(tool);
 
     for(PartMaterialType pmt : tool.getRequiredComponents()) {
-      for(IToolPart tp : pmt.getPossibleParts()) {
+      for(IToolPart tp : pmt.getPossiblePartAsSet()) {
         registerToolPart(tp);
       }
     }

@@ -14,7 +14,7 @@ import slimeknights.mantle.inventory.BaseContainer;
 import slimeknights.mantle.network.AbstractPacketThreadsafe;
 import slimeknights.tconstruct.common.TinkerNetwork;
 import slimeknights.tconstruct.library.tools.ToolCore;
-import slimeknights.tconstruct.tools.common.client.GuiToolStation;
+import slimeknights.tconstruct.tools.common.client.GuiToolStationBase;
 import slimeknights.tconstruct.tools.common.inventory.ContainerToolStation;
 
 public class ToolStationSelectionPacket extends AbstractPacketThreadsafe {
@@ -35,8 +35,8 @@ public class ToolStationSelectionPacket extends AbstractPacketThreadsafe {
     Container container = Minecraft.getMinecraft().player.openContainer;
     if(container instanceof ContainerToolStation) {
       ((ContainerToolStation) container).setToolSelection(tool, activeSlots);
-      if(Minecraft.getMinecraft().currentScreen instanceof GuiToolStation) {
-        ((GuiToolStation) Minecraft.getMinecraft().currentScreen).onToolSelectionPacket(this);
+      if(Minecraft.getMinecraft().currentScreen instanceof GuiToolStationBase) {
+        ((GuiToolStationBase) Minecraft.getMinecraft().currentScreen).onToolSelectionPacket(this);
       }
     }
   }

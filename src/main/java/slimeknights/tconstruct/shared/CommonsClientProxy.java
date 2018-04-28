@@ -23,6 +23,7 @@ import static slimeknights.tconstruct.common.ModelRegisterUtil.registerItemModel
 import static slimeknights.tconstruct.shared.TinkerCommons.blockClearGlass;
 import static slimeknights.tconstruct.shared.TinkerCommons.blockClearStainedGlass;
 import static slimeknights.tconstruct.shared.TinkerCommons.blockDecoGround;
+import static slimeknights.tconstruct.shared.TinkerCommons.blockDecoGroundRaw;
 import static slimeknights.tconstruct.shared.TinkerCommons.blockFirewood;
 import static slimeknights.tconstruct.shared.TinkerCommons.blockMetal;
 import static slimeknights.tconstruct.shared.TinkerCommons.blockOre;
@@ -98,6 +99,7 @@ public class CommonsClientProxy extends ClientProxy {
     registerItemModel(blockClearStainedGlass); // this is enumBlock, but the model is tinted instead of using a state
 
     registerItemBlockMeta(blockDecoGround);
+    registerItemBlockMeta(blockDecoGroundRaw);
     registerItemBlockMeta(slabDecoGround);
     registerItemModel(stairsMudBrick);
   }

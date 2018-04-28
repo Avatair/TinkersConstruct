@@ -34,6 +34,7 @@ import slimeknights.tconstruct.library.Util;
 import slimeknights.tconstruct.shared.block.BlockClearGlass;
 import slimeknights.tconstruct.shared.block.BlockClearStainedGlass;
 import slimeknights.tconstruct.shared.block.BlockDecoGround;
+import slimeknights.tconstruct.shared.block.BlockDecoGroundRaw;
 import slimeknights.tconstruct.shared.block.BlockDecoGroundSlab;
 import slimeknights.tconstruct.shared.block.BlockFirewood;
 import slimeknights.tconstruct.shared.block.BlockFirewoodSlab;
@@ -65,6 +66,7 @@ public class TinkerCommons extends TinkerPulse {
   public static BlockGlow blockGlow;
 
   public static BlockDecoGround blockDecoGround;
+  public static BlockDecoGroundRaw blockDecoGroundRaw;
 
   public static BlockSlime blockSlime;
   public static BlockSlimeCongealed blockSlimeCongealed;
@@ -89,7 +91,9 @@ public class TinkerCommons extends TinkerPulse {
   public static ItemStack graveyardSoil;
   public static ItemStack consecratedSoil;
 
+  public static ItemStack mudBrickRawBlock;
   public static ItemStack mudBrickBlock;
+  public static ItemStack mudBrickBlockCooked;
 
   public static ItemStack oreCobalt;
   public static ItemStack oreArdite;
@@ -101,6 +105,7 @@ public class TinkerCommons extends TinkerPulse {
   public static ItemStack blockKnightSlime;
   public static ItemStack blockSilkyJewel;
   public static ItemStack blockAlubrass;
+  public static ItemStack blockEnder;
 
   public static ItemStack lavawood;
   public static ItemStack firewood;
@@ -119,6 +124,7 @@ public class TinkerCommons extends TinkerPulse {
   public static ItemStack nuggetPigIron;
   public static ItemStack nuggetKnightSlime;
   public static ItemStack nuggetAlubrass;
+  public static ItemStack nuggetEnder;
 
   // Ingot Itemstacks
   public static ItemStack ingotCobalt;
@@ -127,6 +133,7 @@ public class TinkerCommons extends TinkerPulse {
   public static ItemStack ingotPigIron;
   public static ItemStack ingotKnightSlime;
   public static ItemStack ingotAlubrass;
+  public static ItemStack ingotEnder;
 
   // Material Itemstacks
   public static ItemStack searedBrick;
@@ -196,6 +203,7 @@ public class TinkerCommons extends TinkerPulse {
     blockFirewood.setCreativeTab(TinkerRegistry.tabGeneral);
 
     // Decorative Stuff
+    blockDecoGroundRaw = registerBlock(registry, new BlockDecoGroundRaw(), "deco_ground_raw");
     blockDecoGround = registerBlock(registry, new BlockDecoGround(), "deco_ground");
 
     blockClearGlass = registerBlock(registry, new BlockClearGlass(), "clear_glass");
@@ -206,7 +214,7 @@ public class TinkerCommons extends TinkerPulse {
     slabFirewood = registerBlock(registry, new BlockFirewoodSlab(), "firewood_slab");
 
     // stairs
-    stairsMudBrick = registerBlockStairsFrom(registry, blockDecoGround, BlockDecoGround.DecoGroundType.MUDBRICK, "mudbrick_stairs");
+    stairsMudBrick = registerBlockStairsFrom(registry, blockDecoGround, BlockDecoGround.DecoGroundType.MUDBRICK_DRIED, "mudbrick_stairs");
     stairsFirewood = registerBlockStairsFrom(registry, blockFirewood, BlockFirewood.FirewoodType.FIREWOOD, "firewood_stairs");
     stairsLavawood = registerBlockStairsFrom(registry, blockFirewood, BlockFirewood.FirewoodType.LAVAWOOD, "lavawood_stairs");
 
@@ -254,9 +262,12 @@ public class TinkerCommons extends TinkerPulse {
     firewood = new ItemStack(blockFirewood, 1, BlockFirewood.FirewoodType.FIREWOOD.getMeta());
 
     // Decorative Stuff
+    
+    blockDecoGroundRaw = registerEnumItemBlock(registry, blockDecoGroundRaw);
+    mudBrickRawBlock = new ItemStack(blockDecoGroundRaw, 1, BlockDecoGroundRaw.DecoGroundTypeRaw.MUDBRICK_RAW.getMeta());
     blockDecoGround = registerEnumItemBlock(registry, blockDecoGround);
-
-    mudBrickBlock = new ItemStack(blockDecoGround, 1, BlockDecoGround.DecoGroundType.MUDBRICK.getMeta());
+    mudBrickBlock = new ItemStack(blockDecoGround, 1, BlockDecoGround.DecoGroundType.MUDBRICK_DRIED.getMeta());
+    mudBrickBlockCooked = new ItemStack(blockDecoGround, 1, BlockDecoGround.DecoGroundType.MUDBRICK_COOKED.getMeta());
 
     blockClearGlass = registerItemBlock(registry, blockClearGlass);
     blockClearStainedGlass = registerEnumItemBlock(registry, blockClearStainedGlass);
@@ -311,6 +322,9 @@ public class TinkerCommons extends TinkerPulse {
       nuggetAlubrass = nuggets.addMeta(5, "alubrass");
       ingotAlubrass = ingots.addMeta(5, "alubrass");
 
+      nuggetEnder = nuggets.addMeta(7, "ender");
+      ingotEnder = ingots.addMeta(7, "ender");
+      
       blockMetal = registerEnumItemBlock(registry, blockMetal);
 
       blockCobalt = new ItemStack(blockMetal, 1, BlockMetal.MetalTypes.COBALT.getMeta());
@@ -320,6 +334,7 @@ public class TinkerCommons extends TinkerPulse {
       blockPigIron = new ItemStack(blockMetal, 1, BlockMetal.MetalTypes.PIGIRON.getMeta());
       blockAlubrass = new ItemStack(blockMetal, 1, BlockMetal.MetalTypes.ALUBRASS.getMeta());
       blockSilkyJewel = new ItemStack(blockMetal, 1, BlockMetal.MetalTypes.SILKY_JEWEL.getMeta());
+      blockEnder = new ItemStack(blockMetal, 1, BlockMetal.MetalTypes.ENDER.getMeta());
     }
 
     // Materials
@@ -400,6 +415,7 @@ public class TinkerCommons extends TinkerPulse {
 
   private void registerSmeltingRecipes() {
     GameRegistry.addSmelting(graveyardSoil, consecratedSoil, 0);
+    GameRegistry.addSmelting(mudBrickBlock, mudBrickBlockCooked, 0);
 
     if(!isSmelteryLoaded()) {
       // compat recipe if the smeltery is not available for melting

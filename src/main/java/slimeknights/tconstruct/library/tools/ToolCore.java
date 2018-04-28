@@ -53,6 +53,7 @@ import slimeknights.tconstruct.library.tinkering.IToolStationDisplay;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tinkering.TinkersItem;
 import slimeknights.tconstruct.library.traits.ITrait;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.TagUtil;
 import slimeknights.tconstruct.library.utils.TinkerUtil;
 import slimeknights.tconstruct.library.utils.ToolHelper;
@@ -341,7 +342,7 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
       Material material = materials.get(i);
 
       // get (one possible) toolpart used to craft the thing
-      Iterator<IToolPart> partIter = pmt.getPossibleParts().iterator();
+      Iterator<IToolPart> partIter = pmt.getPossiblePartAsSet().iterator();
       if(!partIter.hasNext()) {
         continue;
       }
@@ -380,7 +381,7 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
   @SideOnly(Side.CLIENT)
   @Override
   public boolean hasEffect(ItemStack stack) {
-    return TagUtil.hasEnchantEffect(stack);
+	return stack.isItemEnchanted() || TagUtil.hasEnchantEffect(stack);
   }
 
   @Nonnull
@@ -391,7 +392,8 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
     // we save all the ones for the name in a set so we don't have the same material in it twice
     Set<Material> nameMaterials = Sets.newLinkedHashSet();
 
-    for(int index : getRepairParts()) {
+	for (Pair<Integer, Integer> repRecord : getRepairParts()) {
+  	  int index = repRecord.getFirst();
       if(index < materials.size()) {
         nameMaterials.add(materials.get(index));
       }
@@ -423,6 +425,7 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
       }
 
       ItemStack tool = buildItem(mats);
+      tool.setCount(1);
       // only valid ones
       if(hasValidMaterials(tool)) {
         subItems.add(tool);
@@ -690,5 +693,28 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
     return TagUtil.getBaseMaterialsTagList(tag1).equals(TagUtil.getBaseMaterialsTagList(tag2)) && // materials used
            TagUtil.getBaseModifiersUsed(tag1) == TagUtil.getBaseModifiersUsed(tag2) && // number of free modifiers used
            TagUtil.getOriginalToolStats(tag1).equals(TagUtil.getOriginalToolStats(tag2)); // unmodified base stats
+  }
+  
+  public boolean canContainSwordEnchantments() {
+	return false;
+  }
+
+  public boolean canContainBowEnchantments() {
+	return false;
+  }
+
+  public boolean canContainDigToolEnchantments() {
+    return false;
+  }
+	
+  /**
+   * Return the enchantability factor of the item, most of the time is based on material.
+   */
+  @Override
+  public int getItemEnchantability(ItemStack stack)
+  {
+//  if( canContainSwordEnchantments() || canContainBowEnchantments() || canContainDigToolEnchantments() )
+	return ToolHelper.getEnchantabilityStat(stack);
+//	return 0;
   }
 }

@@ -31,6 +31,7 @@ import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.AoeToolCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
 import slimeknights.tconstruct.library.utils.HarvestLevels;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.TagUtil;
 import slimeknights.tconstruct.library.utils.Tags;
 import slimeknights.tconstruct.library.utils.ToolHelper;
@@ -60,6 +61,11 @@ public class Mattock extends AoeToolCore {
 
     // unused, but we give mattock its own tool class
     this.setHarvestLevel("mattock", 0);
+  }
+  
+  @Override
+  public boolean canContainDigToolEnchantments() {
+	return true;
   }
 
   @Override
@@ -106,9 +112,15 @@ public class Mattock extends AoeToolCore {
     return 0.9f;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public int[] getRepairParts() {
-    return new int[]{1, 2};
+  public Pair<Integer, Integer>[] getRepairParts() {
+//	return new int[] { 1, 2 };
+	return new Pair[] {
+	  new Pair<Integer, Integer>(0, 20),
+	  new Pair<Integer, Integer>(2, 40),
+	  new Pair<Integer, Integer>(1, 40)
+	};
   }
 
   @Nonnull

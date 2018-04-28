@@ -24,6 +24,7 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.SwordCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.tools.TinkerTools;
 import slimeknights.tconstruct.tools.modifiers.ModBeheading;
 
@@ -63,9 +64,16 @@ public class Cleaver extends SwordCore {
     return 25f;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public int[] getRepairParts() {
-    return new int[]{1, 2};
+  public Pair<Integer, Integer>[] getRepairParts() {
+	// return new int[]{1, 2};
+	return new Pair[] {
+	  new Pair<Integer, Integer>(3, 10),
+	  new Pair<Integer, Integer>(0, 10),
+	  new Pair<Integer, Integer>(2, 40),
+	  new Pair<Integer, Integer>(1, 40)
+	};
   }
 
   @Override

@@ -19,6 +19,7 @@ import slimeknights.tconstruct.library.materials.Material;
 import slimeknights.tconstruct.library.materials.MaterialTypes;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 
@@ -29,8 +30,8 @@ public class Excavator extends Shovel {
   public Excavator() {
     super(PartMaterialType.handle(TinkerTools.toughToolRod),
           PartMaterialType.head(TinkerTools.excavatorHead),
-          PartMaterialType.head(TinkerTools.largePlate),
-          PartMaterialType.extra(TinkerTools.toughBinding));
+          PartMaterialType.extra(TinkerTools.toughBinding),
+          PartMaterialType.head(TinkerTools.largePlate));
   }
 
   @Override
@@ -62,8 +63,20 @@ public class Excavator extends Shovel {
   }
 
   @Override
-  public int[] getRepairParts() {
-    return new int[] { 1, 2 };
+  public boolean canContainDigToolEnchantments() {
+    return true;
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public Pair<Integer, Integer>[] getRepairParts() {
+//	return new int[] { 1, 2 };
+	return new Pair[] {
+	  new Pair<Integer, Integer>(2, 10),
+	  new Pair<Integer, Integer>(0, 10),
+	  new Pair<Integer, Integer>(3, 40),
+	  new Pair<Integer, Integer>(1, 40)
+	};		
   }
 
   @Override
@@ -75,8 +88,8 @@ public class Excavator extends Shovel {
   public ToolNBT buildTagData(List<Material> materials) {
     HandleMaterialStats handle = materials.get(0).getStatsOrUnknown(MaterialTypes.HANDLE);
     HeadMaterialStats head = materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD);
-    HeadMaterialStats plate = materials.get(2).getStatsOrUnknown(MaterialTypes.HEAD);
-    ExtraMaterialStats binding = materials.get(3).getStatsOrUnknown(MaterialTypes.EXTRA);
+    HeadMaterialStats plate = materials.get(3).getStatsOrUnknown(MaterialTypes.HEAD);
+    ExtraMaterialStats binding = materials.get(2).getStatsOrUnknown(MaterialTypes.EXTRA);
 
     ToolNBT data = new ToolNBT();
     data.head(head, plate);

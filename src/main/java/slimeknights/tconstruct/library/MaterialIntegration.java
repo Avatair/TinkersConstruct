@@ -151,11 +151,11 @@ public class MaterialIntegration {
    * Called during the register recipes event to add a variant to the tool forge for this material
    * @param registry  IRecipe Registry
    */
-  public void registerToolForgeRecipe(IForgeRegistry<IRecipe> registry) {
-    if(toolforge && oreSuffix != null && !oreSuffix.isEmpty()) {
-      TinkerTools.registerToolForgeBlock(registry, "block" + oreSuffix);
-    }
-  }
+//  public void registerToolForgeRecipe(IForgeRegistry<IRecipe> registry) {
+//    if(toolforge && oreSuffix != null && !oreSuffix.isEmpty()) {
+//      TinkerTools.registerToolForgeBlock(registry, "block" + oreSuffix);
+//    }
+//  }
 
   /**
    * Called during the register blocks event to register fluid blocks. If no fluid is defined it does nothing for simplicity

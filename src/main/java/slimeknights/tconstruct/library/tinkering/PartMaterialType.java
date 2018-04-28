@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import slimeknights.mantle.util.RecipeMatch;
 import slimeknights.tconstruct.library.materials.Material;
 import slimeknights.tconstruct.library.materials.MaterialTypes;
 import slimeknights.tconstruct.library.tools.IToolPart;
@@ -84,9 +85,20 @@ public class PartMaterialType {
 
     return traits.build();
   }
+  
+  public RecipeMatch getMatcher(Material material) {
+	IToolPart part = getPossiblePart();
+	ItemStack stack = part.getItemstackWithMaterial(material);
+	return RecipeMatch.of(stack);
+  }
 
-  public Set<IToolPart> getPossibleParts() {
-    return ImmutableSet.copyOf(neededPart);
+  public Set<IToolPart> getPossiblePartAsSet() {
+	return ImmutableSet.copyOf(neededPart);
+  }
+
+  public final IToolPart getPossiblePart() {
+	IToolPart part = neededPart.iterator().next();	//NOTE: Assumed, amount of parts is exactly 1.
+	return part;
   }
 
   public static PartMaterialType head(IToolPart part) {

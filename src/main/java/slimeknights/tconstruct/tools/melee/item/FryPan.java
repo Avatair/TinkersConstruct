@@ -34,6 +34,7 @@ import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.TinkerToolCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
 import slimeknights.tconstruct.library.utils.EntityUtil;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerModifiers;
 import slimeknights.tconstruct.tools.TinkerTools;
@@ -47,6 +48,16 @@ public class FryPan extends TinkerToolCore {
           PartMaterialType.head(TinkerTools.panHead));
 
     addCategory(Category.WEAPON);
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public Pair<Integer, Integer>[] getRepairParts() {
+	// return new int[]{1, 2};
+	return new Pair[] {
+	  new Pair<Integer, Integer>(0, 20),
+	  new Pair<Integer, Integer>(1, 80)
+	};
   }
 
   @Override

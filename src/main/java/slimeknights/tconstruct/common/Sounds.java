@@ -34,7 +34,7 @@ public abstract class Sounds {
 
   public static final SoundEvent stone_hit = sound("stone_hit");
   public static final SoundEvent wood_hit = sound("wood_hit");
-
+  public static final SoundEvent anvil_hit = sound("anvil_hit");
   public static final SoundEvent crossbow_reload = sound("crossbow_reload");
 
 

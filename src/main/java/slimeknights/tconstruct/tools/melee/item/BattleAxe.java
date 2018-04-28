@@ -21,6 +21,7 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.AoeToolCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 
@@ -43,6 +44,11 @@ public class BattleAxe extends AoeToolCore {
   public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
     return ToolHelper.calcAOEBlocks(stack, world, player, origin, 2, 2, 1);
   }
+  
+  @Override
+  public boolean canContainSwordEnchantments() {
+	return true;
+  }
 
   @Override
   public float damagePotential() {
@@ -59,9 +65,16 @@ public class BattleAxe extends AoeToolCore {
     return 1f;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public int[] getRepairParts() {
-    return new int[]{1, 2};
+  public Pair<Integer, Integer>[] getRepairParts() {
+	// return new int[]{1, 2};
+	return new Pair[] {
+	  new Pair<Integer, Integer>(3, 10),
+	  new Pair<Integer, Integer>(0, 10),
+	  new Pair<Integer, Integer>(2, 40),
+	  new Pair<Integer, Integer>(1, 40)
+	};
   }
 
   @Nonnull

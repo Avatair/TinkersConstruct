@@ -21,6 +21,7 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.SwordCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.tools.TinkerTools;
 
 public class LongSword extends SwordCore {
@@ -33,6 +34,16 @@ public class LongSword extends SwordCore {
           PartMaterialType.extra(TinkerTools.handGuard));
 
     addCategory(Category.WEAPON);
+  }
+  
+  @SuppressWarnings("unchecked")
+  public Pair<Integer, Integer>[] getRepairParts() {
+	return new Pair[] {
+	  new Pair<Integer, Integer>(1, 60),
+	  new Pair<Integer, Integer>(0, 30),
+	  new Pair<Integer, Integer>(2, 10)
+	};
+	// index 1 usually is the head. 0 is handle.
   }
 
   @Override

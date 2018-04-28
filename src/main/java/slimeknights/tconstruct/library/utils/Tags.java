@@ -37,6 +37,7 @@ public final class Tags {
   public static final String ATTACKSPEEDMULTIPLIER = "AttackSpeedMultiplier";
   public static final String MININGSPEED = "MiningSpeed";
   public static final String HARVESTLEVEL = "HarvestLevel";
+  public static final String ENCHANTABILITY = "Enchantability";
 
   // bows
   public static final String DRAWSPEED = "DrawSpeed";
@@ -56,6 +57,8 @@ public final class Tags {
   public static final String ENCHANT_EFFECT = "EnchantEffect";
   public static final String RESET_FLAG = "ResetFlag";
 
+  public static final float FLOAT_ACCURACY = 100.0f;
+  
   private Tags() {
   }
 }

@@ -2,11 +2,13 @@ package slimeknights.tconstruct.library.tools.ranged;
 
 import com.google.common.collect.Multimap;
 
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
@@ -153,9 +155,12 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
     if(ToolHelper.isBroken(stack) || !(entityLiving instanceof EntityPlayer)) {
       return;
     }
+    
+	boolean isInfiniteAmmo = EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
+    
     EntityPlayer player = (EntityPlayer) entityLiving;
     ItemStack ammo = findAmmo(stack, entityLiving);
-    if(ammo.isEmpty() && !player.capabilities.isCreativeMode) {
+	if (ammo.isEmpty() && !player.capabilities.isCreativeMode && !isInfiniteAmmo) {
       return;
     }
 
@@ -166,11 +171,11 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
       return;
     }
 
-    if(ammo.isEmpty()) {
-      ammo = getCreativeProjectileStack();
-    }
+	if (ammo.isEmpty() && isInfiniteAmmo) {
+		ammo = getInfiniteProjectileStack();
+	}
 
-    shootProjectile(ammo, stack, worldIn, player, useTime);
+	shootProjectile(ammo, stack, worldIn, player, useTime, isInfiniteAmmo);
 
     StatBase statBase = StatList.getObjectUseStats(this);
     assert statBase != null;
@@ -184,24 +189,41 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
     TagUtil.setResetFlag(stack, true);
   }
 
-  public void shootProjectile(@Nonnull ItemStack ammo, @Nonnull ItemStack bow, World worldIn, EntityPlayer player, int useTime) {
+  public void shootProjectile(@Nonnull ItemStack ammo, @Nonnull ItemStack bow, World worldIn, EntityPlayer player,
+	  int useTime, boolean isInfiniteAmmo) {
     float progress = getDrawbackProgress(bow, useTime);
     float power = ItemBow.getArrowVelocity((int)(progress * 20f)) * progress * baseProjectileSpeed();
+	int punch = 0;
+	int fireTime = 0;
     power *= ProjectileLauncherNBT.from(bow).range;
 
     if(!worldIn.isRemote) {
-      TinkerToolEvent.OnBowShoot event = TinkerToolEvent.OnBowShoot.fireEvent(bow, ammo, player, useTime, baseInaccuracy());
+      TinkerToolEvent.OnBowShoot event = TinkerToolEvent.OnBowShoot.fireEvent(bow, ammo, player, useTime,
+		baseInaccuracy());
+		
+      int powerLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, bow);
+      int punchLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, bow);
+      int flameLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, bow);
 
       for(int i = 0; i < event.projectileCount; i++) {
         boolean usedAmmo = false;
-        if(i == 0 || event.consumeAmmoPerProjectile) {
+		if (!isInfiniteAmmo && (i == 0 || event.consumeAmmoPerProjectile)) {
           usedAmmo = consumeAmmo(ammo, player);
         }
         float inaccuracy = event.getBaseInaccuracy();
         if(i > 0) {
           inaccuracy += event.bonusInaccuracy;
         }
-        EntityArrow projectile = getProjectileEntity(ammo, bow, worldIn, player, power, inaccuracy, progress*progress, usedAmmo);
+        
+        if (powerLevel > 0)
+        	power += (float)powerLevel * 0.5f + 0.5f;
+        if (punchLevel > 0)
+        	punch += punchLevel;
+        if (flameLevel > 0)
+        	fireTime += 100;
+		
+		EntityArrow projectile = getProjectileEntity(ammo, bow, worldIn, player, power, punch, fireTime, inaccuracy,
+				progress * progress, usedAmmo);
 
         if(projectile != null && ProjectileEvent.OnLaunch.fireEvent(projectile, bow, player)) {
           if(progress >= 1f) {
@@ -218,12 +240,18 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
     playShootSound(power, worldIn, player);
   }
 
-  public EntityArrow getProjectileEntity(ItemStack ammo, ItemStack bow, World world, EntityPlayer player, float power, float inaccuracy, float progress, boolean usedAmmo) {
+  public EntityArrow getProjectileEntity(ItemStack ammo, ItemStack bow, World world, EntityPlayer player, float power,
+		int punch, int fireTime, float inaccuracy, float progress, boolean usedAmmo) {
     if(ammo.getItem() instanceof IAmmo) {
-      return ((IAmmo) ammo.getItem()).getProjectile(ammo, bow, world, player, power, inaccuracy, progress, usedAmmo);
-    }
-    else if(ammo.getItem() instanceof ItemArrow) {
+		return ((IAmmo) ammo.getItem()).getProjectile(ammo, bow, world, player, power, inaccuracy, progress, punch, fireTime,
+				usedAmmo);
+	}
+    else if (ammo.getItem() instanceof ItemArrow) {
       EntityArrow projectile = ((ItemArrow) ammo.getItem()).createArrow(world, ammo, player);
+  	  if( punch > 0 )
+		projectile.setKnockbackStrength(punch);
+	  if( fireTime > 0 )
+		projectile.setFire(fireTime);
       projectile.setAim(player, player.rotationPitch, player.rotationYaw, 0.0F, power, inaccuracy);
       if(player.capabilities.isCreativeMode) {
         projectile.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
@@ -257,7 +285,7 @@ public abstract class BowCore extends ProjectileLauncherCore implements IAmmoUse
   }
 
   @Nonnull
-  protected ItemStack getCreativeProjectileStack() {
+  protected ItemStack getInfiniteProjectileStack() {
     return new ItemStack(Items.ARROW);
   }
 

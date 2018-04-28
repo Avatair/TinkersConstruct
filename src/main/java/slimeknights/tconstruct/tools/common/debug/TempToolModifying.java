@@ -47,7 +47,7 @@ public class TempToolModifying extends Impl<IRecipe> implements IRecipe {
     }
 
     try {
-      outputTool = ToolBuilder.tryModifyTool(stacks, tool, false);
+      outputTool = ToolBuilder.tryModifyTool(stacks, tool, false, false);
     }
     catch(TinkerGuiException e) {
       System.out.println(e.getMessage());
@@ -76,7 +76,7 @@ public class TempToolModifying extends Impl<IRecipe> implements IRecipe {
     }
 
     try {
-      ToolBuilder.tryModifyTool(stacks, tool, true);
+      ToolBuilder.tryModifyTool(stacks, tool, true, false);
     }
     catch(TinkerGuiException e) {
       e.printStackTrace();

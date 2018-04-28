@@ -49,6 +49,7 @@ import slimeknights.tconstruct.plugin.jei.table.TableRecipeHandler;
 import slimeknights.tconstruct.shared.block.BlockTable;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 import slimeknights.tconstruct.smeltery.block.BlockCasting;
+import slimeknights.tconstruct.smeltery.block.BlockTinkerAnvil;
 import slimeknights.tconstruct.smeltery.client.GuiSmeltery;
 import slimeknights.tconstruct.smeltery.client.GuiTinkerTank;
 import slimeknights.tconstruct.smeltery.client.IGuiLiquidTank;
@@ -82,7 +83,7 @@ public class JEIPlugin implements IModPlugin {
     if(TConstruct.pulseManager.isPulseLoaded(TinkerTools.PulseId)) {
       // tool tables
       registry.registerSubtypeInterpreter(Item.getItemFromBlock(TinkerTools.toolTables), tableInterpreter);
-      registry.registerSubtypeInterpreter(Item.getItemFromBlock(TinkerTools.toolForge), tableInterpreter);
+//      registry.registerSubtypeInterpreter(Item.getItemFromBlock(TinkerTools.toolForge), tableInterpreter);
 
       // tool parts
       ToolPartSubtypeInterpreter toolPartInterpreter = new ToolPartSubtypeInterpreter();
@@ -155,6 +156,8 @@ public class JEIPlugin implements IModPlugin {
       registry.addRecipeCatalyst(new ItemStack(TinkerSmeltery.smelteryController), SmeltingRecipeCategory.CATEGORY, AlloyRecipeCategory.CATEGORY);
       registry.addRecipeCatalyst(new ItemStack(TinkerSmeltery.castingBlock, 1, BlockCasting.CastingType.TABLE.meta), CastingRecipeCategory.CATEGORY);
       registry.addRecipeCatalyst(new ItemStack(TinkerSmeltery.castingBlock, 1, BlockCasting.CastingType.BASIN.meta), CastingRecipeCategory.CATEGORY);
+      registry.addRecipeCatalyst(new ItemStack(TinkerSmeltery.anvilBlock, 1, BlockTinkerAnvil.AnvilType.ANVIL.meta), CastingRecipeCategory.CATEGORY);
+
       // add the seared furnace to the list with the vanilla furnace
       // note that this is just the smelting one, fuel is not relevant
       registry.addRecipeCatalyst(new ItemStack(TinkerSmeltery.searedFurnaceController), VanillaRecipeCategoryUid.SMELTING);

@@ -73,7 +73,7 @@ public class TinkerProjectileHandler implements ITinkerProjectile, INBTSerializa
 
   @Override
   public boolean pickup(EntityLivingBase entity, boolean simulate) {
-    ItemStack stack = AmmoHelper.getMatchingItemstackFromInventory(parent, entity, true);
+    ItemStack stack = AmmoHelper.getMatchingItemstackFromInventory(parent, entity, false);
     if(stack.getItem() instanceof IAmmo) {
       if(!simulate && ((IAmmo) parent.getItem()).getCurrentAmmo(parent) > 0) {
         ToolHelper.unbreakTool(stack);

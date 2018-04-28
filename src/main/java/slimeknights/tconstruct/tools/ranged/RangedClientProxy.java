@@ -60,8 +60,8 @@ public class RangedClientProxy extends ClientProxy {
     // arrow
     info = new ToolBuildGuiInfo(TinkerRangedWeapons.arrow);
     info.addSlotPosition(32, 41); // center
-    info.addSlotPosition(32 + 18, 41 - 18); // top right
     info.addSlotPosition(32 - 18, 41 + 18); // bot left
+    info.addSlotPosition(32 + 18, 41 - 18); // top right
     TinkerRegistryClient.addToolBuilding(info);
 
     // crossbow

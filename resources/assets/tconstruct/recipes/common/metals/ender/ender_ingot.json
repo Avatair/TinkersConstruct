@@ -5,6 +5,10 @@
             "values": [
                 {
                     "type": "tconstruct:is_pulse_loaded",
+                    "pulse_name": "TinkerTools"
+                },
+                {
+                    "type": "tconstruct:is_pulse_loaded",
                     "pulse_name": "TinkerSmeltery"
                 },
                 {
@@ -14,20 +18,17 @@
             ]
         }
     ],
-    "type": "minecraft:crafting_shaped",
-    "group": "tconstruct:mud_brick_slab",
-    "pattern": [
-        "AAA"
-    ],
-    "key": {
-        "A": {
-            "item": "tconstruct:deco_ground",
-            "data": 0
+    "type": "forge:ore_shapeless",
+    "group": "tconstruct:ender_ingot",
+    "ingredients": [
+        {
+            "type": "forge:ore_dict",
+            "ore": "blockEnderium"
         }
-    },
+    ],
     "result": {
-        "item": "tconstruct:deco_ground_slab",
-        "count": 6,
-        "data": 0
+        "item": "tconstruct:ingots",
+        "count": 9,
+        "data": 7
     }
 }

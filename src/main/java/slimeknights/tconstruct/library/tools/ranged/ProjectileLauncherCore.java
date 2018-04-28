@@ -23,4 +23,9 @@ public abstract class ProjectileLauncherCore extends TinkerToolCore {
 
   @Override
   public abstract ProjectileLauncherNBT buildTagData(List<Material> materials);
+  
+  @Override
+  public boolean canContainBowEnchantments() {
+	return true;
+  }
 }

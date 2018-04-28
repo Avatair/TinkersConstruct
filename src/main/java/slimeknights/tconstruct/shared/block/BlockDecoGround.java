@@ -15,18 +15,19 @@ public class BlockDecoGround extends EnumBlock<BlockDecoGround.DecoGroundType> {
   public final static PropertyEnum<DecoGroundType> TYPE = PropertyEnum.create("type", DecoGroundType.class);
 
   public BlockDecoGround() {
-    super(Material.GROUND, TYPE, DecoGroundType.class);
+    super(Material.ROCK, TYPE, DecoGroundType.class);
 
     this.setHardness(2.0f);
 
-    this.setSoundType(SoundType.GROUND);
+    this.setSoundType(SoundType.STONE);
 
-    setHarvestLevel("shovel", -1);
+    setHarvestLevel("pickaxe", -1);
     setCreativeTab(TinkerRegistry.tabGeneral);
   }
 
   public enum DecoGroundType implements IStringSerializable, EnumBlock.IEnumMeta {
-    MUDBRICK;
+	MUDBRICK_DRIED,
+	MUDBRICK_COOKED;
 
     public final int meta;
 

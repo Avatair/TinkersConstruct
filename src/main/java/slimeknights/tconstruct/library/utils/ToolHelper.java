@@ -8,9 +8,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +41,7 @@ import net.minecraftforge.common.IShearable;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
 import slimeknights.tconstruct.TConstruct;
@@ -55,6 +58,7 @@ import slimeknights.tconstruct.tools.common.network.ToolBreakAnimationPacket;
 import slimeknights.tconstruct.tools.modifiers.ModReinforced;
 
 public final class ToolHelper {
+  private static Random rand = new Random();
 
   private ToolHelper() {
   }
@@ -76,13 +80,20 @@ public final class ToolHelper {
     return getIntTag(stack, Tags.HARVESTLEVEL);
   }
 
-  /** Returns the speed saved on the tool. NOT the actual mining speed, see getActualMiningSpeed */
+  /**
+   * Returns the speed saved on the tool. NOT the actual mining speed, see
+   * getActualMiningSpeed
+   */
   public static float getMiningSpeedStat(ItemStack stack) {
-    return getfloatTag(stack, Tags.MININGSPEED);
+	return (float)getIntTag(stack, Tags.MININGSPEED) / Tags.FLOAT_ACCURACY;
   }
 
   public static float getAttackStat(ItemStack stack) {
-    return getfloatTag(stack, Tags.ATTACK);
+	return (float)getIntTag(stack, Tags.ATTACK) / Tags.FLOAT_ACCURACY;
+  }
+	
+  public static int getEnchantabilityStat(ItemStack stack) {
+	return getIntTag(stack, Tags.ENCHANTABILITY);
   }
 
   public static float getActualAttack(ItemStack stack) {
@@ -98,7 +109,7 @@ public final class ToolHelper {
    * This is normally just a number from 1 to 2, the actual attack speed is in getActualAttackSpeed
    */
   public static float getAttackSpeedStat(ItemStack stack) {
-    return getfloatTag(stack, Tags.ATTACKSPEEDMULTIPLIER);
+	return getIntTag(stack, Tags.ATTACKSPEEDMULTIPLIER) / Tags.FLOAT_ACCURACY;
   }
 
   /** Returns the actual attack speed */
@@ -162,7 +173,7 @@ public final class ToolHelper {
 
     // calculate speed depending on stats
     NBTTagCompound tag = TagUtil.getToolTag(stack);
-    float speed = tag.getFloat(Tags.MININGSPEED);
+    float speed = (float)tag.getInteger(Tags.MININGSPEED) / Tags.FLOAT_ACCURACY;
 
     if(stack.getItem() instanceof ToolCore) {
       speed *= ((ToolCore) stack.getItem()).miningSpeedModifier();
@@ -544,6 +555,9 @@ public final class ToolHelper {
       }
     }
 
+	// Vanilla enchantment mechanics
+	actualAmount = reduceDamageBasedOnEnchantment(stack, actualAmount);
+
     // extra compatibility for unbreaking.. because things just love to mess it up.. like 3rd party stuff
     if(actualAmount > 0 && TagUtil.getTagSafe(stack).getBoolean(ModReinforced.TAG_UNBREAKABLE)) {
       actualAmount = 0;
@@ -558,6 +572,24 @@ public final class ToolHelper {
     }
   }
 
+  public static int reduceDamageBasedOnEnchantment(ItemStack stack, int amount) {
+    int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
+    int j = 0;
+
+    for (int k = 0; i > 0 && k < amount; ++k)
+    {
+      if (EnchantmentDurability.negateDamage(stack, i, rand))
+      {
+        ++j;
+      }
+    }
+
+    amount -= j;
+    if( amount < 0 )
+      amount = 0;
+    return amount;
+  }
+  
   public static void healTool(ItemStack stack, int amount, EntityLivingBase entity) {
     damageTool(stack, -amount, entity);
   }
@@ -654,6 +686,11 @@ public final class ToolHelper {
     // players base damage (includes tools damage stat)
     float baseDamage = (float) attacker.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
 
+    if (targetEntity instanceof EntityLivingBase)
+    	baseDamage += EnchantmentHelper.getModifierForCreature(stack, ((EntityLivingBase)targetEntity).getCreatureAttribute());
+    else
+    	baseDamage += EnchantmentHelper.getModifierForCreature(stack, EnumCreatureAttribute.UNDEFINED);
+    
     // missing because not supported by tcon tools: vanilla damage enchantments, we have our own modifiers
     // missing because not supported by tcon tools: vanilla knockback enchantments, we have our own modifiers
     float baseKnockback = attacker.isSprinting() ? 1 : 0;
@@ -716,6 +753,13 @@ public final class ToolHelper {
         // reset hurt reristant time
         target.hurtResistantTime = hurtResistantTime;
       }
+      
+		
+	  // apply fire aspect
+	  int j = EnchantmentHelper.getFireAspectModifier(attacker);
+	  if (j > 0 && !targetEntity.isBurning()) {
+		targetEntity.setFire(1);
+	  }
     }
 
     boolean hit = false;
@@ -860,6 +904,15 @@ public final class ToolHelper {
       }
     }
   }
+  
+  public static int getMaxRepairPoints( TinkersItem item ) {
+	int totalPoints = 0;
+	for (Pair<Integer, Integer> repRecord : item.getRepairParts()) {
+	  totalPoints += repRecord.getSecond();
+	}
+		
+	return totalPoints;
+  }
 
   public static ItemStack playerIsHoldingItemWith(EntityPlayer player, Predicate<ItemStack> predicate) {
     ItemStack tool = player.getHeldItemMainhand();
@@ -880,9 +933,9 @@ public final class ToolHelper {
     return tag.getInteger(key);
   }
 
-  static float getfloatTag(ItemStack stack, String key) {
-    NBTTagCompound tag = TagUtil.getToolTag(stack);
-
-    return tag.getFloat(key);
-  }
+  // static float getfloatTag(ItemStack stack, String key) {
+  //  NBTTagCompound tag = TagUtil.getToolTag(stack);
+  //
+  //  return tag.getFloat(key);
+  //}
 }

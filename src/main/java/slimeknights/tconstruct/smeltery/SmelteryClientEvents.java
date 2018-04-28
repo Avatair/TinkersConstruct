@@ -20,6 +20,10 @@ public class SmelteryClientEvents {
   public static final ModelResourceLocation locCastingTable = new ModelResourceLocation(LOCATION_CastingBlock, "type=table");
   public static final ModelResourceLocation locCastingBasin = new ModelResourceLocation(LOCATION_CastingBlock, "type=basin");
 
+  // anvils
+  private static final String LOCATION_TinkersAnvil = Util.resource("tinker_anvil");
+  public static final ModelResourceLocation locTinkersAnvil = new ModelResourceLocation(LOCATION_TinkersAnvil, "type=anvil");
+
   // Blank Pattern
   private static final ResourceLocation MODEL_BlankCast = Util.getResource("item/cast");
   public static final ResourceLocation locBlankCast = Util.getResource("cast");
@@ -30,6 +34,7 @@ public class SmelteryClientEvents {
     // convert casting table and basin to bakedTableModel for the item-rendering on/in them
     wrap(event, locCastingTable);
     wrap(event, locCastingBasin);
+    wrap(event, locTinkersAnvil);
 
     // add the extra cast models. See ToolClientEvents for more info with the pattern
     ToolClientEvents.replacePatternModel(locBlankCast, MODEL_BlankCast, event, CustomTextureCreator.castLocString, TinkerRegistry.getCastItems());
@@ -42,4 +47,24 @@ public class SmelteryClientEvents {
       event.getModelRegistry().putObject(loc, new BakedTableModel(model, null, DefaultVertexFormats.ITEM));
     }
   }
+  
+  /*  @SubscribeEvent
+  public void onLeftClickEvent(PlayerInteractEvent.LeftClickBlock event) {
+	  if( event.getItemStack().getItem() instanceof Hammer ) {
+		  World world = event.getWorld();
+		  IBlockState state = world.getBlockState(event.getPos());
+		  if( state.getBlock() instanceof BlockTinkerAnvil ) {
+//			  event.getEntityPlayer().setActiveHand(event.getHand());
+			  if( world.isRemote ) {
+//				  Minecraft mc = Minecraft.getMinecraft(); 
+				  PlayerControllerMP controllerMP = Minecraft.getMinecraft().playerController;
+//				  mc.
+//				  controllerMP.currentItemHittingBlock = new ItemStack(Blocks.AIR, 0);
+//				  controllerMP.isHittingBlock = true;
+//				  controllerMP.curBlockDamageMP = 0.0f;
+			  }
+//			  event.setUseItem(Result.DENY);
+		  }
+	  }
+  }*/
 }

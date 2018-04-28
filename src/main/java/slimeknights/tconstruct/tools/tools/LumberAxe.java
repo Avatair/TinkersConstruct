@@ -38,6 +38,7 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.AoeToolCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 
@@ -52,15 +53,20 @@ public class LumberAxe extends AoeToolCore {
   public LumberAxe() {
     super(PartMaterialType.handle(TinkerTools.toughToolRod),
           PartMaterialType.head(TinkerTools.broadAxeHead),
-          PartMaterialType.head(TinkerTools.largePlate),
-          PartMaterialType.extra(TinkerTools.toughBinding));
+          PartMaterialType.extra(TinkerTools.toughBinding),
+          PartMaterialType.head(TinkerTools.largePlate));
 
     // lumberaxe is not a weapon. it's for lumberjacks. Lumberjacks are manly, they're weapons themselves.
     addCategory(Category.HARVEST);
 
     this.setHarvestLevel("axe", 0);
   }
-
+  
+  @Override
+  public boolean canContainDigToolEnchantments() {
+    return true;
+  }
+  
   @Override
   public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
     if(this.isInCreativeTab(tab)) {
@@ -121,9 +127,16 @@ public class LumberAxe extends AoeToolCore {
     return ToolHelper.calcAOEBlocks(stack, world, player, origin, 3, 3, 3);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public int[] getRepairParts() {
-    return new int[] { 1, 2 };
+  public Pair<Integer, Integer>[] getRepairParts() {
+    // return new int[]{1, 2};
+	return new Pair[] {
+	  new Pair<Integer, Integer>(2, 10),
+	  new Pair<Integer, Integer>(0, 10),
+	  new Pair<Integer, Integer>(3, 40),
+	  new Pair<Integer, Integer>(1, 40)
+	};
   }
 
   @Override
@@ -135,8 +148,8 @@ public class LumberAxe extends AoeToolCore {
   public ToolNBT buildTagData(List<Material> materials) {
     HandleMaterialStats handle = materials.get(0).getStatsOrUnknown(MaterialTypes.HANDLE);
     HeadMaterialStats head = materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD);
-    HeadMaterialStats plate = materials.get(2).getStatsOrUnknown(MaterialTypes.HEAD);
-    ExtraMaterialStats binding = materials.get(3).getStatsOrUnknown(MaterialTypes.EXTRA);
+    HeadMaterialStats plate = materials.get(3).getStatsOrUnknown(MaterialTypes.HEAD);
+    ExtraMaterialStats binding = materials.get(2).getStatsOrUnknown(MaterialTypes.EXTRA);
 
     ToolNBT data = new ToolNBT();
     data.head(head, plate);

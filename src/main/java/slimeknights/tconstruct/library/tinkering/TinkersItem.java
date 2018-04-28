@@ -43,6 +43,7 @@ import slimeknights.tconstruct.library.materials.Material;
 import slimeknights.tconstruct.library.materials.MaterialTypes;
 import slimeknights.tconstruct.library.modifiers.TinkerGuiException;
 import slimeknights.tconstruct.library.traits.ITrait;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.TagUtil;
 import slimeknights.tconstruct.library.utils.Tags;
 import slimeknights.tconstruct.library.utils.TinkerUtil;
@@ -92,6 +93,11 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
 
     return out;
   }
+  
+	
+  public int getCraftingOutputAmount(ItemStack stack) {
+	return 1;
+  }
 
   /* INDESTRUCTIBLE */
 
@@ -103,7 +109,9 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
   @Nonnull
   @Override
   public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-    EntityItem entity = new IndestructibleEntityItem(world, location.posX, location.posY, location.posZ, itemstack);
+	if (!Config.tinkersItemIndestructible)
+		return null;
+	EntityItem entity = new IndestructibleEntityItem(world, location.posX, location.posY, location.posZ, itemstack);
     if(location instanceof EntityItem) {
       // workaround for private access on that field >_>
       NBTTagCompound tag = new NBTTagCompound();
@@ -162,7 +170,9 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
   public ItemStack buildItem(List<Material> materials) {
     ItemStack tool = new ItemStack(this);
     tool.setTagCompound(buildItemNBT(materials));
-
+	int count = Math.min(getCraftingOutputAmount(tool), tool.getMaxStackSize());
+	tool.setCount(count);
+	
     return tool;
   }
 
@@ -288,8 +298,12 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
   /* Repairing */
 
   /** Returns indices of the parts that are used for repairing */
-  public int[] getRepairParts() {
-    return new int[] { 1 }; // index 1 usually is the head. 0 is handle.
+  @SuppressWarnings("unchecked")
+  public Pair<Integer, Integer>[] getRepairParts() {
+	return new Pair[] {
+			new Pair<Integer, Integer>(1, 100)
+			};
+	// index 1 usually is the head. 0 is handle.
   }
 
   public float getRepairModifierForPart(int index) {
@@ -299,11 +313,26 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
   @Nonnull
   @Override
   public ItemStack repair(ItemStack repairable, NonNullList<ItemStack> repairItems) {
+		return repairV2(repairable, repairItems);
+	}
+
+  private ItemStack repairV2(ItemStack repairable, NonNullList<ItemStack> repairItems) {
+	if( !(repairable.getItem() instanceof TinkersItem) )
+		return ItemStack.EMPTY;
+		
     if(repairable.getItemDamage() == 0 && !ToolHelper.isBroken(repairable)) {
       // undamaged and not broken - no need to repair
       return ItemStack.EMPTY;
     }
 
+	TinkersItem tool = (TinkersItem)repairable.getItem();
+	ItemStack repairedTool = repairable.copy();
+	
+	int totalScore = ToolHelper.getMaxRepairPoints((TinkersItem)repairable.getItem());
+//	int origDur = TagUtil.getOriginalToolStats(repairable).durability;
+	int maxDur = ToolHelper.getDurabilityStat(repairable);
+	int actualDur = Math.max(ToolHelper.getDurabilityStat(repairable) - repairable.getItemDamage(), 0);
+    
     // we assume the first required part exclusively determines repair material
     List<Material> materials = TinkerUtil.getMaterialsFromTagList(TagUtil.getBaseMaterialsTagList(repairable));
     if(materials.isEmpty()) {
@@ -311,10 +340,151 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
     }
 
     // ensure the items only contain valid items
-    NonNullList<ItemStack> items = Util.deepCopyFixedNonNullList(repairItems);
-    boolean foundMatch = false;
-    for(int index : getRepairParts()) {
+	List<PartMaterialType> pms = tool.getRequiredComponents();
+	NonNullList<ItemStack> consumedItemTypes = Util.deepCopyFixedNonNullList(repairItems);
+	boolean foundMatch = false;
+	int summedScore = 0;
+	for (Pair<Integer, Integer> repRecord : getRepairParts()) {
+	  int index = repRecord.getFirst();
+	  int score = repRecord.getSecond();
+	  PartMaterialType pmt = pms.get(index);
       Material material = materials.get(index);
+		summedScore += score;			
+		float curRatio = (float)actualDur / (float)maxDur;
+		float repairRatio = (float)summedScore / (float)totalScore;
+		if( curRatio <= repairRatio ) {
+			// Repair and consume item
+			RecipeMatch matcher = pmt.getMatcher(material);
+			Optional<RecipeMatch.Match> match = matcher.matches(repairItems);
+
+			// not a single match -> nothing to repair with
+			if (!match.isPresent()) {
+				break;
+			}
+			
+			foundMatch = true;
+			
+			int increase = (int) Math.ceil(repairRatio * (float)maxDur - actualDur);
+			actualDur += increase;
+			ToolHelper.repairTool(repairedTool, increase);
+			
+			RecipeMatch.removeMatch(repairItems, match.get());
+			
+			while ((match = matcher.matches(consumedItemTypes)).isPresent()) {
+				RecipeMatch.removeMatch(consumedItemTypes, match.get());
+			}
+		}
+		
+//		if (repairCustom(material, items) > 0) {
+//			foundMatch = true;
+//		}
+
+//		Optional<RecipeMatch.Match> match = pmt.getMatcher(material).matches(items);
+
+//		// not a single match -> nothing to repair with
+//		if (!match.isPresent()) {
+//			continue;
+//		}
+//		foundMatch = true;
+
+//		while ((match = material.matches(items)).isPresent()) {
+//			RecipeMatch.removeMatch(items, match.get());
+//		}
+	}
+	
+	if (!foundMatch) {
+		return ItemStack.EMPTY;
+	}
+
+	// check if all items were used
+	for (int i = 0; i < consumedItemTypes.size(); i++) {
+		// was non-null and did not get modified (stacksize changed or null now,
+		// usually)
+		if (!consumedItemTypes.get(i).isEmpty() /* && ItemStack.areItemStacksEqual(repairItems.get(i), items.get(i))*/) {
+			// found an item that was not touched
+			return ItemStack.EMPTY;
+		}
+	}
+	
+//	// save that we repaired it :I
+//	NBTTagCompound tag = TagUtil.getExtraTag(repairedTool);
+//	tag.setInteger(Tags.REPAIR_COUNT, tag.getInteger(Tags.REPAIR_COUNT) + 1);
+//	TagUtil.setExtraTag(repairedTool, tag);
+	
+/*
+	
+	if (!foundMatch) {
+		return ItemStack.EMPTY;
+	}
+
+	// check if all items were used
+	for (int i = 0; i < repairItems.size(); i++) {
+		// was non-null and did not get modified (stacksize changed or null now,
+		// usually)
+		if (!repairItems.get(i).isEmpty() && ItemStack.areItemStacksEqual(repairItems.get(i), items.get(i))) {
+			// found an item that was not touched
+			return ItemStack.EMPTY;
+		}
+	}
+
+	// now do it all over again with the real items, to actually repair \o/
+	ItemStack item = repairable.copy();
+	
+	float totalScore = ToolHelper.getMaxRepairPoints((TinkersItem)repairable.getItem());
+	float origDur = TagUtil.getOriginalToolStats(repairable).durability;
+	float actualDur = ToolHelper.getDurabilityStat(repairable);
+	
+	for (Pair<Integer, Integer> repRecord : getRepairParts()) {
+		int index = repRecord.getFirst();
+		float score = repRecord.getSecond();
+		
+		float curRatio = actualDur / origDur;
+		float repairRatio = score / totalScore;
+		if( curRatio < ratio ) {
+			// Repair and consume item
+		}
+	}
+
+	*/
+	
+/*		while (item.getItemDamage() > 0) {
+		int amount = calculateRepairAmount(materials, repairItems);
+
+		// nothing to repair with, we're therefore done
+		if (amount <= 0) {
+			break;
+		}
+
+		ToolHelper.repairTool(item, calculateRepair(item, amount));
+		// save that we repaired it :I
+		NBTTagCompound tag = TagUtil.getExtraTag(item);
+		tag.setInteger(Tags.REPAIR_COUNT, tag.getInteger(Tags.REPAIR_COUNT) + 1);
+		TagUtil.setExtraTag(item, tag);
+	}*/
+	
+	return repairedTool;
+  }
+
+
+  private ItemStack repairV1(ItemStack repairable, NonNullList<ItemStack> repairItems) {
+	// REMOVE_IN_BRANCH
+	
+	if (repairable.getItemDamage() == 0 && !ToolHelper.isBroken(repairable)) {
+		// undamaged and not broken - no need to repair
+		return ItemStack.EMPTY;
+	}
+
+	// we assume the first required part exclusively determines repair material
+	List<Material> materials = TinkerUtil.getMaterialsFromTagList(TagUtil.getBaseMaterialsTagList(repairable));
+	if (materials.isEmpty()) {
+		return ItemStack.EMPTY;
+	}
+
+	// ensure the items only contain valid items
+	NonNullList<ItemStack> items = Util.deepCopyFixedNonNullList(repairItems);
+	boolean foundMatch = false;
+	for (Pair<Integer, Integer> repRecord : getRepairParts()) {
+		Material material = materials.get(repRecord.getFirst());
 
       if(repairCustom(material, items) > 0) {
         foundMatch = true;
@@ -373,10 +543,13 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
   }
 
   protected int calculateRepairAmount(List<Material> materials, NonNullList<ItemStack> repairItems) {
+	// REMOVE_IN_BRANCH
+		
     Set<Material> materialsMatched = Sets.newHashSet();
     float durability = 0f;
     // try to match each material once
-    for(int index : getRepairParts()) {
+	for (Pair<Integer, Integer> repRecord : getRepairParts()) {
+	  int index = repRecord.getFirst();
       Material material = materials.get(index);
 
       if(materialsMatched.contains(material)) {
@@ -404,6 +577,8 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
   }
 
   protected int calculateRepair(ItemStack tool, int amount) {
+	// REMOVE_IN_BRANCH
+		
     float origDur = TagUtil.getOriginalToolStats(tool).durability;
     float actualDur = ToolHelper.getDurabilityStat(tool);
 

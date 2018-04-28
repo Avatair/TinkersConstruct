@@ -30,12 +30,14 @@ import static slimeknights.tconstruct.shared.TinkerCommons.blockManyullyn;
 import static slimeknights.tconstruct.shared.TinkerCommons.blockPigIron;
 import static slimeknights.tconstruct.shared.TinkerCommons.blockSlime;
 import static slimeknights.tconstruct.shared.TinkerCommons.blockSlimeCongealed;
+import static slimeknights.tconstruct.shared.TinkerCommons.blockEnder;
 import static slimeknights.tconstruct.shared.TinkerCommons.ingotAlubrass;
 import static slimeknights.tconstruct.shared.TinkerCommons.ingotArdite;
 import static slimeknights.tconstruct.shared.TinkerCommons.ingotCobalt;
 import static slimeknights.tconstruct.shared.TinkerCommons.ingotKnightSlime;
 import static slimeknights.tconstruct.shared.TinkerCommons.ingotManyullyn;
 import static slimeknights.tconstruct.shared.TinkerCommons.ingotPigIron;
+import static slimeknights.tconstruct.shared.TinkerCommons.ingotEnder;
 import static slimeknights.tconstruct.shared.TinkerCommons.matSlimeBallBlood;
 import static slimeknights.tconstruct.shared.TinkerCommons.matSlimeBallBlue;
 import static slimeknights.tconstruct.shared.TinkerCommons.matSlimeBallMagma;
@@ -50,6 +52,7 @@ import static slimeknights.tconstruct.shared.TinkerCommons.nuggetCobalt;
 import static slimeknights.tconstruct.shared.TinkerCommons.nuggetKnightSlime;
 import static slimeknights.tconstruct.shared.TinkerCommons.nuggetManyullyn;
 import static slimeknights.tconstruct.shared.TinkerCommons.nuggetPigIron;
+import static slimeknights.tconstruct.shared.TinkerCommons.nuggetEnder;
 import static slimeknights.tconstruct.shared.TinkerCommons.oreArdite;
 import static slimeknights.tconstruct.shared.TinkerCommons.oreCobalt;
 import static slimeknights.tconstruct.shared.TinkerCommons.searedBrick;
@@ -159,7 +162,8 @@ public class TinkerOredict {
     oredictNIB(nuggetKnightSlime, ingotKnightSlime, blockKnightSlime, "Knightslime");
     oredictNIB(nuggetPigIron, ingotPigIron, blockPigIron, "Pigiron");
     oredictNIB(nuggetAlubrass, ingotAlubrass, blockAlubrass, "Alubrass");
-
+    oredictNIB(nuggetEnder, ingotEnder, blockEnder, "Enderium");
+    
     String metal = "blockMetal";
     oredict(new ItemStack(Blocks.IRON_BLOCK), metal);
     oredict(new ItemStack(Blocks.GOLD_BLOCK), metal);

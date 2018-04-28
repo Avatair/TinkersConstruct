@@ -26,13 +26,17 @@ import slimeknights.tconstruct.tools.common.inventory.ContainerToolStation;
 public class TileToolStation extends TileTable implements IInventoryGui {
 
   public TileToolStation() {
-    super("gui.toolstation.name", 6);
-    this.itemHandler = new ConfigurableInvWrapperCapability(this, false, false);
+	this("gui.toolstation.name");
+  }
+  
+  public TileToolStation(String name) {
+	super(name, 6);
+	this.itemHandler = new ConfigurableInvWrapperCapability(this, false, false);
   }
 
   @Override
-  public Container createContainer(InventoryPlayer inventoryplayer, World world, BlockPos pos) {
-    return new ContainerToolStation(inventoryplayer, this);
+  public ContainerToolStation createContainer(InventoryPlayer inventoryplayer, World world, BlockPos pos) {
+    return new ContainerToolStation(inventoryplayer, this, true, true);
   }
 
   @Override

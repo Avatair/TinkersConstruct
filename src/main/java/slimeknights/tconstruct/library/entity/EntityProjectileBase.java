@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.SoundEvents;
@@ -237,6 +238,22 @@ public abstract class EntityProjectileBase extends EntityArrow implements IEntit
         // deal the damage
         float speed = MathHelper.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
         bounceOff = !dealDamage(speed, inventoryItem, attacker, entityHit);
+        
+		if (this.knockbackStrength > 0)
+        {
+            float f1 = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+
+            if (f1 > 0.0F)
+            {
+            	entityHit.addVelocity(this.motionX * (double)this.knockbackStrength * 0.6000000238418579D / (double)f1, 0.1D, this.motionZ * (double)this.knockbackStrength * 0.6000000238418579D / (double)f1);
+            }
+        }
+		
+        if (this.isBurning() && !(entityHit instanceof EntityEnderman))
+        {
+        	entityHit.setFire(5);
+        }
+        
         if(!bounceOff) {
           for(IProjectileTrait trait : tinkerProjectile.getProjectileTraits()) {
             trait.afterHit(this, getEntityWorld(), inventoryItem, attacker, entityHit, speed);

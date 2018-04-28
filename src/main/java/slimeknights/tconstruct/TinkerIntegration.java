@@ -58,7 +58,9 @@ public class TinkerIntegration extends TinkerPulse {
     // listed here so it's the first in the toolforge listing
     integrate(TinkerMaterials.iron, TinkerFluids.iron, "Iron").toolforge();
     integrate(TinkerMaterials.pigiron, TinkerFluids.pigIron, "Pigiron").toolforge();
-
+//  integrate(TinkerMaterials.ender, TinkerFluids.moltenEnder, "Ender");
+    integrate(TinkerFluids.moltenEnder, "Ender");
+    
     integrate(TinkerMaterials.knightslime, TinkerFluids.knightslime, "Knightslime").toolforge();
     integrate(TinkerMaterials.slime, "slimecrystalGreen");
     integrate(TinkerMaterials.blueslime, "slimecrystalBlue");
@@ -80,6 +82,10 @@ public class TinkerIntegration extends TinkerPulse {
     integrate(TinkerMaterials.silver, TinkerFluids.silver, "Silver").toolforge();
     integrate(TinkerMaterials.electrum, TinkerFluids.electrum, "Electrum").toolforge();
     integrate(TinkerMaterials.steel, TinkerFluids.steel, "Steel").toolforge();
+    integrate(TinkerMaterials.magnite, TinkerFluids.magnite, "Magnite").toolforge();
+    integrate(TinkerMaterials.manalite, "gemManalite");
+    integrate(TinkerMaterials.hexcite, "gemHexcite");
+    integrate(TinkerMaterials.aquamarine, "gemAquamarine");
 
     // non-toolmaterial integration
     integrate(TinkerFluids.gold, "Gold").toolforge();
@@ -127,11 +133,11 @@ public class TinkerIntegration extends TinkerPulse {
     IForgeRegistry<IRecipe> registry = event.getRegistry();
 
     // add the tool forge recipes from all integrations
-    if(isToolsLoaded()) {
-      for(MaterialIntegration integration : TinkerRegistry.getMaterialIntegrations()) {
-        integration.registerToolForgeRecipe(registry);
-      }
-    }
+//    if(isToolsLoaded()) {
+//      for(MaterialIntegration integration : TinkerRegistry.getMaterialIntegrations()) {
+//        integration.registerToolForgeRecipe(registry);
+//      }
+//    }
   }
 
   @SubscribeEvent

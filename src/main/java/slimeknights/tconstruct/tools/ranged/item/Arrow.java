@@ -26,8 +26,8 @@ public class Arrow extends ProjectileCore {
 
   public Arrow() {
     super(PartMaterialType.arrowShaft(TinkerTools.arrowShaft),
-          PartMaterialType.arrowHead(TinkerTools.arrowHead),
-          PartMaterialType.fletching(TinkerTools.fletching));
+    	  PartMaterialType.fletching(TinkerTools.fletching),
+          PartMaterialType.arrowHead(TinkerTools.arrowHead));
 
     addCategory(Category.NO_MELEE, Category.PROJECTILE);
   }
@@ -35,7 +35,7 @@ public class Arrow extends ProjectileCore {
   @Override
   public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
     if(this.isInCreativeTab(tab)) {
-      addDefaultSubItems(subItems, TinkerMaterials.wood, null, TinkerMaterials.feather);
+      addDefaultSubItems(subItems, TinkerMaterials.wood, TinkerMaterials.feather, null);
     }
   }
 
@@ -54,8 +54,8 @@ public class Arrow extends ProjectileCore {
     ProjectileNBT data = new ProjectileNBT();
 
     ArrowShaftMaterialStats shaft = materials.get(0).getStatsOrUnknown(MaterialTypes.SHAFT);
-    HeadMaterialStats head = materials.get(1).getStatsOrUnknown(MaterialTypes.HEAD);
-    FletchingMaterialStats fletching = materials.get(2).getStatsOrUnknown(MaterialTypes.FLETCHING);
+    HeadMaterialStats head = materials.get(2).getStatsOrUnknown(MaterialTypes.HEAD);
+    FletchingMaterialStats fletching = materials.get(1).getStatsOrUnknown(MaterialTypes.FLETCHING);
 
     data.head(head);
     data.fletchings(fletching);
@@ -67,8 +67,15 @@ public class Arrow extends ProjectileCore {
   }
 
   @Override
-  public EntityProjectileBase getProjectile(ItemStack stack, ItemStack bow, World world, EntityPlayer player, float speed, float inaccuracy, float power, boolean usedAmmo) {
+  public EntityProjectileBase getProjectile(ItemStack stack, ItemStack bow, World world, EntityPlayer player,
+	  float speed, float inaccuracy, float power, int punch, int fireTime, boolean usedAmmo) {
     inaccuracy -= (1f - 1f / ProjectileNBT.from(stack).accuracy) * speed / 2f;
-    return new EntityArrow(world, player, speed, inaccuracy, power, getProjectileStack(stack, world, player, usedAmmo), bow);
+	EntityArrow arrow = new EntityArrow(world, player, speed, inaccuracy, power,
+	getProjectileStack(stack, world, player, usedAmmo), bow);
+	if( punch > 0 )
+	  arrow.setKnockbackStrength(punch);
+	if( fireTime > 0 )
+	  arrow.setFire(fireTime);
+	return arrow;
   }
 }

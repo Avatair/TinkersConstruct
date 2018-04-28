@@ -23,6 +23,7 @@ import slimeknights.tconstruct.library.materials.MaterialTypes;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ProjectileLauncherNBT;
 import slimeknights.tconstruct.library.tools.ranged.BowCore;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.tools.TinkerMaterials;
 import slimeknights.tconstruct.tools.TinkerTools;
 import slimeknights.tconstruct.tools.ranged.TinkerRangedWeapons;
@@ -42,11 +43,17 @@ public class ShortBow extends BowCore implements ICustomCrosshairUser {
     this.addPropertyOverride(PROPERTY_IS_PULLING, isPullingPropertyGetter);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public int[] getRepairParts() {
-    return new int[] { 0, 1 };
+  public Pair<Integer, Integer>[] getRepairParts() {
+	// return new int[]{0, 1};
+	return new Pair[] {
+	  new Pair<Integer, Integer>(2, 20),
+	  new Pair<Integer, Integer>(1, 40),
+	  new Pair<Integer, Integer>(0, 40)
+	};
   }
-
+	
   @Override
   public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
     if(this.isInCreativeTab(tab)) {

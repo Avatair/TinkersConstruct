@@ -44,7 +44,6 @@ import slimeknights.tconstruct.shared.tileentity.TileTable;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 import slimeknights.tconstruct.tools.common.RepairRecipe;
 import slimeknights.tconstruct.tools.common.TableRecipeFactory.TableRecipe;
-import slimeknights.tconstruct.tools.common.block.BlockToolForge;
 import slimeknights.tconstruct.tools.common.block.BlockToolTable;
 import slimeknights.tconstruct.tools.common.block.BlockToolTable.TableTypes;
 import slimeknights.tconstruct.tools.common.item.ItemBlockTable;
@@ -54,7 +53,6 @@ import slimeknights.tconstruct.tools.common.tileentity.TilePartBuilder;
 import slimeknights.tconstruct.tools.common.tileentity.TilePartChest;
 import slimeknights.tconstruct.tools.common.tileentity.TilePatternChest;
 import slimeknights.tconstruct.tools.common.tileentity.TileStencilTable;
-import slimeknights.tconstruct.tools.common.tileentity.TileToolForge;
 import slimeknights.tconstruct.tools.common.tileentity.TileToolStation;
 import slimeknights.tconstruct.tools.ranged.item.BoltCore;
 
@@ -69,7 +67,7 @@ public class TinkerTools extends AbstractToolPulse {
 
   // Blocks
   public static BlockToolTable toolTables;
-  public static BlockToolForge toolForge;
+  // public static BlockToolForge toolForge;
 
   // General Items
   public static Pattern pattern;
@@ -115,7 +113,7 @@ public class TinkerTools extends AbstractToolPulse {
 
     // register blocks
     toolTables = registerBlock(registry, new BlockToolTable(), "tooltables");
-    toolForge = registerBlock(registry, new BlockToolForge(), "toolforge");
+    // toolForge = registerBlock(registry, new BlockToolForge(), "toolforge");
 
     registerTE(TileTable.class, "table");
     registerTE(TileCraftingStation.class, "craftingstation");
@@ -124,7 +122,7 @@ public class TinkerTools extends AbstractToolPulse {
     registerTE(TilePatternChest.class, "patternchest");
     registerTE(TilePartChest.class, "partchest");
     registerTE(TileToolStation.class, "toolstation");
-    registerTE(TileToolForge.class, "toolforge");
+    // registerTE(TileToolForge.class, "toolforge");
 
   }
 
@@ -146,7 +144,7 @@ public class TinkerTools extends AbstractToolPulse {
 
     // register blocks
     toolTables = registerItemBlockProp(registry, new ItemBlockTable(toolTables), BlockToolTable.TABLES);
-    toolForge = registerItemBlock(registry, new ItemBlockTable(toolForge));
+    // toolForge = registerItemBlock(registry, new ItemBlockTable(toolForge));
 
     // set shard
     TinkerRegistry.setShardItem(shard);
@@ -181,40 +179,51 @@ public class TinkerTools extends AbstractToolPulse {
 
   @Override
   protected void registerToolParts(IForgeRegistry<Item> registry) {
+	int headPrios[] = new int[] {1,2,0,3};
+	int handlePrios[] = new int[] {0,3};
+	int platePrios[] = new int[] {3,2};
+	int bindingPrios[] = new int[] {2};
+	int limbPrios[] = new int[] {1,0};
+	int bowStringPrios[] = new int[] {3,2};
+	int boltCorePrios[] = new int[] {0};
+	int arrowHeadPrios[] = new int[] {2};
+	int fletchingPrios[] = new int[] {1};
+		 
+
     // The order the items are registered in represents the order in the stencil table GUI too
-    pickHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2), "pick_head");
-    shovelHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2), "shovel_head");
-    axeHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2), "axe_head");
-    broadAxeHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8), "broad_axe_head");
-    swordBlade = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2), "sword_blade");
-    largeSwordBlade = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8), "large_sword_blade");
-    hammerHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8), "hammer_head");
-    excavatorHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8), "excavator_head");
-    kamaHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2), "kama_head");
-    scytheHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8), "scythe_head");
-    panHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 3), "pan_head");
-    signHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 3), "sign_head");
+    pickHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2).assignSlotPrio(headPrios), "pick_head");
+    shovelHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2).assignSlotPrio(headPrios), "shovel_head");
+    axeHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2).assignSlotPrio(headPrios), "axe_head");
+    broadAxeHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8).assignSlotPrio(headPrios), "broad_axe_head");
+    swordBlade = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2).assignSlotPrio(headPrios), "sword_blade");
+    largeSwordBlade = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8).assignSlotPrio(headPrios), "large_sword_blade");
+    hammerHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8).assignSlotPrio(headPrios), "hammer_head");
+    excavatorHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8).assignSlotPrio(headPrios), "excavator_head");
+    kamaHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2).assignSlotPrio(headPrios), "kama_head");
+    scytheHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8).assignSlotPrio(headPrios), "scythe_head");
+    panHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 3).assignSlotPrio(headPrios), "pan_head");
+    signHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 3).assignSlotPrio(headPrios), "sign_head");
 
-    toolRod = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot), "tool_rod");
-    toughToolRod = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 3), "tough_tool_rod");
-    binding = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot), "binding");
-    toughBinding = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 3), "tough_binding");
+    toolRod = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot).assignSlotPrio(handlePrios), "tool_rod");
+    toughToolRod = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 3).assignSlotPrio(handlePrios), "tough_tool_rod");
+    binding = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot).assignSlotPrio(handlePrios), "binding");
+    toughBinding = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 3).assignSlotPrio(handlePrios), "tough_binding");
 
-    wideGuard = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot), "wide_guard");
-    handGuard = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot), "hand_guard");
-    crossGuard = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot), "cross_guard");
+    wideGuard = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot).assignSlotPrio(bindingPrios), "wide_guard");
+    handGuard = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot).assignSlotPrio(bindingPrios), "hand_guard");
+    crossGuard = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot).assignSlotPrio(bindingPrios), "cross_guard");
 
-    largePlate = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8), "large_plate");
+    largePlate = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 8).assignSlotPrio(platePrios), "large_plate");
 
-    knifeBlade = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot), "knife_blade");
+    knifeBlade = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot).assignSlotPrio(headPrios), "knife_blade");
 
-    bowLimb = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 3), "bow_limb");
-    bowString = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot), "bow_string");
+    bowLimb = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 3).assignSlotPrio(limbPrios), "bow_limb");
+    bowString = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot).assignSlotPrio(bowStringPrios), "bow_string");
 
-    arrowHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2), "arrow_head");
-    arrowShaft = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2), "arrow_shaft");
-    fletching = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2), "fletching");
-    boltCore = (BoltCore) registerToolPart(registry, new BoltCore(Material.VALUE_Ingot * 2), "bolt_core", null);
+    arrowHead = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2).assignSlotPrio(arrowHeadPrios), "arrow_head");
+    arrowShaft = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2).assignSlotPrio(handlePrios), "arrow_shaft");
+    fletching = registerToolPart(registry, new ToolPart(Material.VALUE_Ingot * 2).assignSlotPrio(fletchingPrios), "fletching");
+    boltCore = (BoltCore) registerToolPart(registry, new BoltCore(Material.VALUE_Ingot * 2).assignSlotPrio(boltCorePrios), "bolt_core", null);
     toolparts.remove(boltCore);
   }
 
@@ -244,6 +253,7 @@ public class TinkerTools extends AbstractToolPulse {
    * @param registry IForgeRegistry to register the recipe
    * @param oredict oredict string for the block to add
    */
+  /*
   public static void registerToolForgeBlock(IForgeRegistry<IRecipe> registry, String oredict) {
     if(toolForge != null) {
       toolForge.baseBlocks.add(oredict);
@@ -270,6 +280,8 @@ public class TinkerTools extends AbstractToolPulse {
 
     registry.register(recipe);
   }
+  
+  */
 
   // POST-INITIALIZATION
   @Override

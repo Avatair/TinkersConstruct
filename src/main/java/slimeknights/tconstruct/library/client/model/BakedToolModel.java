@@ -5,17 +5,21 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.model.TRSRTransformation;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +110,8 @@ public class BakedToolModel extends BakedWrapper.Perspective {
       addModifierQuads(stack, original, quads);
       addExtraQuads(stack, original, quads, world, entity);
 
-      return new BakedSimpleItem(quads.build(), original.transforms, original);
+      return new BakedSimpleForTools(quads.build(), original.transforms, original);
+//      return new BakedSimpleItem(quads.build(), original.transforms, original);
     }
 
     private BakedToolModel getBaseModel(@Nonnull BakedToolModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
@@ -197,5 +202,20 @@ public class BakedToolModel extends BakedWrapper.Perspective {
       return result;
     }
   }
+
+	private static class BakedSimpleForTools extends BakedSimpleItem {
+		public BakedSimpleForTools(ImmutableList<BakedQuad> quads,
+				ImmutableMap<TransformType, TRSRTransformation> transforms, IBakedModel original) {
+			super(quads, transforms, original);
+		}
+
+		@Nonnull
+		@Override
+		public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+			if( side == null )
+				return super.getQuads(state, side, rand);
+			return ImmutableList.of();
+		}
+	}
 
 }

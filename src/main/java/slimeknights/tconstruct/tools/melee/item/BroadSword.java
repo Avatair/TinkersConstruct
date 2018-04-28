@@ -15,6 +15,7 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.SwordCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 
@@ -30,6 +31,16 @@ public class BroadSword extends SwordCore {
     addCategory(Category.WEAPON);
   }
 
+  @SuppressWarnings("unchecked")
+  public Pair<Integer, Integer>[] getRepairParts() {
+	return new Pair[] {
+	  new Pair<Integer, Integer>(2, 10),
+	  new Pair<Integer, Integer>(0, 30),
+	  new Pair<Integer, Integer>(1, 60)
+	};
+	// index 1 usually is the head. 0 is handle.
+  }
+  
   @Override
   public float damagePotential() {
     return 1.0f;
@@ -39,7 +50,7 @@ public class BroadSword extends SwordCore {
   public double attackSpeed() {
     return 1.6d; // default vanilla sword speed
   }
-
+  
   // sword sweep attack
   @Override
   public boolean dealDamage(ItemStack stack, EntityLivingBase player, Entity entity, float damage) {

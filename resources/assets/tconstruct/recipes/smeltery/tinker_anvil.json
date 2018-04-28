@@ -1,0 +1,30 @@
+{
+    "conditions": [
+        {
+            "type": "tconstruct:is_pulse_loaded",
+            "pulse_name": "TinkerSmeltery"
+        }
+    ],
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "BBB",
+        " f ",
+        "bbb"
+    ],
+    "key": {
+        "B": {
+            "item": "minecraft:iron_block"
+        },
+        "b": {
+            "item": "minecraft:iron_ingot"
+        },
+        "f": {
+            "item": "tconstruct:tooltables",
+            "data": 3
+        }
+    },
+    "result": {
+        "item": "tconstruct:tinker_anvil",
+        "data": 0
+    }
+}

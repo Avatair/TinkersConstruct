@@ -55,7 +55,8 @@ public class SmelteryClientProxy extends ClientProxy {
     registerItemModel(TinkerSmeltery.tinkerTankController);
     registerItemBlockMeta(TinkerSmeltery.searedBlock);
     registerItemBlockMeta(TinkerSmeltery.castingBlock);
-
+    registerItemBlockMeta(TinkerSmeltery.anvilBlock);
+    
     // slabs
     registerItemBlockMeta(TinkerSmeltery.searedSlab);
     registerItemBlockMeta(TinkerSmeltery.searedSlab2);

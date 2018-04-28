@@ -20,27 +20,32 @@ public class HeadMaterialStats extends AbstractMaterialStats {
   public final static String LOC_MiningSpeed  = "stat.head.miningspeed.name";
   public final static String LOC_Attack       = "stat.head.attack.name";
   public final static String LOC_HarvestLevel = "stat.head.harvestlevel.name";
+  public final static String LOC_Enchantability = "stat.head.enchantability.name";
 
   public final static String LOC_DurabilityDesc    = "stat.head.durability.desc";
   public final static String LOC_MiningSpeedDesc   = "stat.head.miningspeed.desc";
   public final static String LOC_AttackDesc        = "stat.head.attack.desc";
   public final static String LOC_HarvestLevelDesc  = "stat.head.harvestlevel.desc";
-
+  public final static String LOC_EnchantabilityDesc = "stat.head.enchantability.desc";
+  
   public final static String COLOR_Durability = CustomFontColor.valueToColorCode(1f);
   public final static String COLOR_Attack     = CustomFontColor.encodeColor(215, 100, 100);
   public final static String COLOR_Speed      = CustomFontColor.encodeColor(120, 160, 205);
-
+  public final static String COLOR_Enchantability = CustomFontColor.encodeColor(60, 190, 205);
+  
   public final int durability; // usually between 1 and 1000
   public final int harvestLevel; // see HarvestLevels class
   public final float attack; // usually between 0 and 10 (in 1/2 hearts, so divide by 2 for damage in hearts)
   public final float miningspeed; // usually between 1 and 10
-
-  public HeadMaterialStats(int durability, float miningspeed, float attack, int harvestLevel) {
+  public final int enchantability; // Tool enchantability
+  
+  public HeadMaterialStats(int durability, float miningspeed, float attack, int harvestLevel, int enchantability) {
     super(MaterialTypes.HEAD);
     this.durability = durability;
     this.miningspeed = miningspeed;
     this.attack = attack;
     this.harvestLevel = harvestLevel;
+	this.enchantability = enchantability;
   }
 
   @Override
@@ -51,10 +56,16 @@ public class HeadMaterialStats extends AbstractMaterialStats {
     info.add(formatHarvestLevel(harvestLevel));
     info.add(formatMiningSpeed(miningspeed));
     info.add(formatAttack(attack));
+	if (enchantability > 0)
+		info.add(formatEnchantability(enchantability));
 
     return info;
   }
 
+  private String formatEnchantability(int enchantability) {
+	return formatNumber(LOC_Enchantability, COLOR_Enchantability, enchantability);
+  }
+  
   public static String formatDurability(int durability) {
     return formatNumber(LOC_Durability, COLOR_Durability, durability);
   }
@@ -86,6 +97,7 @@ public class HeadMaterialStats extends AbstractMaterialStats {
     info.add(Util.translate(LOC_HarvestLevelDesc));
     info.add(Util.translate(LOC_MiningSpeedDesc));
     info.add(Util.translate(LOC_AttackDesc));
+    info.add(Util.translate(LOC_EnchantabilityDesc));
 
     return info;
   }

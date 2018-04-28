@@ -50,8 +50,8 @@ public final class ToolBuilder {
   }
 
   @Nonnull
-  public static ItemStack tryBuildTool(NonNullList<ItemStack> stacks, String name) {
-    return tryBuildTool(stacks, name, TinkerRegistry.getTools());
+  public static ItemStack tryBuildTool(NonNullList<ItemStack> stacks, String name, boolean bAllowCastable) {
+	return tryBuildTool(stacks, name, TinkerRegistry.getTools(), bAllowCastable);
   }
 
   /**
@@ -61,7 +61,8 @@ public final class ToolBuilder {
    * @return The built tool or null if none could be built.
    */
   @Nonnull
-  public static ItemStack tryBuildTool(NonNullList<ItemStack> stacks, String name, Collection<ToolCore> possibleTools) {
+  public static ItemStack tryBuildTool(NonNullList<ItemStack> stacks, String name, Collection<ToolCore> possibleTools,
+	  boolean bOnlyCraftable) {
     int length = -1;
     NonNullList<ItemStack> input;
     // remove trailing empty slots
@@ -80,6 +81,12 @@ public final class ToolBuilder {
     if(length < 0) {
       return ItemStack.EMPTY;
     }
+    
+	// check if there exist some invalid material
+	if (bOnlyCraftable) {
+		if (containsNonCraftable(stacks))
+			return ItemStack.EMPTY;
+	}
 
     input = ItemStackList.of(stacks);
 
@@ -99,6 +106,19 @@ public final class ToolBuilder {
     }
 
     return ItemStack.EMPTY;
+  }
+  
+  private static boolean containsNonCraftable(NonNullList<ItemStack> stacks) {
+	for (int i = 0; i < stacks.size(); i++) {
+	  ItemStack stack = stacks.get(i);
+	  Material mat = TinkerUtil.getMaterialFromStack(stack);
+	  if (mat == null || mat == Material.UNKNOWN)
+	    continue;
+	  if (mat != null && !mat.isCraftable())
+	 	return true;
+	}
+	
+	return false;
   }
 
   /**
@@ -140,10 +160,17 @@ public final class ToolBuilder {
   }
 
   @Nonnull
-  public static ItemStack tryRepairTool(NonNullList<ItemStack> stacks, ItemStack toolStack, boolean removeItems) {
+  public static ItemStack tryRepairTool(NonNullList<ItemStack> stacks, ItemStack toolStack, boolean removeItems,
+	  boolean bOnlyCraftable) {
     if(toolStack == null || !(toolStack.getItem() instanceof IRepairable)) {
       return ItemStack.EMPTY;
     }
+    
+	// Check if tool contains invalid castable materials
+	if (bOnlyCraftable) {
+		if (toolContainNonCraftable(toolStack))
+			return ItemStack.EMPTY;
+	}
 
     // obtain a working copy of the items if the originals shouldn't be modified
     if(!removeItems) {
@@ -151,6 +178,16 @@ public final class ToolBuilder {
     }
 
     return ((IRepairable) toolStack.getItem()).repair(toolStack, stacks);
+  }
+
+  private static boolean toolContainNonCraftable(ItemStack toolStack) {
+	List<Material> materials = TinkerUtil.getMaterialsFromTagList(TagUtil.getBaseMaterialsTagList(toolStack));
+	for (Material mat : materials) {
+	  if (!mat.isCraftable())
+		return true;
+	}
+	
+	return false;
   }
 
   /**
@@ -164,8 +201,14 @@ public final class ToolBuilder {
    * @throws TinkerGuiException Thrown when not matching modifiers could be applied. Contains extra-information why the process failed.
    */
   @Nonnull
-  public static ItemStack tryModifyTool(NonNullList<ItemStack> input, ItemStack toolStack, boolean removeItems)
-      throws TinkerGuiException {
+  public static ItemStack tryModifyTool(NonNullList<ItemStack> input, ItemStack toolStack, boolean removeItems,
+	  boolean bOnlyCraftable) throws TinkerGuiException {
+
+	// Check if tool contains invalid castable materials
+	if (bOnlyCraftable) {
+	  if (toolContainNonCraftable(toolStack))
+		return ItemStack.EMPTY;
+	}
     ItemStack copy = toolStack.copy();
 
     // obtain a working copy of the items if the originals shouldn't be modified
@@ -270,13 +313,34 @@ public final class ToolBuilder {
    * @return The tool with the replaced parts or null if the conditions have not been met.
    */
   @Nonnull
-  public static ItemStack tryReplaceToolParts(ItemStack toolStack, final NonNullList<ItemStack> toolPartsIn, final boolean removeItems)
-      throws TinkerGuiException {
+	public static ItemStack tryReplaceToolParts(ItemStack toolStack, final NonNullList<ItemStack> toolPartsIn,
+			final boolean performAction, boolean bOnlyCraftable) throws TinkerGuiException {
     if(toolStack == null || !(toolStack.getItem() instanceof TinkersItem)) {
       return ItemStack.EMPTY;
     }
 
-    // we never modify the original. Caller can remove all of them if we return a result
+	// Reject if not fully repaired
+	int maxDur = ToolHelper.getDurabilityStat(toolStack);
+	int actualDur = Math.max(ToolHelper.getDurabilityStat(toolStack) - toolStack.getItemDamage(), 0);
+	if (actualDur < maxDur)
+		return ItemStack.EMPTY;
+
+	// Reject if stack sizes are more than one somewhere
+	for (ItemStack partInput : toolPartsIn) {
+		if (partInput.getCount() > 1)
+			return ItemStack.EMPTY;
+	}
+
+	// Reject if no castable parts are allowed
+	if (bOnlyCraftable) {
+		if (containsNonCraftable(toolPartsIn))
+			return ItemStack.EMPTY;
+		if (toolContainNonCraftable(toolStack))
+			return ItemStack.EMPTY;
+	}
+
+	// we never modify the original. Caller can remove all of them if we return a
+	// result
     NonNullList<ItemStack> inputItems = ItemStackList.of(Util.deepCopyFixedNonNullList(toolPartsIn));
     if(!TinkerEvent.OnToolPartReplacement.fireEvent(inputItems, toolStack)) {
       // event cancelled
@@ -287,8 +351,11 @@ public final class ToolBuilder {
 
     TIntIntMap assigned = new TIntIntHashMap();
     TinkersItem tool = (TinkersItem) toolStack.getItem();
-    // materiallist has to be copied because it affects the actual NBT on the tool if it's changed
-    final NBTTagList materialList = TagUtil.getBaseMaterialsTagList(toolStack).copy();
+	// materiallist has to be copied because it affects the actual NBT on the tool
+	// if it's changed
+	final NBTTagList materialTagList = TagUtil.getBaseMaterialsTagList(toolStack).copy();
+	List<Material> materials = TinkerUtil.getMaterialsFromTagList(materialTagList);
+	List<PartMaterialType> pms = tool.getRequiredComponents();
 
     // assing each toolpart to a slot in the tool
     for(int i = 0; i < toolParts.size(); i++) {
@@ -303,11 +370,10 @@ public final class ToolBuilder {
 
       int candidate = -1;
       // find an applicable slot in the tool structure corresponding to the toolparts position
-      List<PartMaterialType> pms = tool.getRequiredComponents();
       for(int j = 0; j < pms.size(); j++) {
         PartMaterialType pmt = pms.get(j);
         String partMat = ((IToolPart) part.getItem()).getMaterial(part).getIdentifier();
-        String currentMat = materialList.getStringTagAt(j);
+		String currentMat = materialTagList.getStringTagAt(j);
         // is valid and not the same material?
         if(pmt.isValid(part) && !partMat.equals(currentMat)) {
           // part not taken up by previous part already?
@@ -338,18 +404,20 @@ public final class ToolBuilder {
     // to do so we simply switch out the materials used and rebuild the tool
     assigned.forEachEntry((i, j) -> {
       String mat = ((IToolPart) toolParts.get(i).getItem()).getMaterial(toolParts.get(i)).getIdentifier();
-      materialList.set(j, new NBTTagString(mat));
-      if(removeItems) {
-        if(i < toolPartsIn.size() && !toolPartsIn.get(i).isEmpty()) {
-          toolPartsIn.get(i).shrink(1);
-        }
-      }
+	  materialTagList.set(j, new NBTTagString(mat));
+	  if (performAction) {
+		if (i < toolPartsIn.size() && !toolPartsIn.get(i).isEmpty()) {
+		  ItemStack prevPart = pms.get(j).getPossiblePart().getItemstackWithMaterial(materials.get(j));
+		  toolPartsIn.set(i, prevPart);
+		  // toolPartsIn.get(i).shrink(1);
+		}
+	  }
       return true;
     });
 
     // check that each material is still compatible with each modifier
     TinkersItem tinkersItem = (TinkersItem) toolStack.getItem();
-    ItemStack copyToCheck = tinkersItem.buildItem(TinkerUtil.getMaterialsFromTagList(materialList));
+	ItemStack copyToCheck = tinkersItem.buildItem(TinkerUtil.getMaterialsFromTagList(materialTagList));
     // this includes traits
     NBTTagList modifiers = TagUtil.getBaseModifiersTagList(toolStack);
     for(int i = 0; i < modifiers.tagCount(); i++) {
@@ -363,7 +431,7 @@ public final class ToolBuilder {
     }
 
     ItemStack output = toolStack.copy();
-    TagUtil.setBaseMaterialsTagList(output, materialList);
+	TagUtil.setBaseMaterialsTagList(output, materialTagList);
     NBTTagCompound tag = TagUtil.getTagSafe(output);
     rebuildTool(tag, (TinkersItem) output.getItem());
     output.setTagCompound(tag);

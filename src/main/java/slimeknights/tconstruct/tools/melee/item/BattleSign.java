@@ -31,6 +31,7 @@ import slimeknights.tconstruct.library.tinkering.Category;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.TinkerToolCore;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 import slimeknights.tconstruct.tools.common.network.EntityMovementChangePacket;
@@ -51,6 +52,16 @@ public class BattleSign extends TinkerToolCore {
         return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F;
       }
     });
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public Pair<Integer, Integer>[] getRepairParts() {
+	// return new int[]{1, 2};
+	return new Pair[] {
+	  new Pair<Integer, Integer>(0, 20),
+	  new Pair<Integer, Integer>(1, 80)
+	};
   }
 
   @Override

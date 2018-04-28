@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.common.eventbus.Subscribe;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.entity.passive.EntityVillager;
@@ -19,6 +20,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -72,7 +74,9 @@ import slimeknights.tconstruct.smeltery.block.BlockSearedStairs;
 import slimeknights.tconstruct.smeltery.block.BlockSmelteryController;
 import slimeknights.tconstruct.smeltery.block.BlockSmelteryIO;
 import slimeknights.tconstruct.smeltery.block.BlockTank;
+import slimeknights.tconstruct.smeltery.block.BlockTinkerAnvil;
 import slimeknights.tconstruct.smeltery.block.BlockTinkerTankController;
+import slimeknights.tconstruct.smeltery.events.TinkerForgingEvents;
 import slimeknights.tconstruct.smeltery.item.CastCustom;
 import slimeknights.tconstruct.smeltery.item.ItemChannel;
 import slimeknights.tconstruct.smeltery.item.ItemTank;
@@ -86,7 +90,9 @@ import slimeknights.tconstruct.smeltery.tileentity.TileSmeltery;
 import slimeknights.tconstruct.smeltery.tileentity.TileSmelteryComponent;
 import slimeknights.tconstruct.smeltery.tileentity.TileTank;
 import slimeknights.tconstruct.smeltery.tileentity.TileTinkerTank;
+import slimeknights.tconstruct.smeltery.tileentity.TileTinkersAnvil;
 import slimeknights.tconstruct.tools.TinkerMaterials;
+import slimeknights.tconstruct.tools.TinkerTools;
 
 @Pulse(id = TinkerSmeltery.PulseId, description = "The smeltery and items needed for it")
 public class TinkerSmeltery extends TinkerPulse {
@@ -104,6 +110,7 @@ public class TinkerSmeltery extends TinkerPulse {
   public static BlockFaucet faucet;
   public static BlockChannel channel;
   public static BlockCasting castingBlock;
+  public static BlockTinkerAnvil anvilBlock;
   public static BlockSmelteryIO smelteryIO;
   public static BlockSearedGlass searedGlass;
 
@@ -160,6 +167,7 @@ public class TinkerSmeltery extends TinkerPulse {
     faucet = registerBlock(registry, new BlockFaucet(), "faucet");
     channel = registerBlock(registry, new BlockChannel(), "channel");
     castingBlock = registerBlock(registry, new BlockCasting(), "casting");
+    anvilBlock =  registerBlock(registry, new BlockTinkerAnvil(), "tinker_anvil");
     smelteryIO = registerBlock(registry, new BlockSmelteryIO(), "smeltery_io");
     searedGlass = registerBlock(registry, new BlockSearedGlass(), "seared_glass");
 
@@ -191,6 +199,7 @@ public class TinkerSmeltery extends TinkerPulse {
     registerTE(TileChannel.class, "channel");
     registerTE(TileCastingTable.class, "casting_table");
     registerTE(TileCastingBasin.class, "casting_basin");
+    registerTE(TileTinkersAnvil.class, "tinker_anvil");
     registerTE(TileDrain.class, "smeltery_drain");
     registerTE(TileSearedFurnace.class, "seared_furnace");
     registerTE(TileTinkerTank.class, "tinker_tank");
@@ -206,6 +215,7 @@ public class TinkerSmeltery extends TinkerPulse {
     faucet = registerItemBlock(registry, faucet);
     channel = registerItemBlock(registry, new ItemChannel(channel));
     castingBlock = registerItemBlockProp(registry, new ItemBlockMeta(castingBlock), BlockCasting.TYPE);
+    anvilBlock =  registerItemBlockProp(registry, new ItemBlockMeta(anvilBlock), BlockTinkerAnvil.TYPE); 
     smelteryIO = registerEnumItemBlock(registry, smelteryIO);
     searedGlass = registerEnumItemBlock(registry, searedGlass);
 
@@ -332,6 +342,8 @@ public class TinkerSmeltery extends TinkerPulse {
       TinkerRegistry.registerTableCasting(new CastingRecipe(castIngot, new RecipeMatch.Item(TinkerCommons.searedBrick, 1), fs, true, true));
     }
 
+    MinecraftForge.EVENT_BUS.register(new TinkerForgingEvents());
+    
     proxy.postInit();
     TinkerRegistry.tabSmeltery.setDisplayIcon(new ItemStack(searedTank));
   }
@@ -451,6 +463,24 @@ public class TinkerSmeltery extends TinkerPulse {
       TinkerRegistry.registerTableCasting(new ItemStack(Items.BRICK), castIngot, TinkerFluids.clay, Material.VALUE_Ingot);
     }
 
+    // ender pearl melting and casting
+    TinkerRegistry.registerMelting(Items.ENDER_PEARL, TinkerFluids.moltenEnder, Material.VALUE_EnderPearl);
+    TinkerRegistry.registerMelting(Items.CHORUS_FRUIT, TinkerFluids.moltenEnder, Material.VALUE_EnderPearl / 18);
+    TinkerRegistry.registerMelting(Blocks.CHORUS_FLOWER, TinkerFluids.moltenEnder, Material.VALUE_EnderPearl / 6);
+    {
+	    ItemStack panCast = new ItemStack(TinkerSmeltery.cast);
+	    Cast.setTagForPart(panCast, TinkerTools.panHead);
+	    TinkerRegistry.registerTableCasting(new ItemStack(Items.ENDER_PEARL), panCast, TinkerFluids.moltenEnder, Material.VALUE_EnderPearl);
+	    
+	    if(Config.claycasts) {
+	    	ItemStack clayPanCast = new ItemStack(TinkerSmeltery.clayCast);
+		    Cast.setTagForPart(clayPanCast, TinkerTools.panHead);
+            RecipeMatch rm2 = RecipeMatch.ofNBT(clayPanCast);
+            FluidStack fs2 = new FluidStack(TinkerFluids.moltenEnder, Material.VALUE_EnderPearl);
+            TinkerRegistry.registerTableCasting(new CastingRecipe(new ItemStack(Items.ENDER_PEARL), rm2, fs2, true, false));
+	    }
+    }
+    
     // emerald melting and casting
     TinkerRegistry.registerMelting(new MeltingRecipe(RecipeMatch.of("gemEmerald", Material.VALUE_Gem), TinkerFluids.emerald));
     TinkerRegistry.registerMelting(new MeltingRecipe(RecipeMatch.of("oreEmerald", (int) (Material.VALUE_Gem * Config.oreToIngotRatio)), TinkerFluids.emerald));
@@ -475,11 +505,21 @@ public class TinkerSmeltery extends TinkerPulse {
                                                           RecipeMatch.of(new ItemStack(Blocks.SAND, 1, 0)),
                                                           new FluidStack(TinkerFluids.blood, 10),
                                                           true, false));
-
+    // end stone
+    TinkerRegistry.registerBasinCasting(new CastingRecipe(new ItemStack(Blocks.END_STONE, 1, 0),
+            RecipeMatch.of(new ItemStack(Blocks.OBSIDIAN, 1, 0)),
+            new FluidStack(TinkerFluids.moltenEnder, Material.VALUE_EnderPearl / 6),
+            true, false));
+    TinkerRegistry.registerBasinCasting(new CastingRecipe(new ItemStack(Blocks.END_STONE, 1, 0),
+            RecipeMatch.of(new ItemStack(Blocks.SANDSTONE, 1, 0)),
+            new FluidStack(TinkerFluids.moltenEnder, Material.VALUE_EnderPearl),
+            true, false));
+    
     // melt entities into a pulp
     TinkerRegistry.registerEntityMelting(EntityIronGolem.class, new FluidStack(TinkerFluids.iron, 18));
     TinkerRegistry.registerEntityMelting(EntitySnowman.class, new FluidStack(FluidRegistry.WATER, 100));
     TinkerRegistry.registerEntityMelting(EntityVillager.class, new FluidStack(TinkerFluids.emerald, 6));
+    TinkerRegistry.registerEntityMelting(EntityEnderman.class, new FluidStack(TinkerFluids.moltenEnder, 25));
   }
 
   /**

@@ -24,6 +24,7 @@ import slimeknights.tconstruct.library.materials.Material;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ProjectileNBT;
 import slimeknights.tconstruct.library.tools.TinkerToolCore;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.library.utils.TooltipBuilder;
 import slimeknights.tconstruct.tools.traits.TraitEnderference;
@@ -41,9 +42,21 @@ public abstract class ProjectileCore extends TinkerToolCore implements IProjecti
   public ProjectileCore(PartMaterialType... requiredComponents) {
     super(requiredComponents);
     durabilityPerAmmo = 10;
+	this.setMaxStackSize(64);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public Pair<Integer, Integer>[] getRepairParts() {
+	return new Pair[0];
   }
 
   /* Ammo Handling */
+  
+  @Override
+  public int getCraftingOutputAmount(ItemStack stack) {
+	return Math.max(ToolHelper.getCurrentDurability(stack) / durabilityPerAmmo, 8);
+  }
 
   protected void setDurabilityPerAmmo(int durabilityPerAmmo) {
     this.durabilityPerAmmo = durabilityPerAmmo;
@@ -61,17 +74,20 @@ public abstract class ProjectileCore extends TinkerToolCore implements IProjecti
 
   @Override
   public boolean showDurabilityBar(ItemStack stack) {
-    return getMaxAmmo(stack) != getCurrentAmmo(stack) && super.showDurabilityBar(stack);
+    // return getMaxAmmo(stack) != getCurrentAmmo(stack) && super.showDurabilityBar(stack);
+	return false;
   }
 
   @Override
   public int getCurrentAmmo(ItemStack stack) {
-    return ToolHelper.getCurrentDurability(stack) / durabilityPerAmmo;
+    // return ToolHelper.getCurrentDurability(stack) / durabilityPerAmmo;
+	return stack.getCount();
   }
 
   @Override
   public int getMaxAmmo(ItemStack stack) {
-    return ToolHelper.getMaxDurability(stack) / durabilityPerAmmo;
+    // return ToolHelper.getMaxDurability(stack) / durabilityPerAmmo;
+	return stack.getMaxStackSize();  
   }
 
   @Override
@@ -84,11 +100,11 @@ public abstract class ProjectileCore extends TinkerToolCore implements IProjecti
   public boolean addAmmo(ItemStack stack, EntityLivingBase player) {
     int ammo = getCurrentAmmo(stack);
     if(ammo < getMaxAmmo(stack)) {
-      ToolHelper.healTool(stack, durabilityPerAmmo, null);
-      return true;
-    }
-    else {
-      return false;
+      // ToolHelper.healTool(stack, durabilityPerAmmo, null);
+	  stack.grow(1);
+	  return true;
+	} else {
+	  return false;
     }
   }
 
@@ -96,15 +112,16 @@ public abstract class ProjectileCore extends TinkerToolCore implements IProjecti
   public boolean useAmmo(ItemStack stack, @Nullable EntityLivingBase player) {
     int ammo = getCurrentAmmo(stack);
     if(ammo > 0) {
-      ToolHelper.damageTool(stack, durabilityPerAmmo, player);
+/*      ToolHelper.damageTool(stack, durabilityPerAmmo, player);
       int newAmmo = getCurrentAmmo(stack);
       if(newAmmo <= 0) {
         ToolHelper.breakTool(stack, player);
       }
       // in case we're creative or a trait like obsidian's prevented the damage
-      return newAmmo < ammo;
-    }
-    else {
+      return newAmmo < ammo; */
+	  stack.shrink(1);
+	  return true;			
+	} else {
       return false;
     }
   }

@@ -43,4 +43,9 @@ public abstract class SwordCore extends TinkerToolCore {
   public float miningSpeedModifier() {
     return 0.5f; // slooow, because it's a swooooord
   }
+  
+  @Override
+  public boolean canContainSwordEnchantments() {
+	return true;
+  }
 }

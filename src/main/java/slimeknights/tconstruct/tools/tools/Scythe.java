@@ -22,6 +22,7 @@ import slimeknights.tconstruct.library.materials.Material;
 import slimeknights.tconstruct.library.materials.MaterialTypes;
 import slimeknights.tconstruct.library.tinkering.PartMaterialType;
 import slimeknights.tconstruct.library.tools.ToolNBT;
+import slimeknights.tconstruct.library.utils.Pair;
 import slimeknights.tconstruct.library.utils.ToolHelper;
 import slimeknights.tconstruct.tools.TinkerTools;
 
@@ -34,6 +35,11 @@ public class Scythe extends Kama {
         PartMaterialType.head(TinkerTools.scytheHead),
         PartMaterialType.extra(TinkerTools.toughBinding),
         PartMaterialType.handle(TinkerTools.toughToolRod));
+  }
+  
+  @Override
+  public boolean canContainDigToolEnchantments() {
+    return true;
   }
 
   @Override
@@ -147,9 +153,16 @@ public class Scythe extends Kama {
     return shorn;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public int[] getRepairParts() {
-    return new int[]{1, 2};
+  public Pair<Integer, Integer>[] getRepairParts() {
+	// return new int[]{1, 2};
+	return new Pair[] {
+	  new Pair<Integer, Integer>(3, 10),
+	  new Pair<Integer, Integer>(0, 10),
+	  new Pair<Integer, Integer>(2, 40),
+	  new Pair<Integer, Integer>(1, 40)
+	};
   }
 
   @Override
