@@ -113,6 +113,15 @@ minecraft {
     useDepAts = true
 }
 
+def commonManifest = {
+	attributes (
+		"FMLCorePlugin": 'slimeknights.tconstruct.library.asm.TConstructLoadingPlugin',
+		"FMLCorePluginContainsFMLMod": 'true',
+		"ForceLoadAsMod": 'true',
+		"FMLAT": 'tconstruct_at.cfg'
+	)
+}
+
 dependencies {
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -159,9 +168,10 @@ processResources
 
 // Add Access Transformers Manifest
 jar {
-    manifest {
-        attributes 'FMLAT': 'tconstruct_at.cfg'
-    }
+//    manifest {
+//        attributes 'FMLAT': 'tconstruct_at.cfg'
+//    }
+    manifest commonManifest
     
     finalizedBy reobfJar
 }
@@ -170,9 +180,10 @@ jar {
 task deobfJar(type: Jar) {
     from sourceSets.main.output
     classifier = 'deobf'
-	manifest {
-        attributes 'FMLAT': 'tconstruct_at.cfg'
-    }
+//	manifest {
+//        attributes 'FMLAT': 'tconstruct_at.cfg'
+//    }
+    manifest commonManifest
 }
 
 task sourcesJar(type: Jar) {
