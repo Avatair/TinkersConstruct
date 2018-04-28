@@ -285,16 +285,16 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
 	ItemStack modifyable = getToolStack();
 
 	// modifying possible?
-    if(tool.isEmpty() ||
-       !(tool.getItem() instanceof TinkersItem) ||
+    if(modifyable.isEmpty() ||
+       !(modifyable.getItem() instanceof TinkersItem) ||
        StringUtils.isNullOrEmpty(toolName) ||
-       tool.getDisplayName().equals(toolName)) {
+       modifyable.getDisplayName().equals(toolName)) {
       return ItemStack.EMPTY;
     }
 
 	// rename tool
 	ItemStack newTool = modifyable.copy();
-    if(TagUtil.getNoRenameFlag(result)) {
+    if(TagUtil.getNoRenameFlag(newTool)) {
       throw new TinkerGuiException(Util.translate("gui.error.no_rename"));
     }
     
