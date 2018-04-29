@@ -47,6 +47,10 @@ public class HeadMaterialStats extends AbstractMaterialStats {
     this.harvestLevel = harvestLevel;
 	this.enchantability = enchantability;
   }
+  
+  public HeadMaterialStats(int durability, float miningspeed, float attack, int harvestLevel) {
+	this(durability, miningspeed, attack, harvestLevel, 0);
+  }
 
   @Override
   public List<String> getLocalizedInfo() {
