@@ -710,6 +710,13 @@ public abstract class ToolCore extends TinkersItem implements IToolStationDispla
            TagUtil.getOriginalToolStats(tag1).equals(TagUtil.getOriginalToolStats(tag2)); // unmodified base stats
   }
   
+  @Override
+  public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+    if(canContainSwordEnchantments() || canContainBowEnchantments() || canContainDigToolEnchantments())
+      return true;
+    return super.isBookEnchantable(stack, book);
+  }
+  
   public boolean canContainSwordEnchantments() {
 	return false;
   }
