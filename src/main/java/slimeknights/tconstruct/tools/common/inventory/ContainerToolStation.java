@@ -49,6 +49,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
   public ContainerToolStation(InventoryPlayer playerInventory, TileToolStation tile, boolean bHasOut,
 	  boolean bOnlyCraftable) {
     super(tile);
+    this.player = playerInventory.player;
 
 	this.bOnlyCraftable = bOnlyCraftable;
     
@@ -63,9 +64,7 @@ public class ContainerToolStation extends ContainerTinkerStation<TileToolStation
     if (bHasOut)
     	addSlotToContainer(out);
     this.addPlayerInventory(playerInventory, 8, 84 + 8);
-    onCraftMatrixChanged(null);
-
-    this.player = playerInventory.player;
+    onCraftMatrixChanged(playerInventory);
   }
 
   public ItemStack getResult() {
