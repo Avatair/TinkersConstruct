@@ -570,6 +570,9 @@ public final class ToolHelper {
   }
 
   public static int reduceDamageBasedOnEnchantment(ItemStack stack, int amount) {
+	if( amount < 0 )
+		return amount;	// Nothing to do in case of healing the tool
+	  
     int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
     int j = 0;
 
