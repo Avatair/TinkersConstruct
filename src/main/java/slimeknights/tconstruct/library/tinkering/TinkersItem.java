@@ -312,7 +312,7 @@ public abstract class TinkersItem extends Item implements ITinkerable, IModifyab
   @Nonnull
   @Override
   public ItemStack repair(ItemStack repairable, NonNullList<ItemStack> repairItems) {
-		return repairV2(repairable, repairItems);
+		return repairV1(repairable, repairItems);
 	}
 
   private ItemStack repairV2(ItemStack repairable, NonNullList<ItemStack> repairItems) {
