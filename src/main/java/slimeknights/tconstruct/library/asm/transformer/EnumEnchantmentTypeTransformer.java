@@ -74,7 +74,7 @@ public class EnumEnchantmentTypeTransformer implements IClassTransformer
         }
 		
         //Encode the altered class back into bytes
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS|ClassWriter.COMPUTE_FRAMES);
         classNode.accept(writer);
         bytes = writer.toByteArray();
         
